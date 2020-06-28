@@ -1,0 +1,138 @@
+/**** Text ****/
+body {
+    font-family: "Open Sans", "Montserrat", sans-serif;
+}
+
+h1 {
+    font-family: "Montserrat", sans-serif;
+    font-size: 32pt;
+    font-weight: 900;
+}
+
+h3 { 
+    font-family: "Open Sans", sans-serif;
+    font-size: 16pt;
+    font-weight: bold;
+}
+
+/* Icon default */
+i.default {
+    font-size: 32pt;
+}
+
+/**** Input ****/
+input.regular {
+    height: 6.5%;
+}
+
+input.long {
+    width: 30%;
+}
+
+/**** Button format ****/
+button {
+    border-radius: 20px;
+    border-color: black;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+/**** Colour related ****/
+/* Background/foreground colours */
+.light-grey {
+    background-color: rgba(52, 54, 66, 0.1);
+}
+
+.red {
+    background-color: #DC2D27;
+}
+
+.dark-grey {
+    background-color: #343642;
+}
+
+.yellow {
+    background-color: #FFEC00;
+}
+
+.black {
+    background-color: black;
+}
+.black--text {
+    color: black;
+}
+
+.white {
+    background-color: white;
+}
+
+.white--text {
+    color: white;
+}
+
+/* Borders */
+.border--black {
+    border-radius: 1px;
+    border-color: black;
+}
+
+/**** Centering ****/
+/* Horizontal */
+.h-centred {
+    text-align: center;
+}
+
+/**** Flexbox ****/
+
+/* Row */
+div.flexbox-row {
+    display: flex;
+    flex-direction: row;
+}
+
+/* Column*/
+div.flexbox-column {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Align horizontal */
+div.flexbox-row--align {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* Vertical align */
+div.flexbox-column--align {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+/**** Padding ****/
+/* Top/bottom 10px padding */
+.margin-tb--10px {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Bottom 10px padding */
+.margin-b--10px {
+    margin-bottom: 10px;
+}
+
+/* Left/right 5px padding */
+.margin-lr--10px {
+    margin-left: 10px;
+    margin-right: 10px;
+}

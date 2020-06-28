@@ -1,6 +1,7 @@
 #include "Alcolator.h"
+#include "iostream"
 
-#define WINDOW_WIDTH  800
+#define WINDOW_WIDTH  900
 #define WINDOW_HEIGHT 600
 
 Alcolator::Alcolator() {
@@ -14,7 +15,7 @@ Alcolator::Alcolator() {
   /// kWindowFlags_Resizable.
   ///
   window_ = Window::Create(app_->main_monitor(), WINDOW_WIDTH, WINDOW_HEIGHT,
-    false, kWindowFlags_Titled | kWindowFlags_Resizable);
+    false, kWindowFlags_Borderless);
 
   ///
   /// Set the title of our window.
@@ -42,7 +43,7 @@ Alcolator::Alcolator() {
   ///
   /// Load a page into our overlay's View
   ///
-  overlay_->view()->LoadURL("file:///app.html");
+  overlay_->view()->LoadURL("file:///login.html");
 
   ///
   /// Register our MyApp instance as an AppListener so we can handle the

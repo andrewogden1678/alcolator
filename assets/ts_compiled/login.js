@@ -1,4 +1,5 @@
 "use strict";
+// LOGIN SCRIPT
 function helloWorld() {
     return "Hello Typescript World!";
 }
