@@ -3,13 +3,13 @@
 
 using namespace ultralight;
 
-class Alcholator : public AppListener,
+class Alcolator : public AppListener,
               public WindowListener,
               public LoadListener {
 public:
-  Alcholator();
+  Alcolator();
 
-  virtual ~Alcholator();
+  virtual ~Alcolator();
 
   // Start the run loop.
   virtual void Run();

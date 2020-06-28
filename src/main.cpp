@@ -1,7 +1,7 @@
-#include "Alcholator.h"
+#include "Alcolator.h"
 
 int main() {
-  Alcholator app;
+  Alcolator app;
   app.Run();
 
   return 0;

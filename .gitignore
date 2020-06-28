@@ -37,3 +37,9 @@ build_*/
 .DS_Store
 .vscode/tasks.json
 .vscode/launch.json
+.vs/Alcolator/v16/.suo
+.vs/Alcolator/v16/Browse.VC.db
+.vs/CMake Overview
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json

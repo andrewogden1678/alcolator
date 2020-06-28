@@ -9,4 +9,4 @@ cmake --build . --config Release
 
 # run application instance
 cd Release
-start Alcholator.exe
+start Alcolator.exe

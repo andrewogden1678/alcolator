@@ -1,9 +1,9 @@
-#include "Alcholator.h"
+#include "Alcolator.h"
 
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 600
 
-Alcholator::Alcholator() {
+Alcolator::Alcolator() {
   ///
   /// Create our main App instance.
   ///
@@ -14,12 +14,12 @@ Alcholator::Alcholator() {
   /// kWindowFlags_Resizable.
   ///
   window_ = Window::Create(app_->main_monitor(), WINDOW_WIDTH, WINDOW_HEIGHT,
-    false, kWindowFlags_Resizable );
+    false, kWindowFlags_Titled | kWindowFlags_Resizable);
 
   ///
   /// Set the title of our window.
   ///
-  window_->SetTitle("Alcholator v0.1");
+  window_->SetTitle("MyApp");
 
   ///
   /// Tell our app to use 'window' as our main window.
@@ -33,6 +33,11 @@ Alcholator::Alcholator() {
   /// position because it'll be calculated when we call OnResize() below.
   ///
   overlay_ = Overlay::Create(*window_.get(), 1, 1, 0, 0);
+
+  ///
+  /// Force a call to OnResize to perform size/layout of our overlay.
+  ///
+  OnResize(window_->width(), window_->height());
 
   ///
   /// Load a page into our overlay's View
@@ -58,25 +63,25 @@ Alcholator::Alcholator() {
   overlay_->view()->set_load_listener(this);
 }
 
-Alcholator::~Alcholator() {
+Alcolator::~Alcolator() {
 }
 
-void Alcholator::Run() {
+void Alcolator::Run() {
   app_->Run();
 }
 
-void Alcholator::OnUpdate() {
+void Alcolator::OnUpdate() {
 }
 
-void Alcholator::OnClose() {
+void Alcolator::OnClose() {
 }
 
-void Alcholator::OnResize(uint32_t width, uint32_t height) {
+void Alcolator::OnResize(uint32_t width, uint32_t height) {
   overlay_->Resize(width, height);
 }
 
-void Alcholator::OnFinishLoading(View* caller) {
+void Alcolator::OnFinishLoading(View* caller) {
 }
 
-void Alcholator::OnDOMReady(View* caller) {
+void Alcolator::OnDOMReady(View* caller) {
 }
