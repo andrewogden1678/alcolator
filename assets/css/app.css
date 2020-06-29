@@ -13,7 +13,7 @@ h1 {
 
 h2 {
     font-family: "Montserrat", sans-serif;
-    font-size: 20;
+    font-size: 20pt;
     font-weight: 900;
 }
 
@@ -29,6 +29,12 @@ h4 {
     font-weight: 900;
 }
 
+h5 {
+    font-family: "Montserrat", sans-serif;
+    font-size: 20pt;
+    font-weight: bold;  
+}
+
 /**** Icons ****/
 /* Icon default */
 i.default {
@@ -41,7 +47,7 @@ i.nav-icon {
 }
 
 i.list-icon {
-    font-size: 56px;
+    font-size: 72px;
 }
 
 /**** Navigation bar ****/
