@@ -11,6 +11,10 @@ public:
 
   virtual ~Alcolator();
 
+  RefPtr<View> view() {
+    return overlay_->view();
+  }
+
   // Start the run loop.
   virtual void Run();
 
@@ -33,4 +37,5 @@ protected:
   RefPtr<App> app_;
   RefPtr<Window> window_;
   RefPtr<Overlay> overlay_;
+  RefPtr<Overlay> inspector_;
 };

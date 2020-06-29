@@ -18,11 +18,6 @@ Alcolator::Alcolator() {
     false, kWindowFlags_Borderless);
 
   ///
-  /// Set the title of our window.
-  ///
-  window_->SetTitle("MyApp");
-
-  ///
   /// Tell our app to use 'window' as our main window.
   ///
   /// This call is required before creating any overlays or calling App::Run
@@ -43,7 +38,11 @@ Alcolator::Alcolator() {
   ///
   /// Load a page into our overlay's View
   ///
-  overlay_->view()->LoadURL("file:///login.html");
+  view()->LoadURL("file:///main.html");
+
+  inspector_ = Overlay::Create(*window_.get(), *view()->inspector(), 0, 0);
+
+  inspector_->Resize(900, 300);
 
   ///
   /// Register our MyApp instance as an AppListener so we can handle the
@@ -61,7 +60,9 @@ Alcolator::Alcolator() {
   /// Register our MyApp instance as a LoadListener so we can handle the
   /// View's OnFinishLoading and OnDOMReady events below.
   ///
-  overlay_->view()->set_load_listener(this);
+  view()->set_load_listener(this);
+
+  
 }
 
 Alcolator::~Alcolator() {
@@ -82,7 +83,11 @@ void Alcolator::OnResize(uint32_t width, uint32_t height) {
 }
 
 void Alcolator::OnFinishLoading(View* caller) {
+  
 }
 
 void Alcolator::OnDOMReady(View* caller) {
+  //overlay_->Unfocus();
+  inspector_->Hide();
+  //inspector_->Focus();
 }

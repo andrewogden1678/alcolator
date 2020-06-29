@@ -23,8 +23,15 @@ i.default {
 /**** Input ****/
 input.regular {
     height: 6.5%;
+    font-size: 14pt;
 }
 
+/* Change cursor on hover */
+input.regular:hover {
+    cursor: text !important;
+}
+
+/* Longer input */
 input.long {
     width: 30%;
 }
@@ -40,6 +47,8 @@ button {
     padding-right: 30px;
     padding-top: 5px;
     padding-bottom: 5px;
+    z-index: inherit;
+    cursor: pointer !important;
 }
 
 /**** Colour related ****/

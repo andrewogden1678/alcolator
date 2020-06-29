@@ -1,5 +1,14 @@
 {
     "files.associations": {
         "xiosbase": "cpp"
+    },
+    "files.exclude": {
+        "**/.gitattributes": true,
+        "**/.gitignore": true,
+        "**/.vs": true,
+        "**/.vscode": true,
+        "**/build": true,
+        "**/cmake": true,
+        "**/out": true
     }
 }
