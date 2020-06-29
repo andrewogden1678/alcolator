@@ -43,3 +43,7 @@ build_*/
 .vs/ProjectSettings.json
 .vs/slnx.sqlite
 .vs/VSWorkspaceState.json
+cmake/Info.plist.in
+cmake/App.cmake
+.vscode/settings.json
+.vscode/c_cpp_properties.json
