@@ -40,10 +40,6 @@ Alcolator::Alcolator() {
   ///
   view()->LoadURL("file:///main.html");
 
-  inspector_ = Overlay::Create(*window_.get(), *view()->inspector(), 0, 0);
-
-  inspector_->Resize(900, 300);
-
   ///
   /// Register our MyApp instance as an AppListener so we can handle the
   /// App's OnUpdate event below.
@@ -87,7 +83,5 @@ void Alcolator::OnFinishLoading(View* caller) {
 }
 
 void Alcolator::OnDOMReady(View* caller) {
-  //overlay_->Unfocus();
-  inspector_->Hide();
-  //inspector_->Focus();
+
 }

@@ -1,11 +1,19 @@
 /**** Text ****/
 body {
     font-family: "Open Sans", "Montserrat", sans-serif;
+    padding: 0;
+    margin: 0;
 }
 
 h1 {
     font-family: "Montserrat", sans-serif;
     font-size: 32pt;
+    font-weight: 900;
+}
+
+h2 {
+    font-family: "Montserrat", sans-serif;
+    font-size: 20;
     font-weight: 900;
 }
 
@@ -15,11 +23,53 @@ h3 {
     font-weight: bold;
 }
 
+h4 {
+    font-family: "Montserrat", sans-serif;
+    font-size: 18pt;
+    font-weight: 900;
+}
+
+/**** Icons ****/
 /* Icon default */
 i.default {
     font-size: 32pt;
 }
 
+/* Navigation icon */
+i.nav-icon {
+    font-size: 24px;
+}
+
+i.list-icon {
+    font-size: 56px;
+}
+
+/**** Navigation bar ****/
+.nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.nav-item {
+    margin-left: 9px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-weight: normal;
+    font-size: 16px;
+}
+
+.nav-item--push {
+    margin-left: auto;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-weight: normal;
+    font-size: 16px;
+}
 /**** Input ****/
 input.regular {
     height: 6.5%;
@@ -65,8 +115,8 @@ button {
     background-color: #343642;
 }
 
-.yellow {
-    background-color: #FFEC00;
+.yellow--text {
+    color: #FFEC00;
 }
 
 .black {
@@ -110,6 +160,14 @@ div.flexbox-column {
     flex-direction: column;
 }
 
+div.flexbox-column--list {
+    display: flex;
+    flex-direction: column;
+    width: 27%;
+    height: calc(100vh - 5.5vh); /* subtract nav bar height to avoid overflow */
+    padding: 0;
+}
+
 /* Align horizontal */
 div.flexbox-row--align {
     display: flex;
@@ -144,4 +202,18 @@ div.flexbox-column--align {
 .margin-lr--10px {
     margin-left: 10px;
     margin-right: 10px;
+}
+
+/**** Tables ****/
+table {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+/* Table row */
+tr {
+    margin: 0;
+    padding: 0;
+    width: 100%;
 }
