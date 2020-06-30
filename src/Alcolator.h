@@ -5,7 +5,8 @@ using namespace ultralight;
 
 class Alcolator : public AppListener,
               public WindowListener,
-              public LoadListener {
+              public LoadListener,
+              public ViewListener {
 public:
   Alcolator();
 
@@ -33,9 +34,18 @@ public:
   // This is called when the DOM has loaded in the main frame. Update JS here.
   virtual void OnDOMReady(View* caller) override;
 
+  virtual void OnChangeCursor(View* caller, Cursor cursor) override;
+
+  /*virtual void OnAddConsoleMessage(View* caller,
+  MessageSource source,
+  MessageLevel level,
+  const String& message,
+  uint32_t line_number,
+  uint32_t column_number,
+  const String& source_id) override;*/
+
 protected:
   RefPtr<App> app_;
   RefPtr<Window> window_;
   RefPtr<Overlay> overlay_;
-  RefPtr<Overlay> inspector_;
 };
