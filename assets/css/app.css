@@ -15,7 +15,7 @@ h1 {
 
 h2 {
     font-family: "Montserrat", sans-serif;
-    font-size: 20pt;
+    font-size: 18pt;
     font-weight: 900;
 }
 
@@ -27,7 +27,7 @@ h3 {
 
 h4 {
     font-family: "Montserrat", sans-serif;
-    font-size: 18pt;
+    font-size: 14pt;
     font-weight: 900;
 }
 
@@ -195,6 +195,14 @@ div.flexbox-column--list {
     padding: 0;
 }
 
+div.flexbox-column--dat {
+    display: flex;
+    flex-direction: column;
+    width: 73%;
+    height: calc(100vh - 5.5vh); /* subtract nav bar height to avoid overflow */
+    padding: 0;
+}
+
 /* Align horizontal */
 div.flexbox-row--align {
     display: flex;
@@ -213,34 +221,25 @@ div.flexbox-column--align {
     width: 100%;
 }
 
-/**** Padding ****/
-/* Top/bottom 10px padding */
+/**** Padding & margin ****/
+/* Top/bottom 10px margin */
 .margin-tb--10px {
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-/* Bottom 10px padding */
+/* Bottom 10px margin */
 .margin-b--10px {
     margin-bottom: 10px;
 }
 
-/* Left/right 5px padding */
+/* Left/right 5px margin */
 .margin-lr--10px {
     margin-left: 10px;
     margin-right: 10px;
 }
 
-/**** Tables ****/
-table {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-}
-
-/* Table row */
-tr {
-    margin: 0;
-    padding: 0;
-    width: 100%;
+/* Padding 10px all sides */
+.pad--10px {
+    padding: 10px;
 }
