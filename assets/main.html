@@ -19,22 +19,48 @@
         <div class="flexbox-column--list light-grey">
           <div class="flexbox-row--align" style="padding-top: 5px;">
             <strong><h2 style="margin: 0;">Records</h2></strong>
-          </div>
-          
+          </div>       
         </div>
-        <div class="flexbox-column--dat">
-          <div class="flexbox-row" style="height: 63%;">
-            <div class="flexbox-column pad--10px">
-              <strong><h4>New Subject 003</h4></strong>
-              <strong><h3>General Information</h3></strong>
-              <div class="flexbox-row--align margin-b--10px">
-                <h3>Age (years): </h3>
-                <input class="light-grey border--black regular" type="text" id="age">
+        <div class="flexbox-column--dat pad--10px">
+          <strong><h4 style="margin-top: 10px; margin-left: 10px; margin-bottom: 0;">New Subject 003</h4></strong>
+          <div class="flexbox-row pad--10px" style="height: 63%;">
+            <div class="flexbox-column" style="width: 50%;">
+              <h3 class="margin-tb--10px"><strong>General Information</strong></h3>
+              <div class="flexbox-row--alignright margin-tb--13px">
+                <h3 class="margin-input input-label semibold">Age (years): </h3>
+                <input class="light-grey border--black regular--dat" type="text" id="age">
+              </div>
+              <div class="flexbox-row--alignright margin-tb--13px">
+                <h3 class="margin-input input-label semibold">Gender: </h3>
+                <input class="light-grey border--black regular--dat" type="text" id="gender">
+              </div>
+              <div class="flexbox-row--alignright margin-tb--13px">
+                <h3 class="margin-input input-label semibold">Height (m): </h3>
+                <input class="light-grey border--black regular--dat" style="display: inline-block;"type="text" id="height">
+              </div>
+              <div class="flexbox-row--alignright margin-tb--13px">
+                <h3 class="margin-input input-label semibold">Weight (kg): </h3>
+                <input class="light-grey border--black regular--dat" type="text" id="weight">
               </div>
             </div>
-            <div class="flexbox-column">
-
-            </div>
+            <div class="flexbox-column" style="width: 50%;">
+              <h3 class="margin-tb--10px"><strong>Calculate Target Consumption</strong></h3>
+              <div class="flexbox-row--alignright margin-tb--13px">
+                <h3 class="margin-input input-label semibold">Target BAC: </h3>
+                <input class="light-grey border--black regular--dat" type="text" id="age">
+              </div>
+              <div class="flexbox-row--alignright margin-tb--13px">
+                <h3 class="margin-input input-label semibold">Reach at: </h3>
+                <input class="light-grey border--black regular--dat" type="text" id="age">
+              </div>
+              <div class="flexbox-row--alignright margin-tb--13px">
+                <h3 class="margin-input input-label semibold">Measure in: </h3>
+                <input class="light-grey border--black regular--dat" type="text" id="age">
+              </div>
+              <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
+                <button class="normal red white--text selectable" style="margin-right: 25px; margin-top: 5px;">Calculate</button>
+              </div>
+            </div> 
           </div>
           <div class="flexbox-row light-grey" style="height: 37%;">
             <strong><h2 style="margin: 5px;">Results</h2></strong>

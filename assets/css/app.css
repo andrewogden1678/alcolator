@@ -21,8 +21,8 @@ h2 {
 
 h3 { 
     font-family: "Open Sans", sans-serif;
-    font-size: 16pt;
-    font-weight: bold;
+    font-size: 14pt !important;
+    font-weight: normal;
 }
 
 h4 {
@@ -35,6 +35,11 @@ h5 {
     font-family: "Montserrat", sans-serif;
     font-size: 20pt;
     font-weight: bold;  
+}
+
+/* Semi bold */
+.semibold {
+    font-weight: 600;
 }
 
 /**** Icons ****/
@@ -87,9 +92,15 @@ i.list-icon {
 
 /**** Input ****/
 input.regular {
-    height: 6.5%;
+    height: 6.5vh;
     font-size: 14pt;
-    
+}
+
+/* Regular with data input */
+input.regular--dat {
+    height: 6.5vh;
+    font-size: 14pt;
+    width: 57%;
 }
 
 /* Change cursor on hover */
@@ -100,6 +111,12 @@ input.regular:hover {
 /* Longer input */
 input.long {
     width: 30%;
+}
+
+/* Label */
+.input-label {
+    min-width: 35%;
+    text-align: right;
 }
 
 /**** Button format ****/
@@ -212,6 +229,24 @@ div.flexbox-row--align {
     width: 100%;
 }
 
+/* Align horizontal left */
+div.flexbox-row--alignleft {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
+    width: 100%;
+}
+
+/* Align horizontal right */
+div.flexbox-row--alignright {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    width: 100%;
+}
+
 /* Vertical align */
 div.flexbox-column--align {
     display: flex;
@@ -228,6 +263,12 @@ div.flexbox-column--align {
     margin-bottom: 10px;
 }
 
+/* Top/bottom 13px margin */
+.margin-tb--13px {
+    margin-top: 13px;
+    margin-bottom: 13px;
+}
+
 /* Bottom 10px margin */
 .margin-b--10px {
     margin-bottom: 10px;
@@ -239,7 +280,19 @@ div.flexbox-column--align {
     margin-right: 10px;
 }
 
+/* No margin */
+.nomargin {
+    margin: 0;
+}
+
+/* Space after label & min-width for input elements */
+.margin-input {
+    margin: 0;
+    margin-right: 5px !important;
+}
+
 /* Padding 10px all sides */
 .pad--10px {
     padding: 10px;
 }
+
