@@ -38,7 +38,7 @@ Alcolator::Alcolator() {
   ///
   /// Load a page into our overlay's View
   ///
-  view()->LoadURL("file:///main.html");
+  view()->LoadURL("file:///admin.html");
 
   ///
   /// Register our MyApp instance as an AppListener so we can handle the

@@ -47,27 +47,63 @@
               <h3 class="margin-tb--10px"><strong>Calculate Target Consumption</strong></h3>
               <div class="flexbox-row--alignright margin-tb--13px">
                 <h3 class="margin-input input-label semibold">Target BAC: </h3>
-                <input class="light-grey border--black regular--dat" type="text" id="age">
+                <input class="light-grey border--black regular--dat" type="text" id="targetBAC">
               </div>
               <div class="flexbox-row--alignright margin-tb--13px">
                 <h3 class="margin-input input-label semibold">Reach at: </h3>
-                <input class="light-grey border--black regular--dat" type="text" id="age">
+                <input class="light-grey border--black regular--dat" type="text" id="bacReachTime">
               </div>
               <div class="flexbox-row--alignright margin-tb--13px">
                 <h3 class="margin-input input-label semibold">Measure in: </h3>
-                <input class="light-grey border--black regular--dat" type="text" id="age">
+                <input class="light-grey border--black regular--dat" type="text" id="measUnit">
               </div>
               <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
-                <button class="normal red white--text selectable" style="margin-right: 25px;">Calculate</button>
+                <button class="normal red white--text selectable" style="margin-right: 25px;" id="calculate">Calculate</button>
               </div>
             </div> 
           </div>
           <div class="flexbox-row light-grey" style="height: 37%;">
             <strong><h2 style="margin: 5px;">Results</h2></strong>
-            <img src="img/bottle.png" alt="beer bottle" class="nav-item--push" style="align-self: flex-end; margin-bottom: 0; z-index: -100;" width="209px" height="145px">
+            <img src="img/bottle.png" alt="beer bottle" class="nav-item--push" style="align-self: flex-end; margin-bottom: 0; margin-right: 20px;" width="209px" height="145px">
           </div>
         </div>
-      </div>
+        <div class="modal">
+          <div class="modal--settings centred-settings white">
+            <h1 style="font-size: 28px; margin: 0;">Settings</h1>
+            <h3 class="semibold" style="font-size: 18px; margin-bottom: 30px;"><strong>Currently Logged-In:</strong> Jane Doe</h3>
+            <h2 style="font-weight: bold; margin-bottom: 5px;">Beverages</h2>
+            <div class="flexbox-row">
+              <!-- TODO fix alignment issues -->
+              <div class="flexbox-column" style="width: 50%; padding-right: 30px;">
+                <h3 style="font-size: 18px; font-weight: bold; margin: 0;">Add New Beverage: </h3>
+                <div class="flexbox-row--alignleft margin-tb--10px">
+                  <h3 class="margin-input input-label semibold">Name: </h3>
+                  <input class="light-grey border--black regular short" type="text" id="newBevName">
+                </div>
+                <div class="flexbox-row--alignleft margin-tb--10px">
+                  <h3 class="margin-input input-label semibold">Alc. %: </h3>
+                  <input class="light-grey border--black regular short" type="text" id="newBevConc">
+                </div>
+              </div>
+              <div class="flexbox-column" style="padding-right: 30px;">
+                <h3 style="font-size: 18px; font-weight: bold; margin: 0;">Change Alc. %: </h3>
+                <div class="flexbox-row--alignleft margin-tb--10px">
+                  <h3 class="margin-input input-label semibold">Select: </h3>
+                  <input class="light-grey border--black regular short" type="text" id="bevName">
+                </div>
+                <div class="flexbox-row--alignleft margin-tb--10px">
+                  <h3 class="margin-input input-label semibold">Alc. %: </h3>
+                  <input class="light-grey border--black regular short" type="text" id="changeBevConc">
+                </div>
+                <div class="flexbox-row--alignright" style="margin-top: 20px; margin-left: 20px; width: 100%;">
+                  <button class="dark-grey white--text" style="margin-right: 5px;">Save</button>
+                  <button class="dark-grey white--text" style="margin-left: 5px;">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>      
   </body>
 </html>
 
