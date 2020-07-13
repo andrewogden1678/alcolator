@@ -1,9 +1,5 @@
-# build typescript front-end
-cd src/typescript
-tsc --outDir ../../assets/ts_compiled
-
 # build application instance
-cd ../../build   
+cd build   
 cmake ..
 cmake --build . --config Release
 

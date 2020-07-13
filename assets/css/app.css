@@ -22,7 +22,7 @@ h2 {
 h3 { 
     font-family: "Open Sans", sans-serif;
     font-size: 14pt !important;
-    font-weight: normal;
+    font-weight: 500;
 }
 
 h4 {
@@ -54,7 +54,14 @@ i.nav-icon {
 }
 
 i.list-icon {
-    font-size: 72px;
+    font-size: 56px;
+}
+
+i.lock {
+    position: absolute;
+    z-index: 2;
+    margin-left: 265px;
+    font-size: 28px;
 }
 
 /**** Navigation bar ****/
@@ -113,6 +120,7 @@ input.long {
     width: 30%;
 }
 
+/* Shorter input */
 input.short {
     width: 150px;
 }
@@ -135,6 +143,13 @@ button {
     padding-top: 5px;
     padding-bottom: 5px;
     z-index: inherit;
+}
+
+/* Change styles for data item */
+.dataitem:hover {
+    background-color: #343642;
+    color: white;
+    cursor: pointer;
 }
 
 /* Select class for boxes */
@@ -161,6 +176,10 @@ button {
 
 .dark-grey {
     background-color: #343642;
+}
+
+.locked-grey {
+    background-color: rgba(52, 54, 66, 0.3);;
 }
 
 .yellow--text {
@@ -345,5 +364,10 @@ div.flexbox-column--align {
 /* Padding 10px all sides */
 .pad--10px {
     padding: 10px;
+}
+
+.margin--dataitem {
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 

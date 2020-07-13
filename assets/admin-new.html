@@ -1,0 +1,65 @@
+<html>
+  <head>
+    <!-- Main app stylesheet-->
+    <link rel="stylesheet" href="css/app.css">
+    <!-- Material Design Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body>
+      <div class="nav dark-grey white--text">
+          <a class="nav-item selectable--text">File</a>
+          <img src="img/nav_separator.svg" class="nav-item cursor-default">
+          <a class="nav-item selectable--text">Settings</a>
+          <h2 class="yellow--text nav-item--push cursor-default"><strong>Alcolator</strong></h2>
+          <img src="img/nav_separator.svg" class="nav-item cursor-default" style="opacity: 0.2">
+          <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;">minimize</i>
+          <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;">close</i>
+      </div>
+      <div class="flexbox-row">
+        <div class="flexbox-column--list light-grey">
+          <div class="flexbox-row--align" style="padding-top: 5px;">
+            <strong><h2 style="margin: 0;">Users</h2></strong>
+          </div>       
+        </div>
+        <div class="flexbox-column--dat pad--10px">
+          <strong><h4 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">New User Arthur Miller</h4></strong>
+          <div class="flexbox-row pad--10px" style="height: 63%; padding-bottom: 20px;">
+            <div class="flexbox-column" style="width: 50%;">
+              <div class="flexbox-row--alignright margin-tb--16px">
+                <h3 class="margin-input input-label semibold">First Name: </h3>
+                <input class="light-grey border--black regular--dat" type="text" id="fname">
+              </div>
+              <div class="flexbox-row--alignright margin-tb--16px">
+                <h3 class="margin-input input-label semibold">Last Name: </h3>
+                <input class="light-grey border--black regular--dat" type="text" id="lname">
+              </div>
+              <div class="flexbox-row--alignright margin-tb--16px">
+                <h3 class="margin-input input-label semibold">Username: </h3>
+                <input class="light-grey border--black regular--dat" style="display: inline-block;"type="text" id="username">
+              </div>
+              <div class="flexbox-row--alignright margin-tb--16px">
+                <h3 class="margin-input input-label semibold">Password: </h3>
+                <input class="light-grey border--black regular--dat" type="text" id="userpass">
+              </div>
+            </div>
+            <div class="flexbox-column" style="width: 50%;">
+              <div class="flexbox-row--alignright margin-tb--16px">
+                <h3 class="margin-input input-label semibold">Access Level: </h3>
+                <input class="light-grey border--black regular--dat" type="text" id="accessLevel">
+              </div>
+              <div class="flexbox-row--alignright" style="justify-content: flex-end; margin-top: 50px;">
+                <button class="normal dark-grey white--text selectable" style="margin-right: 25px; width: 172px; padding-right: 25px; padding-left: 25px;" id="changesSave">Save Changes</button>
+              </div>
+              <div class="flexbox-row--alignright" style="justify-content: flex-end; margin-top: 30px;">
+                <button class="normal red white--text selectable" style="margin-right: 25px; width: 172px;" id="cancel">Cancel</button>
+              </div>
+            </div> 
+          </div>
+          <div class="flexbox-row light-grey" style="height: 37%;">
+            <strong><h2 style="margin: 5px;">Recent Activity</h2></strong>
+            <img src="img/bottle.png" alt="beer bottle" class="nav-item--push" style="align-self: flex-end; margin-bottom: 0; margin-right: 20px;" width="209px" height="145px">
+          </div>
+        </div>
+      </div>      
+  </body>
+</html>

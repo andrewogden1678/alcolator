@@ -38,7 +38,7 @@ Alcolator::Alcolator() {
   ///
   /// Load a page into our overlay's View
   ///
-  view()->LoadURL("file:///admin.html");
+  view()->LoadURL("file:///main.html");
 
   ///
   /// Register our MyApp instance as an AppListener so we can handle the
@@ -86,6 +86,7 @@ void Alcolator::OnFinishLoading(View* caller) {
 void Alcolator::OnDOMReady(View* caller) {
   
 }
+
 void Alcolator::OnChangeCursor(View* caller, Cursor cursor) {
 
   window_->SetCursor(cursor);

@@ -4,9 +4,7 @@
 using namespace ultralight;
 
 class Alcolator : public AppListener,
-              public WindowListener,
-              public LoadListener,
-              public ViewListener {
+                 {
 public:
   Alcolator();
 
