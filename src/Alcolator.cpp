@@ -1,28 +1,25 @@
 #include "Alcolator.h"
-#include "iostream"
+#include "view_controllers/LoginVC.h"
 
+// Definitions
 #define WINDOW_WIDTH  900
 #define WINDOW_HEIGHT 600
 
 Alcolator::Alcolator() {
-  ///
-  /// Create our main App instance.
-  ///
+
+  // Create app instance
   app_ = App::Create();
 
-  ///
-  /// Create a resizable window by passing by OR'ing our window flags with
-  /// kWindowFlags_Resizable.
-  ///
+  // Create the app window
   window_ = Window::Create(app_->main_monitor(), WINDOW_WIDTH, WINDOW_HEIGHT,
     false, kWindowFlags_Borderless);
 
-  ///
-  /// Tell our app to use 'window' as our main window.
-  ///
-  /// This call is required before creating any overlays or calling App::Run
-  ///
+  // Tell the app that this is the main window
   app_->set_window(*window_.get());
+
+  login_.reset(new LoginView(*window_.get()));
+
+  window_->set_listener(login_.get());
 
   ///
   /// Create our HTML overlay-- we don't care about its initial size and

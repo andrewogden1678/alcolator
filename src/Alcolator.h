@@ -1,5 +1,5 @@
-#pragma once
 #include <AppCore/AppCore.h>
+#include "view_controllers/LoginVC.h"
 
 using namespace ultralight;
 
@@ -48,5 +48,5 @@ public:
 protected:
   RefPtr<App> app_;
   RefPtr<Window> window_;
-  RefPtr<Overlay> overlay_;
-};
+  std::unique_ptr<LoginView> login;
+}
