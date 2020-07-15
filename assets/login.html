@@ -4,18 +4,18 @@
     <link rel="stylesheet" href="css/app.css">
     <!-- Material Design Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Page script -->
-    <script src="ts_compiled/login.js"></script>
+    <!-- Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body class="light-grey">
-    <div class="flexbox-column--align" style="min-height: 95vh;">
+    <div class="flexbox-column--align" style="min-height: 95vh;" id="login">
       <!-- Title & login labels -->
       <h1 class="h-centred" style="margin: 0%; margin-left: 4.5%;">Alcolator</h1>
       <h3 class="h-centred" style="margin-top: 0%; margin-left: 4.5%; margin-top: 0.5%;"><strong>Login</strong></h3>
       <!-- Username input -->
       <div class="flexbox-row--align margin-b--10px">
         <i class="material-icons margin-lr--10px default">account_circle</i>
-        <input class="light-grey border--black regular long" type="text" id="username">
+        <input class="light-grey border--black regular long" type="text" id="username" :value="username">
       </div>
       <!-- Password input -->
       <div class="flexbox-row--align margin-tb--10px">
@@ -27,5 +27,7 @@
         <button class="normal red white--text selectable">Login</button>
       </div>
     </div>
+    <!-- Page script -->
+    <script src="js/login.js"></script>
   </body>
 </html>

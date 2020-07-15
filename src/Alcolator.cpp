@@ -38,7 +38,7 @@ Alcolator::Alcolator() {
   ///
   /// Load a page into our overlay's View
   ///
-  view()->LoadURL("file:///main.html");
+  view()->LoadURL("file:///login.html");
 
   ///
   /// Register our MyApp instance as an AppListener so we can handle the
@@ -79,11 +79,11 @@ void Alcolator::OnResize(uint32_t width, uint32_t height) {
   overlay_->Resize(width, height);
 }
 
-void Alcolator::OnFinishLoading(View* caller) {
+void Alcolator::OnFinishLoading(View* caller, uint64_t frame_id, bool is_main_frame, const String& url) {
 
 }
 
-void Alcolator::OnDOMReady(View* caller) {
+void Alcolator::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, const String& url) {
   
 }
 
