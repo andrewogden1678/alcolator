@@ -8,6 +8,8 @@ include(cmake/App.cmake)
 
 set(SOURCES "src/Alcolator.h"
             "src/Alcolator.cpp"
+            "src/view_controllers/LoginVC.h"
+            "src/view_controllers/LoginVC.cpp"
             "src/main.cpp")
 
 add_app("${SOURCES}")

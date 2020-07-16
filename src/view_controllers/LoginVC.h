@@ -6,8 +6,8 @@ using namespace ultralight;
 // View for login page
 class LoginView : public LoadListener, // Various app-state dependent handlers
                 public WindowListener, // Window handlers
-                public ViewListener 
-{ // View handlers
+                public ViewListener // View handlers
+{ 
     
     public:
         // Constructor & Destructor
@@ -30,5 +30,5 @@ class LoginView : public LoadListener, // Various app-state dependent handlers
 
     protected:
         Ref<Window> window_; // Window ref
-        Ref<Overlay> overlay_; // Overlay ref     
+        RefPtr<Overlay> overlay_; // Overlay ref     
 };
