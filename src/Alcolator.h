@@ -16,4 +16,5 @@ class Alcolator {
   protected:
     RefPtr<App> app_;
     RefPtr<Window> window_;
+    std::unique_ptr<LoginView> lv_;
 };

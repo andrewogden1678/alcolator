@@ -1,6 +1,7 @@
 #include "LoginVC.h"
 
-LoginView::LoginView(Ref<Window> window) : window_(window) {
+LoginView::LoginView(Ref<Window> window) : ViewController::ViewController(window) {
+    window_ = window;
     uint32_t width = App::instance()->window()->width();
     uint32_t height = App::instance()->window()->height();
 

@@ -17,16 +17,16 @@ Alcolator::Alcolator() {
   // Tell the app that this is the main window
   app_->set_window(*window_.get());
 
-  std::unique_ptr<LoginView> lv; 
+  lv_.reset(new LoginView(*window_.get()));
 
-  lv.reset(new LoginView(*window_.get()));
-
-  window_->set_listener(lv.get());
+  window_->set_listener(lv_.get());
   
 }
 
 Alcolator::~Alcolator() {
   window_->set_listener(nullptr);
+
+  lv_.reset();
 
   window_ = nullptr;
   app_ = nullptr;
