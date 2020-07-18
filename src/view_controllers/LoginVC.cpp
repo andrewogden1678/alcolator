@@ -1,18 +1,18 @@
 #include "LoginVC.h"
 
 LoginView::LoginView(Ref<Window> window) : ViewController::ViewController(window) {
-    window_ = window;
-    uint32_t width = App::instance()->window()->width();
-    uint32_t height = App::instance()->window()->height();
-
+    // Create overlay
     overlay_ = Overlay::Create(window_, 900, 600, 0, 0);
 
+    // Set load and view listeners, then load the page
     view()->set_load_listener(this);
     view()->set_view_listener(this);
     view()->LoadURL("file:///login.html");
 }
 
 LoginView::~LoginView() {
+
+    // Destroy listener instances
     view()->set_load_listener(nullptr);
     view()->set_view_listener(nullptr);
 }

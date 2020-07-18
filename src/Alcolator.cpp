@@ -17,21 +17,26 @@ Alcolator::Alcolator() {
   // Tell the app that this is the main window
   app_->set_window(*window_.get());
 
-  lv_.reset(new LoginView(*window_.get()));
+  // Set the smart pointer
+  nextView_.reset(new LoginView(*window_.get()));
 
-  window_->set_listener(lv_.get());
-  
+  // Set the view listener to the current view
+  window_->set_listener(nextView_.get());
 }
 
 Alcolator::~Alcolator() {
+  // Annul window listener
   window_->set_listener(nullptr);
 
-  lv_.reset();
+  // Destroy view
+  nextView_.reset();
 
+  // Destroy the window and app instances
   window_ = nullptr;
   app_ = nullptr;
 }
 
+// Run the program
 void Alcolator::Run() {
   app_->Run();
 }
