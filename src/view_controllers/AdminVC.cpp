@@ -7,7 +7,8 @@ AdminView::AdminView(Ref<Window> window) : ViewController::ViewController(window
     // Set load and view listeners, then load the page
     view()->set_load_listener(this);
     view()->set_view_listener(this);
-    view()->LoadURL("file:///main.html");
+    view()->LoadURL("file:///admin_new.html");
+    //view()->LoadURL("file:///admin_view.html"); // uncomment this line to load respective page (comment out other one)
 }
 
 AdminView::~AdminView() {

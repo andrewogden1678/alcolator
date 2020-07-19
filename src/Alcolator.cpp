@@ -1,5 +1,7 @@
 #include "Alcolator.h"
+#include "view_controllers/AdminVC.h"
 #include "view_controllers/LoginVC.h"
+#include "view_controllers/MainVC.h"
 
 // Definitions
 #define WINDOW_WIDTH  900

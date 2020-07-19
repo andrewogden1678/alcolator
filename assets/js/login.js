@@ -1,6 +1,10 @@
+// Vue instance
 var login = new Vue({
-    el: '#login',
+    el: '#login', // container ID 
     data: {
-        username: "This has been updated!"
+
+    },
+    methods: {
+
     }
-})
+});

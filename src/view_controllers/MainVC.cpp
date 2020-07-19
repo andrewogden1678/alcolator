@@ -8,6 +8,8 @@ MainView::MainView(Ref<Window> window) : ViewController::ViewController(window) 
     view()->set_load_listener(this);
     view()->set_view_listener(this);
     view()->LoadURL("file:///main.html");
+    //view()->LoadURL("file:///main_bacmode.html"); // uncomment this line to load respective page (comment out others)
+    //view()->LoadURL("file:///main_viewmode.html"); //     "
 }
 
 MainView::~MainView() {
