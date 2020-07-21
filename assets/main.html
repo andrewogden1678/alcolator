@@ -4,18 +4,20 @@
     <link rel="stylesheet" href="css/app.css">
     <!-- Material Design Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Vue.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body>
-      <div class="nav dark-grey white--text">
+      <div class="nav dark-grey white--text" id="window">
           <a class="nav-item selectable--text">File</a>
           <img src="img/nav_separator.svg" class="nav-item cursor-default">
           <a class="nav-item selectable--text">Settings</a>
           <h2 class="yellow--text nav-item--push cursor-default"><strong>Alcolator</strong></h2>
           <img src="img/nav_separator.svg" class="nav-item cursor-default" style="opacity: 0.2">
           <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;">minimize</i>
-          <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;">close</i>
+          <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;" @click="winClose">close</i>
       </div>
-      <div class="flexbox-row">
+      <div class="flexbox-row" id="vm">
         <div class="flexbox-column--list light-grey">
           <div class="flexbox-row--align" style="padding-top: 5px;">
             <strong><h2 style="margin: 0;">Records</h2></strong>
@@ -126,21 +128,9 @@
             </div>
           </div>
         </div>
-      </div>      
+      </div>
+    <!-- Page Script -->
+    <script src="js/main.js"></script>
+    <script src="js/window.js"></script> <!-- Window handler -->     
   </body>
-</html>
-
-<!-- <table>
-            <tr>
-              <th class="h-centred" colspan="2">
-                <strong><h2>Records</h2></strong>
-              </th>
-            </tr>
-            <tr>
-              <td class="dark-grey" style="min-height: 74px;" rowspan="2"><i class="material-icons list-icon h-centred">assignment_ind</i></td>
-              <td class="dark-grey" style="min-height: 37px;"><h5>S273</h5></td>
-            </tr>
-            <tr>
-              <td class="dark-grey" style="min-height: 37px;"><h3>30/06/20</h3></td>
-            </tr>
-          </table> -->
+</html

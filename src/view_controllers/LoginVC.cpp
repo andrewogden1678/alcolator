@@ -1,31 +1,50 @@
 #include "LoginVC.h"
+#include "MainVC.h"
 
 LoginView::LoginView(Ref<Window> window) : ViewController::ViewController(window) {
     // Create overlay
     overlay_ = Overlay::Create(window_, 900, 600, 0, 0);
 
     // Set load and view listeners, then load the page
-    view()->set_load_listener(this);
-    view()->set_view_listener(this);
-    view()->LoadURL("file:///login.html");
+    GetView()->set_load_listener(this);
+    GetView()->set_view_listener(this);
+    GetView()->LoadURL("file:///login.html");
 }
 
 LoginView::~LoginView() {
-
-    // Destroy listener instances
-    view()->set_load_listener(nullptr);
-    view()->set_view_listener(nullptr);
+    // Destroy instances
+    GetView()->set_load_listener(nullptr);
+    GetView()->set_view_listener(nullptr);
+    overlay_ = nullptr;
 }
 
-void LoginView::OnClose() {
+///
+/// Listeners inherited from Ultralight
+///
+void LoginView::OnClose() {}
 
+void LoginView::OnResize(uint32_t width, uint32_t height) {}
+
+void LoginView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, const String& url) {
+    // Lock and set the javascript context for all future calls
+    Ref<JSContext> locked_context = GetView()->LockJSContext();
+    SetJSContext(locked_context.get());
+    JSObject global = JSGlobalObject();
+
+    // Bind methods to be invoked from JS
+    global["OnWindowClose"] = BindJSCallback(&LoginView::OnWindowClose);
+    global["OnLogin"] = BindJSCallback(&LoginView::OnLogin);
 }
 
-void LoginView::OnResize(uint32_t width, uint32_t height) {
-
-}
-
-void LoginView::OnDOMReady(View* caller, uint64_t frame_id,
-            bool is_main_frame, const String& url) {
-
+///
+/// Local JS-Invoked Methods
+///
+void LoginView::OnLogin(const JSObject& obj, const JSArgs& args) {
+    /*
+    ** Login code/handling here
+    */
+    
+    // Set next view and deallocate memory items
+    NextView(new MainView(window_.get()));
+    ViewDealloc();
 }

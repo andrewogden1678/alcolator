@@ -1,5 +1,4 @@
 #pragma once
-#include <AppCore/AppCore.h>
 #include "ViewController.h"
 
 using namespace ultralight;
@@ -24,4 +23,5 @@ class AdminView : public ViewController
         virtual void OnDOMReady(View* caller, uint64_t frame_id,
             bool is_main_frame, const String& url) override;
 
+        /// Local JS-Invoked Methods
 };

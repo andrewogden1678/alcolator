@@ -1,7 +1,5 @@
 #include "Alcolator.h"
-#include "view_controllers/AdminVC.h"
 #include "view_controllers/LoginVC.h"
-#include "view_controllers/MainVC.h"
 
 // Definitions
 #define WINDOW_WIDTH  900
@@ -19,7 +17,7 @@ Alcolator::Alcolator() {
   // Tell the app that this is the main window
   app_->set_window(*window_.get());
 
-  // Set the smart pointer
+  // Go to the login page
   nextView_.reset(new LoginView(*window_.get()));
 
   // Set the view listener to the current view
