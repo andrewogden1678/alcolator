@@ -7,13 +7,6 @@ set(ULTRALIGHT_INCLUDE_DIR "${SDK_ROOT}/include")
 set(ULTRALIGHT_BINARY_DIR "${SDK_ROOT}/bin")
 set(ULTRALIGHT_INSPECTOR_DIR "${SDK_ROOT}/inspector")
 
-set(LIBODB_DIR "${CMAKE_BINARY_DIR}/ODB/")
-set(LIBODB-SQLITE_DIR "${CMAKE_BINARY_DIR}/ODB-SQLITE/")
-set(ODB_INC_DIR "${LIBODB_DIR}/odb")
-set(ODB_LIB_DIR "${LIBODB_DIR}/lib")
-set(ODB-SQLITE_INC_DIR "${LIBODB-SQLITE_DIR}/odb/sqlite")
-set(ODB-SQLITE_LIB_DIR "${LIBODB-SQLITE_DIR}/lib")
-
 if (UNIX)
   if (APPLE)
     set(PORT UltralightMac)
@@ -49,30 +42,12 @@ ExternalProject_Add(UltralightSDK
   INSTALL_COMMAND ""
 )
 
-ExternalProject_Add(ODB
-  URL https://www.codesynthesis.com/download/odb/2.4/libodb-2.4.0.tar.gz
-  SOURCE_DIR "${LIBODB_DIR}"
-  BUILD_IN_SOURCE 0
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
-)
-
-ExternalProject_Add(ODB-SQLITE
-  URL https://www.codesynthesis.com/download/odb/2.4/libodb-sqlite-2.4.0.tar.gz
-  SOURCE_DIR "${LIBODB-SQLITE_DIR}"
-  BUILD_IN_SOURCE 0
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
-)
-
 MACRO(ADD_APP source_list)
   set(APP_NAME ${CMAKE_PROJECT_NAME})
     
-  include_directories("${ULTRALIGHT_INCLUDE_DIR}" "${ODB_INC_DIR}" "${ODB-SQLITE_INC_DIR}")
-  link_directories("${ULTRALIGHT_LIBRARY_DIR}" "${ODB_LIB_DIR}" "${ODB-SQLITE_LIB_DIR}")
-  link_libraries(UltralightCore AppCore Ultralight WebCore odb odb-sqlite)
+  include_directories("${ULTRALIGHT_INCLUDE_DIR}")
+  link_directories("${ULTRALIGHT_LIBRARY_DIR}")
+  link_libraries(UltralightCore AppCore Ultralight WebCore)
 
   add_executable(${APP_NAME} WIN32 MACOSX_BUNDLE ${source_list})
 
@@ -107,6 +82,4 @@ MACRO(ADD_APP source_list)
   endif ()
 
   add_dependencies(${APP_NAME} UltralightSDK)
-  add_dependencies(${APP_NAME} ODB)
-  add_dependencies(${APP_NAME} ODB-SQLITE)
 ENDMACRO()

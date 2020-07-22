@@ -1,6 +1,5 @@
 #include <AppCore/AppCore.h>
 #include "view_controllers/ViewController.h"
-#include <odb/callback.hxx>
 
 using namespace ultralight;
 
