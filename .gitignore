@@ -45,3 +45,6 @@ build_*/
 .vs/VSWorkspaceState.json
 .vscode/settings.json
 .vscode/c_cpp_properties.json
+
+# Ignore include
+include/
