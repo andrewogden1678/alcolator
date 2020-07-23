@@ -18,11 +18,29 @@ class Database {
         // Disconnect
         int Disconnect();
 
-        // DB query execution template
-        template <class T> void Execute(T* model, SQLCommandType sqlCommand, SQLCondition cond = NULL, std::string comparison = NULL) {
-            model.SerialiseSQL(sqlCommand, cond, comparison);
+        /// DB Query Execution
+        // SELECT
+        template <class T> void Select(T* model, SQLCommandType sqlCommand, SQLCondition cond = NULL, std::string comparison = NULL) {
+            
 
-            // DB execution here
+        }
+
+        // INSERT
+        template <class T> void Insert(T* model) {
+            
+
+        }
+
+        // UPDATE
+        template <class T> void Update(T* model) {
+            
+
+        }
+
+        // DELETE
+        template <class T> void Delete(T* model) {
+            
+
         }
         
 
