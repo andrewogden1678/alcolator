@@ -15,9 +15,12 @@ class Identity : Model {
                     username_(username_), password_(password) {};
                     
         ~Identity();
+        
+        // Override members to strings conversion
+        virtual std::vector<std::string> ConvertMembersSQL() override;
 
-        // Instantiation list
-        std::string members[5] = {"first_name", "last_name", "access_level", "username", "password"};
+        // Column list
+        std::string columns[5] = {"first_name", "last_name", "access_level", "username", "password"};
 
         /// DB Members
         // First name

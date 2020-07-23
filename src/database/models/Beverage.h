@@ -13,8 +13,11 @@ class Beverage : Model {
                     
         ~Beverage();
         
-        // Instantiation list
-        std::string members[2] = {"name", "concentration"};
+        // Override members to strings conversion
+        virtual std::vector<std::string> ConvertMembersSQL() override;
+
+        // Column list
+        std::string columns[2] = {"name", "concentration"};
 
         /// DB Members
         // Beverage name

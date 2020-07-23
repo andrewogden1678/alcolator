@@ -15,7 +15,11 @@ class Subject : Model {
 
         ~Subject();
         
-        std::string members[8] = {"subject_code", "experimenter_id", "experiment_id", "age", 
+        // Override members to strings conversion
+        virtual std::vector<std::string> ConvertMembersSQL() override;
+        
+        // Column list
+        std::string columns[8] = {"subject_code", "experimenter_id", "experiment_id", "age", 
                                     "gender", "height", "weight", "created_on"};
 
         /// DB Members

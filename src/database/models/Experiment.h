@@ -13,8 +13,11 @@ class Experiment : Model {
                     
         ~Experiment();
         
-        // Instantiation list
-        std::string members[2] = {"name", "is_concluded"};
+        // Override members to strings conversion
+        virtual std::vector<std::string> ConvertMembersSQL() override;
+        
+        // Column list
+        std::string columns[2] = {"name", "is_concluded"};
 
         /// DB Members
         // Experiment name

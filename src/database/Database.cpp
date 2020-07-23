@@ -6,8 +6,8 @@ Database* Database::instance_ = nullptr;
 // Get the database instance
 Database* Database::Instance() {
     // Ensure instance is only instantiated ONCE
-    if (instance == nullptr) {
-        instance = new Database();
+    if (instance_ == nullptr) {
+        instance_ = new Database();
     }
     // Return instance
     return(instance_);

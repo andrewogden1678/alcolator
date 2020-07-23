@@ -17,8 +17,11 @@ class Result : Model {
                     
         ~Result();
         
-        // Instantiation list
-        std::string members[8] = {"subject_id", "beverage_id", "target_bad", "target_bac_time", 
+        // Override members to strings conversion
+        virtual std::vector<std::string> ConvertMembersSQL() override;
+        
+        // Column list
+        std::string columns[8] = {"subject_id", "beverage_id", "target_bad", "target_bac_time", 
                                     "amount_grams", "amount_beverage", "actual_bac", "actual_bac_time"};
 
         /// DB Members

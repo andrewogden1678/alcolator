@@ -18,8 +18,7 @@ set(SOURCES "src/Alcolator.h"
             "src/view_controllers/AdminVC.cpp"
             "src/view_controllers/MainVC.h"
             "src/view_controllers/MainVC.cpp"
-            "src/main.cpp"
-            "src/helpers/DatabaseHelper.h")
+            "src/main.cpp")
 
 add_app("${SOURCES}")
 
