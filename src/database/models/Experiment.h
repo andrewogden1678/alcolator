@@ -9,13 +9,16 @@ class Experiment : Model {
 
         // Object constructor
         Experiment(int pk, std::string name, bool is_concluded)
-                    : pk_(pk), name_(name), is_concluded_(is_concluded) {};
+                    : Model(pk, "experiments"), name_(name), is_concluded_(is_concluded) {};
                     
         ~Experiment();
         
+        // Instantiation list
+        std::string members[2] = {"name", "is_concluded"};
+
         /// DB Members
         // Experiment name
         std::string name_;
         // Whether experiment is concluded or not
         bool is_concluded_;   
-}
+};

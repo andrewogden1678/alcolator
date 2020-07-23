@@ -9,9 +9,13 @@ class ActionLog : Model {
 
         // Object constructor
         ActionLog(int pk, int identity_id, std::string message, std::string created_on)
-                    : pk_(pk), identity_id_(identity_id), message_(message), created_on_(created_on), tableName_("action_logs"){};
+                    : Model(pk, "action_logs"), identity_id_(identity_id), 
+                    message_(message), created_on_(created_on){};
                     
         ~ActionLog();
+
+        // Instantiation list
+        std::string members[3] = {"identity_id", "message", "created_on"};
 
         /// DB Members
         // Foreign key to an Identity (One<->One)
@@ -20,4 +24,4 @@ class ActionLog : Model {
         std::string message_;
         // Date created
         std::string created_on_;      
-}
+};

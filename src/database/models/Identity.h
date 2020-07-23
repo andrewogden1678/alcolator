@@ -9,12 +9,15 @@ class Identity : Model {
     public: 
 
         // Object constructor
-        Identity(int pk, std::string first_name, std::string last_name_, AccessLevel access_level,
+        Identity(int pk, std::string first_name, std::string last_name, AccessLevel access_level,
                     std::string username, std::string password)
-                    : pk_(pk), first_name_(first_name), last_name_(last_name), access_level_(access_level),
+                    : Model(pk, "identities"), first_name_(first_name), last_name_(last_name), access_level_(access_level),
                     username_(username_), password_(password) {};
                     
         ~Identity();
+
+        // Instantiation list
+        std::string members[5] = {"first_name", "last_name", "access_level", "username", "password"};
 
         /// DB Members
         // First name
@@ -27,4 +30,4 @@ class Identity : Model {
         std::string username_;
         // Password
         std::string password_;
-}
+};

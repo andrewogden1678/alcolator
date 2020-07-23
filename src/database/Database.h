@@ -2,6 +2,7 @@
 #include "models/Model.h"
 #include "models/enums/SQLCommandType.h"
 #include "models/enums/SQLCondition.h"
+#include "models/enums/Model.h"
 
 ///
 /// Database driver
@@ -20,7 +21,7 @@ class Database {
 
         /// DB Query Execution
         // SELECT
-        template <class T> void Select(T* model, SQLCommandType sqlCommand, SQLCondition cond = NULL, std::string comparison = NULL) {
+        template <class T> void Select(Model model, SQLCommandType sqlCommand, SQLCondition cond = NULL, std::string comparison = NULL) {
             
 
         }
@@ -49,8 +50,8 @@ class Database {
         static Database* instance_;
 
         // The SQLite database
-        sqlite3 db_;
+        sqlite3* db_;
 
         // Private constructor, ensure that DB cannot be instantiated with new()
         Database();
-}
+};

@@ -11,16 +11,17 @@ class Model {
 
     // Constructor/Destructor
     public:
-        Model();
+        Model(int pk, std::string tableName) : pk_(pk), tableName_(tableName) {};
         virtual ~Model();
 
     protected:
-        // Serialise SQL into 
-        std::string SerialiseSQL(SQLCommandType sqlCommand, SQLCondition cond = NULL, std::string comparison = NULL);
+        /*
+        std::string SerialiseSQL(SQLCommandType sqlCommand, SQLCondition cond = SQLCondition::ENULL, 
+        std::string comparison = NULL) override;*/
 
         // Table name
         std::string tableName_;
 
         // Primary key (shared across all models)
         int pk_;
-}
+};

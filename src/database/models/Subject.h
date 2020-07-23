@@ -10,11 +10,14 @@ class Subject : Model {
         // Object constructor
         Subject(int pk, std::string subject_code, int experimenter_id, int experiment_id,
                     int age, bool gender, double height, double weight, std::string created_on)
-                    : pk_(pk), subject_code_(subject_code), experimenter_id_(experimenter_id), experiment_id_(experiment_id),
+                    : Model(pk, "subjects"), subject_code_(subject_code), experimenter_id_(experimenter_id), experiment_id_(experiment_id),
                     age_(age), gender_(gender), height_(height), weight_(weight), created_on_(created_on) {};
 
         ~Subject();
         
+        std::string members[8] = {"subject_code", "experimenter_id", "experiment_id", "age", 
+                                    "gender", "height", "weight", "created_on"};
+
         /// DB Members
         // Specific code for subject
         std::string subject_code_;
@@ -32,4 +35,4 @@ class Subject : Model {
         double weight_;
         // Date created on
         std::string created_on_;       
-}
+};
