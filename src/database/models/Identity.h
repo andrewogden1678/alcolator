@@ -7,7 +7,6 @@
 class Identity : Model {
 
     public: 
-
         // Object constructor
         Identity(int pk, std::string first_name, std::string last_name, AccessLevel access_level,
                     std::string username, std::string password)

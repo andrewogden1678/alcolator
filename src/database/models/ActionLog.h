@@ -7,7 +7,6 @@
 class ActionLog : Model {
 
     public: 
-
         // Object constructor
         ActionLog(int pk, int identity_id, std::string message, std::string created_on);
                     

@@ -2,15 +2,11 @@
 
 ActionLog::ActionLog(int pk, int identity_id, std::string message, std::string created_on) 
                     : Model(pk), message_(message), created_on_(created_on) {
-
-
-    // SELECT IDENTITY FOREIGN KEY HERE (something like below code)
-    // Identity identity = Database::instance()->GetForeignKey(table_name, id)
-
+    // Map foreign key to object for ease
+    this->identity_ = Database::instance()->GetForeignKey(identity_id);
 };
 
 std::vector<std::string> ActionLog::Serialise() {
-    
     // Return vector
     std::vector<std::string> returnVec;
 

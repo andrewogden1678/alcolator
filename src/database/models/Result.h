@@ -6,7 +6,6 @@
 class Result : Model {
 
     public: 
-
         // Object constructor
         Result(int pk, int subject_id, int beverage_id,
                     double target_bac, int target_bac_time, double amount_grams, 

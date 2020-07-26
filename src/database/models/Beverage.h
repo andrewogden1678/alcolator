@@ -6,7 +6,6 @@
 class Beverage : Model {
 
     public: 
-
         // Object constructor
         Beverage(int pk, std::string name, double concentration)
                     : Model(pk, "beverages"), name_(name), concentration_(concentration) {};

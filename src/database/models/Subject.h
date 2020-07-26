@@ -6,7 +6,6 @@
 class Subject : Model {
 
     public: 
-
         // Object constructor
         Subject(int pk, std::string subject_code, int experimenter_id, int experiment_id,
                     int age, bool gender, double height, double weight, std::string created_on)

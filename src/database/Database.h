@@ -244,7 +244,7 @@ class Database {
 
         // SQL callback
         template<class T>
-        static int SelectCallback(void* data, int fieldCount, char** fields, char** colNames) {
+        int SelectCallback(void* data, int fieldCount, char** fields, char** colNames) {
             // Cast data to vector
             std::vector<T>* selected = static_cast<std::vector<T>*>(data);
 

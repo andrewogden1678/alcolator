@@ -6,7 +6,6 @@
 class Experiment : Model {
 
     public: 
-
         // Object constructor
         Experiment(int pk, std::string name, bool is_concluded)
                     : Model(pk, "experiments"), name_(name), is_concluded_(is_concluded) {};
