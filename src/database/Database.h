@@ -19,7 +19,7 @@ class Database {
 
         // Disconnect
         int Disconnect();
-
+        
         /// DB Query Execution
         // SELECT (ALL)
         template <class T> 
@@ -102,6 +102,13 @@ class Database {
             } else {
                 return selected; // All ok, return the records
             }
+        }
+
+        // Get Foreign key
+        template <class T>
+        T GetForeignKey(int id) {
+            // Return the object
+            return this->Select(id);
         }
 
         // INSERT
@@ -237,8 +244,7 @@ class Database {
 
         // SQL callback
         template<class T>
-        static int SelectCallback(void* data, int fieldCount, char** fields, char** azColName) {
-            
+        static int SelectCallback(void* data, int fieldCount, char** fields, char** colNames) {
             // Cast data to vector
             std::vector<T>* selected = static_cast<std::vector<T>*>(data);
 
