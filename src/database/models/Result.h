@@ -1,4 +1,6 @@
 #include "Model.h"
+#include "Subject.h"
+#include "Beverage.h"
 
 ///
 /// Model: Result
@@ -9,25 +11,27 @@ class Result : Model {
         // Object constructor
         Result(int pk, int subject_id, int beverage_id,
                     double target_bac, int target_bac_time, double amount_grams, 
-                    double amount_beverage, double actual_bac, std::string actual_bac_time)
-                    : Model(pk, "results"), subject_id_(subject_id), beverage_id_(beverage_id), target_bac_(target_bac),
-                    target_bac_time_(target_bac_time), amount_grams_(amount_grams), amount_beverage_(amount_beverage),
-                    actual_bac_(actual_bac), actual_bac_time_(actual_bac_time) {};
+                    double amount_beverage, double actual_bac, std::string actual_bac_time);
                     
         ~Result();
         
         // Override members to strings conversion
         virtual std::vector<std::string> Serialise() override;
         
+        // Get table name
+        static std::string GetTableName() override {
+            return this->tableName_;
+        }
+
         // Column list
         std::string columns[8] = {"subject_id", "beverage_id", "target_bad", "target_bac_time", 
                                     "amount_grams", "amount_beverage", "actual_bac", "actual_bac_time"};
 
         /// DB Members
         // Foreign key to a Subject (One<->One)
-        int subject_id_;
+        Subject subject_;
          // Foreign key to a Beverage (One<->One)
-        int beverage_id_;
+        Beverage beverage_;
         // Target BAC
         double target_bac_;
         // BAC Target time
@@ -40,4 +44,8 @@ class Result : Model {
         double actual_bac_;
         // Time BAC was recorded
         std::string actual_bac_time_;       
+
+        private:
+            // Table name
+            std::string tableName_ = "results";
 };

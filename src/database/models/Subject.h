@@ -1,4 +1,6 @@
 #include "Model.h"
+#include "Experiment.h"
+#include "Identity.h"
 
 ///
 /// Model: Subject
@@ -8,15 +10,18 @@ class Subject : Model {
     public: 
         // Object constructor
         Subject(int pk, std::string subject_code, int experimenter_id, int experiment_id,
-                    int age, bool gender, double height, double weight, std::string created_on)
-                    : Model(pk, "subjects"), subject_code_(subject_code), experimenter_id_(experimenter_id), experiment_id_(experiment_id),
-                    age_(age), gender_(gender), height_(height), weight_(weight), created_on_(created_on) {};
+                    int age, bool gender, double height, double weight, std::string created_on);
 
         ~Subject();
         
         // Override members to strings conversion
         virtual std::vector<std::string> Serialise() override;
         
+        // Get table name
+        static std::string GetTableName() override {
+            return this->tableName_;
+        }
+
         // Column list
         std::string columns[8] = {"subject_code", "experimenter_id", "experiment_id", "age", 
                                     "gender", "height", "weight", "created_on"};
@@ -25,9 +30,9 @@ class Subject : Model {
         // Specific code for subject
         std::string subject_code_;
         // Foreign key to an Identity (One<->One)
-        int experimenter_id_;
+        Experimenter experimenter_;
          // Foreign key to an Experiment(One<->One)
-        int experiment_id_;
+        Experiment experiment_;
         // Subject age
         int age_;
         // Subject gender
@@ -38,4 +43,8 @@ class Subject : Model {
         double weight_;
         // Date created on
         std::string created_on_;       
+
+        private:
+            // Table name
+            std::string tableName_ = "subjects";
 };

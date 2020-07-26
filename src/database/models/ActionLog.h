@@ -12,9 +12,6 @@ class ActionLog : Model {
                     
         ~ActionLog();
 
-        // Column list
-        std::string columns[3] = {"identity_id", "message", "created_on"};
-
         // Override members to strings conversion
         virtual std::vector<std::string> Serialise() override;
 
@@ -22,6 +19,9 @@ class ActionLog : Model {
         static std::string GetTableName() override {
             return this->tableName_;
         }
+
+        // Column list
+        std::string columns[3] = {"identity_id", "message", "created_on"};
 
         /// DB Members
         // Foreign key to an Identity (One<->One)

@@ -1,8 +1,6 @@
 // Imports & Namespaces
-#include "enums/SQLCommandType.h"
-#include "enums/SQLCondition.h"
 #include <string>
-#include <vector>
+#include "Database.h"
 
 using namespace std;
 
@@ -13,7 +11,7 @@ class Model {
 
     // Constructor/Destructor
     public:
-        Model(int pk, std::string tableName) : pk_(pk) {};
+        Model(int pk) : pk_(pk) {};
         virtual ~Model();
 
         // Get members in format that can be processed by SQL

@@ -34,7 +34,7 @@ create table subjects(id integer primary key,
                       FOREIGN key (experiment_id) 
                       		REFERENCES experiments (id));
                       
-create table retults(id integer primary key, 
+create table results(id integer primary key, 
                      subject_id integer not NULL,
                      beverage_id integer NOT NULL,
                      target_bac decimal NOT NULL,

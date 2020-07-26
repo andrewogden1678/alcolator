@@ -1,8 +1,5 @@
-#include <sqlite3.h>
 #include "models/Model.h"
-#include "models/enums/SQLCommandType.h"
-#include "models/enums/SQLCondition.h"
-#include "models/enums/Model.h"
+#include <sqlite3.h>
 #include <string>
 #include <vector>
 ///
@@ -20,6 +17,9 @@ class Database {
         // Disconnect
         int Disconnect();
         
+        // String formatter to account for quotes in string
+        static std::string FormatStringSQL(std::string* str);
+
         /// DB Query Execution
         // SELECT (ALL)
         template <class T> 

@@ -2,7 +2,7 @@
 
 ActionLog::ActionLog(int pk, int identity_id, std::string message, std::string created_on) 
                     : Model(pk), message_(message), created_on_(created_on) {
-    // Map foreign key to object for ease
+    // Map foreign key to object
     this->identity_ = Database::instance()->GetForeignKey(identity_id);
 };
 
@@ -12,20 +12,11 @@ std::vector<std::string> ActionLog::Serialise() {
 
     /// Convert and add properties to vector
     // Identity
-    std::string identity_id = this->identity_.pk_;
-    returnVec.push_back(identity_id);
+    returnVec.push_back(std::to_string(this->identity_->pk_));
     // Message
-    std::string message; 
-    message += "'";
-    message += this->message_;
-    message += "'";
-    returnVec.push_back(message);
+    returnVec.push_back(Database::FormatStringSQL(this->message_))
     // Date created on
-    std::string created_on;
-    created_on += "'";
-    created_on += this->created_on_;
-    created_on += "'";
-    returnVec.push_back(created_on);
+    returnVec.push_back(Database::FormatStringSQL(this->created_on_))
 
     // Return the vector
     return returnVec;

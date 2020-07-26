@@ -39,3 +39,15 @@ int Database::Disconnect() {
     // We don't need this anymore
     db_ = nullptr;
 }
+
+// Format strings for SQL
+static std::string Database::FormatStringSQL(std::string* str) {
+
+    // Add preceding and trailing quotations
+    std::string temp;
+    temp += "\"";
+    temp += str;
+    temp += "\"";
+
+    return temp;
+}
