@@ -14,7 +14,7 @@ class Experiment : Model {
         ~Experiment();
         
         // Override members to strings conversion
-        virtual std::vector<std::string> ConvertMembersSQL() override;
+        virtual std::vector<std::string> Serialise() override;
         
         // Column list
         std::string columns[2] = {"name", "is_concluded"};

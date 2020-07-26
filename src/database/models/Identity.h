@@ -17,7 +17,7 @@ class Identity : Model {
         ~Identity();
         
         // Override members to strings conversion
-        virtual std::vector<std::string> ConvertMembersSQL() override;
+        virtual std::vector<std::string> Serialise() override;
 
         // Column list
         std::string columns[5] = {"first_name", "last_name", "access_level", "username", "password"};

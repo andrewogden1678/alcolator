@@ -22,7 +22,8 @@ class ViewController : public WindowListener, // Window handlers
         RefPtr<View> GetView();
 
         // Go to next view
-        template <class T> void NextView(T vc) {
+        template <class T> 
+        void NextView(T vc) {
             // Set the pointer to the specified view
             nextView_.reset(vc);
 

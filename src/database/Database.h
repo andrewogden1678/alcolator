@@ -21,28 +21,106 @@ class Database {
         int Disconnect();
 
         /// DB Query Execution
-        // SELECT
-        template <class T> void Select(Model model, SQLCommandType sqlCommand, SQLCondition cond = NULL, std::string comparison = NULL) {
-            
+        // SELECT (ALL)
+        template <class T> 
+        std::vector<T> Select() {
+            // Vector of T class
+            std::vector<T> selected;
 
+            // Construct select query
+            std::string stmt;
+            stmt += "SELECT * FROM ";
+            stmt += T::GetTableName();
+            stmt += ";";
+
+            // Execute the query
+            int status = sqlite3_exec(this->db_, stmt.c_str(), SelectCallback, &selected, &errMsg);
+
+            // Check success
+            if (status != SQLITE_OK) {
+                // do something with errMsg here
+                sqlite3_free(errMsg); // Free the space
+                return {}; // Return empty vector                
+            } else {
+                return selected; // All ok, return the records
+            }
+        }
+
+        // SELECT (ONE)
+        template <class T> 
+        T Select(int id) {
+            // Vector of T class
+            std::vector<T> selected;
+
+            // Construct select query
+            std::string stmt;
+            stmt += "SELECT * FROM ";
+            stmt += T::GetTableName();
+            stmt += "WHERE ";
+            stmt += "id";
+            stmt += "=";
+            stmt += to_string(id);
+            stmt += ";";
+
+            // Execute the query
+            int status = sqlite3_exec(this->db_, stmt.c_str(), SelectCallback, &selected, &errMsg);
+
+            // Check success
+            if (status != SQLITE_OK) {
+                // do something with errMsg here
+                sqlite3_free(errMsg); // Free the space
+                return {}; // Return empty vector                
+            } else {
+                return selected.at(0); // All ok, return the record (will always be at 0 position)
+            }
+        }
+
+        // SELECT (CONDITIONAL)
+        template <class T> 
+        std::vector<T> Select(std::string column, std::string condition, std::string comparison) {
+            // Vector of T class
+            std::vector<T> selected;
+
+            // Construct select query
+            std::string stmt;
+            stmt += "SELECT * FROM ";
+            stmt += T::GetTableName();
+            stmt += "WHERE ";
+            stmt += column;
+            stmt += condition;
+            stmt += comparison;
+            stmt += ";";
+
+            // Execute the query
+            int status = sqlite3_exec(this->db_, stmt.c_str(), SelectCallback, &selected, &errMsg);
+
+            // Check success
+            if (status != SQLITE_OK) {
+                // do something with errMsg here
+                sqlite3_free(errMsg); // Free the space
+                return {}; // Return empty vector                
+            } else {
+                return selected; // All ok, return the records
+            }
         }
 
         // INSERT
-        template <class T> int Insert(T* model) {
+        template <class T> 
+        int Insert(T* model) {
             // Get all object members
-            std::vector<std::string> members = model->ConvertMembersSQL();
+            std::vector<std::string> members = model->Serialise();
 
             // Error message to pass by ref
             char* errorMsg;
 
-            // SQL insert statement template
+            // Construct insert query
             std::string stmt;
             stmt += "INSERT INTO ";
-            stmt += model->GetTableName();
+            stmt += model::GetTableName();
             stmt += " VALUES(";
             // Add items
             int counter = 0; // Counter for formatting
-            for (std::vector<string>::iterator i = members.begin(); i != members.end(); i++) {
+            for (std::vector<std::string>::iterator i = members.begin(); i != members.end(); i++) {
                 // Add comma if not first item
                 if (counter != 0) {
                     stmt += ",";
@@ -61,26 +139,27 @@ class Database {
             
             // Check success
             if (status != SQLITE_OK) {
-                return 1; // Return error
                 // do something with errMsg here
-                sqlite3_free(errorMsg); // Free the space
+                sqlite3_free(errMsg); // Free the space
+                return 1; // Return error code
             } else {
                 return 0; // All ok
             }
         }
 
         // DELETE
-        template <class T> int Delete(T* model) {
+        template <class T> 
+        int Delete(T* model) {
             // Get all object members
-            std::vector<std::string> members = model->ConvertMembersSQL();
+            std::vector<std::string> members = model->Serialise();
 
             // Error message to pass by ref
             char* errorMsg;
 
-            // SQL delete statement template
+            // Construct delete query
             std::string stmt;
             stmt += "DELETE FROM ";
-            stmt += model->GetTableName();
+            stmt += model::GetTableName();
             stmt += " WHERE id = ";
             stmt += std::to_string(model->GetPK());
             stmt += ";";
@@ -90,37 +169,38 @@ class Database {
 
             // Check success
             if (status != SQLITE_OK) {
-                return 1; // Return error
-                // todo: do something with errMsg here
-                sqlite3_free(errorMsg); // Free the space
+                // do something with errMsg here
+                sqlite3_free(errMsg); // Free the space
+                return 1; // Return  error code
             } else {
                 return 0; // All ok
             }
         }
 
         // UPDATE
-        template <class T> int Update(T* model) {
+        template <class T> 
+        int Update(T* model) {
             // Get all object members
-            std::vector<std::string> members = model->ConvertMembersSQL();
+            std::vector<std::string> members = model->Serialise();
 
             // Error message to pass by ref
             char* errorMsg;
 
-            // SQL insert statement template
+            // Construct update query
             std::string stmt;
             stmt += "UPDATE ";
-            stmt += model->GetTableName();
+            stmt += model::GetTableName();
             stmt += "SET ";
             // Add items
             int counter = 0; // Counter for formatting
-            for (std::vector<string>::iterator i = members.begin(); i != members.end(); i++) {
+            for (std::vector<std::string>::iterator i = members.begin(); i != members.end(); i++) {
                 // Add comma if not first item
                 if (counter != 0) {
                     stmt += ",";
                 }
                 // Add column name
                 stmt += model->columns[counter];
-                stmt += " = "
+                stmt += " = ";
                 // Add the object member
                 stmt += *members;
 
@@ -137,9 +217,9 @@ class Database {
             
             // Check success
             if (status != SQLITE_OK) {
-                return 1; // Return error
                 // do something with errMsg here
-                sqlite3_free(errorMsg); // Free the space
+                sqlite3_free(errMsg); // Free the space
+                return 1; // Return error code
             } else {
                 return 0; // All ok
             }
@@ -156,5 +236,19 @@ class Database {
         Database();
 
         // SQL callback
-        int Callback(void* data, int argc, char** argv, char** azColName);
+        template<class T>
+        static int SelectCallback(void* data, int fieldCount, char** fields, char** azColName) {
+            
+            // Cast data to vector
+            std::vector<T>* selected = static_cast<std::vector<T>*>(data);
+
+            try {
+                // Deserialise SQL data into the model and fill the vector
+                selected->emplace_back(fields, fields + fieldCount);
+                // Return success code
+                return 0;
+            } catch (...) {
+                return 1; // Oops, something went wrong
+            }   
+        }
 };

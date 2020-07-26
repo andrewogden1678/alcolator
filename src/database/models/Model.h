@@ -13,29 +13,21 @@ class Model {
 
     // Constructor/Destructor
     public:
-        Model(int pk, std::string tableName) : pk_(pk), tableName_(tableName) {};
+        Model(int pk, std::string tableName) : pk_(pk) {};
         virtual ~Model();
 
         // Get members in format that can be processed by SQL
-        virtual std::vector<std::string> ConvertMembersSQL();
+        virtual std::vector<std::string> Serialise();
         
         // Get tablename
-        std::string GetTableName() {
-            return this->tableName_;
-        }
+        virtual std::string GetTableName();
 
         // Get primary key
         int GetPK() {
             return this->pk_;
         }
+        
     protected:
-        /*
-        std::string SerialiseSQL(SQLCommandType sqlCommand, SQLCondition cond = SQLCondition::ENULL, 
-        std::string comparison = NULL) override;*/
-
-        // Table name
-        std::string tableName_;
-
         // Primary key (shared across all models)
         int pk_;
 };

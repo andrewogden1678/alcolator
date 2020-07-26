@@ -1,7 +1,7 @@
 #include "ActionLog.h"
 
 ActionLog::ActionLog(int pk, int identity_id, std::string message, std::string created_on) 
-                    : Model(pk, "action_logs"), message_(message), created_on_(created_on) {
+                    : Model(pk), message_(message), created_on_(created_on) {
 
 
     // SELECT IDENTITY FOREIGN KEY HERE (something like below code)
@@ -9,7 +9,7 @@ ActionLog::ActionLog(int pk, int identity_id, std::string message, std::string c
 
 };
 
-std::vector<std::string> ActionLog::ConvertMembersSQL() {
+std::vector<std::string> ActionLog::Serialise() {
     
     // Return vector
     std::vector<std::string> returnVec;

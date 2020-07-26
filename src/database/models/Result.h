@@ -18,7 +18,7 @@ class Result : Model {
         ~Result();
         
         // Override members to strings conversion
-        virtual std::vector<std::string> ConvertMembersSQL() override;
+        virtual std::vector<std::string> Serialise() override;
         
         // Column list
         std::string columns[8] = {"subject_id", "beverage_id", "target_bad", "target_bac_time", 
