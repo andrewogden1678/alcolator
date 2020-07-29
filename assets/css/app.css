@@ -320,6 +320,11 @@ div.flexbox-column--align {
     width: 100%;
 }
 
+/* Scroll vertically */
+div.vertical-scroll {
+    overflow-y: auto;
+}
+
 /**** Padding & margin ****/
 /* Top/bottom 10px margin */
 .margin-tb--10px {

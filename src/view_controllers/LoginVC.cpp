@@ -1,6 +1,7 @@
 #include "LoginVC.h"
 #include "MainVC.h"
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -42,13 +43,16 @@ void LoginView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, 
 ///
 /// Local JS-Invoked Methods
 ///
+// ARGS: Username (string), Password (string)
 void LoginView::OnLogin(const JSObject& obj, const JSArgs& args) {
     /*
     ** Login code/handling here
     */  
-   std::cout << std::to_string(String(args[0])) << std::endl;
-   std::cout << std::to_string(String(args[1])) << std::endl;
-    
+    /*std::cout << static_cast<int>(args.size()) << std::endl;
+    std::cout.flush();*/
+    std::cout << "test"<< std::endl;
+    std::cout.flush();
+
     // Set next view and deallocate memory items
     NextView(new MainView(window_.get()));
     ViewDealloc();

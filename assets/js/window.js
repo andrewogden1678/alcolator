@@ -1,10 +1,8 @@
 // Window handlers
-let window = new Vue({
-    el: '#window', // ID for the close button
+let win = new Vue({
+    el: '#win', // ID for the close button
     data: {
-        moveToggle: false,
-        moveX,
-        moveY
+
     },
     methods: {
         winClose: function () {
