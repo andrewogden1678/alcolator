@@ -5,6 +5,32 @@ let vm = new Vue({
         
     },
     methods: {
-
+        /// File methods
+        fileMenu: function () {
+            window.OnClickFile();
+            // make visible css
+        },
+        fileAddUser: function () {
+            window.OnClickNewUser();
+        },
+        fileLogOut: function () {
+            window.OnLogOut();
+        },
+        /// Settings methods
+        settingsOpen: function () {
+            window.OnClickSettings();
+            // make visible css
+        },
+        /// User methods
+        /// Settings methods
+        saveClick: function () {
+            window.OnClickSaveUser();
+            // make visible css
+        },
+        /// Settings methods
+        cancelClick: function () {
+            window.OnClickCancel();
+            // make visible css
+        }
     }
 });

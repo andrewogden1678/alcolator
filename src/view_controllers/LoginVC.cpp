@@ -1,5 +1,8 @@
 #include "LoginVC.h"
 #include "MainVC.h"
+#include <iostream>
+
+using namespace std;
 
 LoginView::LoginView(Ref<Window> window) : ViewController::ViewController(window) {
     // Create overlay
@@ -42,7 +45,9 @@ void LoginView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, 
 void LoginView::OnLogin(const JSObject& obj, const JSArgs& args) {
     /*
     ** Login code/handling here
-    */
+    */  
+   std::cout << std::to_string(String(args[0])) << std::endl;
+   std::cout << std::to_string(String(args[1])) << std::endl;
     
     // Set next view and deallocate memory items
     NextView(new MainView(window_.get()));

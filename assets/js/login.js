@@ -2,11 +2,13 @@
 let vm = new Vue({
     el: '#vm', // container ID 
     data: {
-        password: "this works"
+        username: '',
+        password: ''
     },
     methods: {
+        /// Login
         login: function () {
-            window.OnLogin();
+            window.OnLogin(this.username, this.password);
         }
     }
 });
