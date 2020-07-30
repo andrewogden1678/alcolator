@@ -33,13 +33,13 @@ void MainView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, c
 
     // Bind methods to be invoked from JS
     global["OnWindowClose"] = BindJSCallback(&MainView::OnWindowClose);
-    global["OnWindowClose"] = BindJSCallbackWithRetval(&MainView::OnClickFile);
+    global["OnClickFile"] = BindJSCallbackWithRetval(&MainView::OnClickFile);
 }
 
 ///
 /// Local JS-Invoked Methods
 ///
-JSValue MainView::OnClickFile(const JSObject& obj, const JSArgs& args) {
-    std::string temp[2] = {"S123", "6/2/2020"} 
-    return JSValue(temp);
+JSArray MainView::OnClickFile(const JSObject& obj, const JSArgs& args) {
+    std::string temp = "['S123', '6/2/2020']";
+    return JSValue(temp).ToArray();
 }

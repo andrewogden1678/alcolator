@@ -7,7 +7,8 @@
     <!-- Vue.JS -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
-  <body id="vm">
+  <body>
+    <div id="vm">
       <div class="nav dark-grey white--text">
           <a class="nav-item selectable--text" @click="fileMenu">File</a>
           <img src="img/nav_separator.svg" class="nav-item cursor-default">
@@ -23,26 +24,11 @@
             <strong><h2>Records</h2></strong>
           </div>   
           <div class="vertical-scroll">
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
-            <record></record>
+            <record 
+              v-for="record in records"
+              v-bind:key="record.id"
+              v-bind:record="record">
+            </record>
           </div>
         </div>
         <div class="flexbox-column--dat pad--10px">
@@ -130,6 +116,7 @@
           </div>
         </div>
       </div>
+    </div>
     <!-- Page Script -->
     <script src="js/main.js"></script>
   </body>

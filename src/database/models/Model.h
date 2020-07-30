@@ -1,6 +1,6 @@
 // Imports & Namespaces
+#pragma once
 #include <string>
-#include "../Database.h"
 
 using namespace std;
 

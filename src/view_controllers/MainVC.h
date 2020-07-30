@@ -1,6 +1,5 @@
 #pragma once
 #include "ViewController.h"
-#include "../database/models/Subject.h"
 
 using namespace ultralight;
 
@@ -25,5 +24,5 @@ class MainView : public ViewController
             bool is_main_frame, const String& url) override;
 
         /// Local JS-Invoked Methods
-        JSObject OnClickFile(const JSObject& obj, const JSArgs& args);
+        JSArray OnClickFile(const JSObject& obj, const JSArgs& args);
 };

@@ -4,7 +4,8 @@ var ComponentRecord = Vue.component('record', {
 
         }
     },
-    template: '<div class="flexbox-row--align margin--dataitem dataitem" style="min-height: 73px;"><i class="material-icons list-icon" style="width: 20%; margin-right: 20px; margin-left: 5px">assignment_ind</i><div class="flexbox-column--align"><div class="flexbox-row--alignleft"><h5 class="nomargin" style="text-align: left;">ID: S273</h5></div><div class="flexbox-row--alignleft"><h3 class="nomargin" style="text-align: left;">30/06/20</h3></div></div></div>'
+    props: ["record"],
+    template: '<div class="flexbox-row--align margin--dataitem dataitem" style="min-height: 73px;"><i class="material-icons list-icon" style="width: 20%; margin-right: 20px; margin-left: 5px">assignment_ind</i><div class="flexbox-column--align"><div class="flexbox-row--alignleft"><h5 class="nomargin" style="text-align: left;">{{record.code}}</h5></div><div class="flexbox-row--alignleft"><h3 class="nomargin" style="text-align: left;">{{record.date}}</h3></div></div></div>'
 });
 
 // Vue instance
@@ -12,7 +13,7 @@ let vm = new Vue({
     el: '#vm', // container ID 
     data: {
         records: [
-            
+
         ]
     },
     components: {
@@ -22,8 +23,7 @@ let vm = new Vue({
         /// File methods
         fileMenu: function () {
             var array = window.OnClickFile();
-            this.records.push({code: array[0], date: array[1]});
-            
+            this.records.push({id: 1, code: array[0], date: array[1]});
         },
         fileOpenExp: function () {
             window.OnExperimentOpen();
