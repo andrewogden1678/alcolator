@@ -13,7 +13,7 @@ let vm = new Vue({
     }
 });
 
-// Defined here again because the login page is intentionally not compatible with window.js
+// Window methods
 let close = new Vue({
     el: '#close', // ID for the close button
     methods: {

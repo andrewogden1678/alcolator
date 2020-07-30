@@ -7,9 +7,9 @@
     <!-- Vue.JS -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
-  <body>
-      <div class="nav dark-grey white--text" id="window">
-          <a class="nav-item selectable--text">File</a>
+  <body id="vm">
+      <div class="nav dark-grey white--text">
+          <a class="nav-item selectable--text" @click="fileMenu">File</a>
           <img src="img/nav_separator.svg" class="nav-item cursor-default">
           <a class="nav-item selectable--text">Settings</a>
           <h2 class="yellow--text nav-item--push cursor-default"><strong>Alcolator</strong></h2>
@@ -17,7 +17,7 @@
           <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;">minimize</i>
           <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;" @click="winClose">close</i>
       </div>
-      <div class="flexbox-row" id="vm">
+      <div class="flexbox-row">
         <div class="flexbox-column--list light-grey">
           <div class="flexbox-row--align" style="padding-top: 5px;">
             <strong><h2 style="margin: 0;">Records</h2></strong>
@@ -132,6 +132,5 @@
       </div>
     <!-- Page Script -->
     <script src="js/main.js"></script>
-    <script src="js/window.js"></script> <!-- Window handler -->     
   </body>
 </html

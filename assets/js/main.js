@@ -2,13 +2,16 @@
 let vm = new Vue({
     el: '#vm', // container ID 
     data: {
-        
+        records: [
+            
+        ]
     },
     methods: {
         /// File methods
         fileMenu: function () {
-            window.OnClickFile();
-            // make visible css
+            var array = window.OnClickFile();
+            this.records.push({code: array[0], date: array[1]});
+            
         },
         fileOpenExp: function () {
             window.OnExperimentOpen();
@@ -52,6 +55,10 @@ let vm = new Vue({
         },
         reportDownload: function () {
             window.OnClickDownloadReport();
+        },
+        // WINDOW stuff
+        winClose: function () {
+            window.OnWindowClose();
         }
     }
 });
