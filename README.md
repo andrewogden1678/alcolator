@@ -21,8 +21,8 @@ Execute the `run.sh` file to build and run the solution.
 
 Ready to test!
 
-Process is no different than before, however I have emailed you a new sqlite3 folder.
-Replace the contents of `include/sqlite3` with the files inside the zip folder.
+Process is no different than before, however I have uploaded a new sqlite3 folder to the Canvas assignment.
+Replace the contents of `include/sqlite3` in the project with the files inside the zip folder I uploaded.
 
 After that, the run process is the same as before, just click on the run.sh file. It will handle the building, copying of dependencies and running of the program.
 
