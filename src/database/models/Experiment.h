@@ -1,26 +1,30 @@
+#pragma once
 #include "Model.h"
 
 ///
 /// Model: Experiment
 ///
-class Experiment : Model {
+class Experiment : public Model {
 
     public: 
-        // Object constructor
+        // Main object constructor
         Experiment(int pk, std::string name, bool is_concluded);
-                    
-        ~Experiment();
+        
+        // SQL Callback constructor
+        Experiment(char** fields);
+
+        ~Experiment() {};
         
         // Override members to strings conversion
         virtual std::vector<std::string> Serialise() override;
         
         // Get table name
-        static std::string GetTableName() override {
-            return this->tableName_;
+        static std::string GetTableName() {
+            return tableName_;
         }
 
         // Column list
-        std::string columns[2] = {"name", "is_concluded"};
+        static std::array<std::string, 2> columns_;
 
         /// DB Members
         // Experiment name
@@ -28,7 +32,6 @@ class Experiment : Model {
         // Whether experiment is concluded or not
         bool is_concluded_;   
 
-        private:
-            // Table name
-            std::string tableName_ = "experiments";
+        // Table name
+        static std::string tableName_;
 };

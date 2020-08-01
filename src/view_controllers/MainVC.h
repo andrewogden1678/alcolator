@@ -1,7 +1,11 @@
 #pragma once
 #include "ViewController.h"
+#include "../database/models/Subject.h"
+#include <vector>
+#include <string>
 
 using namespace ultralight;
+using namespace std;
 
 ///
 /// Main Page View Controller
@@ -24,5 +28,5 @@ class MainView : public ViewController
             bool is_main_frame, const String& url) override;
 
         /// Local JS-Invoked Methods
-        JSArray OnClickFile(const JSObject& obj, const JSArgs& args);
+        JSValue OnLoadSubjects(const JSObject& obj, const JSArgs& args);
 };

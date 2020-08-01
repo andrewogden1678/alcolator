@@ -25,11 +25,8 @@ else ()
   message(FATAL_ERROR "Unknown OS '${CMAKE_SYSTEM_NAME}'")
 endif ()
 
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-  set(ARCHITECTURE "x64")
-else ()
-  set(ARCHITECTURE "x86")
-endif ()
+
+set(ARCHITECTURE "x64")
 
 set(S3_DOMAIN ".sfo2.cdn.digitaloceanspaces.com")
 

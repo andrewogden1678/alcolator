@@ -1,26 +1,30 @@
+#pragma once
 #include "Model.h"
 
 ///
 /// Model: Beverage
 ///
-class Beverage : Model {
+class Beverage : public Model {
 
     public: 
-        // Object constructor
+        // Main object constructor
         Beverage(int pk, std::string name, double concentration);
                     
-        ~Beverage();
+        // SQL Callback constructor
+        Beverage(char** fields);
+
+        ~Beverage() {};
         
         // Override members to strings conversion
         virtual std::vector<std::string> Serialise() override;
 
         // Get table name
-        static std::string GetTableName() override {
-            return this->tableName_;
+        static std::string GetTableName() {
+            return tableName_;
         }
 
         // Column list
-        std::string columns[2] = {"name", "concentration"};
+        static std::array<std::string, 2> columns_;
 
         /// DB Members
         // Beverage name
@@ -28,7 +32,6 @@ class Beverage : Model {
         // Alcohol concentration
         double concentration_;        
 
-        private:
-            // Table name
-            std::string tableName_ = "beverages";
+        // Table name
+        static std::string tableName_;
 };

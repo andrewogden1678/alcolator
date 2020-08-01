@@ -1,4 +1,5 @@
 #include "Database.h"
+#define DB_PATH "Q:\\Programming\\Alcolator\\Alcolator.db"
 
 // Pointer to database singleton
 Database* Database::instance_ = nullptr;
@@ -8,6 +9,7 @@ Database* Database::Instance() {
     // Ensure instance is only instantiated ONCE
     if (instance_ == nullptr) {
         instance_ = new Database();
+        Database::Instance()->Connect();
     }
     // Return instance
     return(instance_);
@@ -16,13 +18,13 @@ Database* Database::Instance() {
 // Connect to the database
 int Database::Connect() {
     // Connection result
-    int exit = 0; 
+    int status = 0; 
 
     // Try to connect
-    exit = sqlite3_open("Alcolator.db", &db_);
+    status = sqlite3_open(DB_PATH, &db_);
 
     // Check for any errors
-    if (exit) {
+    if (status) {
         // There was an error so return code 1
         return 1;
     } else {
@@ -34,20 +36,32 @@ int Database::Connect() {
 // Disconnect from the database
 int Database::Disconnect() {
     // Close the database
-    sqlite3_close(db_)
+    sqlite3_close(db_);
 
     // We don't need this anymore
     db_ = nullptr;
+
+    return 0;
 }
 
 // Format strings for SQL
-static std::string Database::FormatStringSQL(std::string* str) {
+std::string Database::FormatStringSQL(std::string* str) {
 
     // Add preceding and trailing quotations
     std::string temp;
     temp += "\"";
-    temp += str;
+    temp += *str;
     temp += "\"";
 
     return temp;
+}
+
+// Format char*  to string
+std::string Database::ToStdString(char* str) {
+
+    // Define, append and return
+    std::string temp;
+    temp += str;
+    return temp;
+    
 }

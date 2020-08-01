@@ -1,5 +1,4 @@
 #include "MainVC.h"
-#include <string>
 
 MainView::MainView(Ref<Window> window) : ViewController::ViewController(window) {
     // Create overlay
@@ -33,13 +32,32 @@ void MainView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, c
 
     // Bind methods to be invoked from JS
     global["OnWindowClose"] = BindJSCallback(&MainView::OnWindowClose);
-    global["OnClickFile"] = BindJSCallbackWithRetval(&MainView::OnClickFile);
+    global["OnLoadSubjects"] = BindJSCallbackWithRetval(&MainView::OnLoadSubjects);
 }
 
 ///
 /// Local JS-Invoked Methods
 ///
-JSArray MainView::OnClickFile(const JSObject& obj, const JSArgs& args) {
-    std::string temp = "['S123', '6/2/2020']";
-    return JSValue(temp).ToArray();
+JSValue MainView::OnLoadSubjects(const JSObject& obj, const JSArgs& args) {
+
+    // Get all subjects from database
+    std::vector<Subject> subjects(Database::Instance()->Select<Subject>());
+
+    // Javascript array
+    JSArray jArray;
+    
+    // Loop through and push values to array
+    for (std::vector<Subject>::iterator subject = subjects.begin(); subject != subjects.end(); subject++) { 
+        // Temporary array
+        JSArray tempArray;
+
+        // We need subject code and created on
+        tempArray.push(JSValue(JSString(subject->subject_code_.c_str())));
+        tempArray.push(JSValue(JSString(subject->created_on_.c_str())));
+
+        // Push the array to the main array
+        jArray.push(JSValue(tempArray));
+    }
+
+    return JSValue(jArray);
 }

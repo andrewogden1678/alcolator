@@ -1,3 +1,4 @@
+#pragma once
 #include "Model.h"
 #include "Subject.h"
 #include "Beverage.h"
@@ -5,27 +6,29 @@
 ///
 /// Model: Result
 ///
-class Result : Model {
+class Result : public Model {
 
     public: 
-        // Object constructor
+        // Main object constructor
         Result(int pk, int subject_id, int beverage_id,
                     double target_bac, int target_bac_time, double amount_grams, 
                     double amount_beverage, double actual_bac, std::string actual_bac_time);
-                    
-        ~Result();
+
+        // SQL Callback constructor
+        Result(char** fields);
+
+        ~Result() {};
         
         // Override members to strings conversion
         virtual std::vector<std::string> Serialise() override;
         
         // Get table name
-        static std::string GetTableName() override {
-            return this->tableName_;
+        static std::string GetTableName() {
+            return tableName_;
         }
 
         // Column list
-        std::string columns[8] = {"subject_id", "beverage_id", "target_bad", "target_bac_time", 
-                                    "amount_grams", "amount_beverage", "actual_bac", "actual_bac_time"};
+        static std::array<std::string, 8> columns_;
 
         /// DB Members
         // Foreign key to a Subject (One<->One)
@@ -45,7 +48,6 @@ class Result : Model {
         // Time BAC was recorded
         std::string actual_bac_time_;       
 
-        private:
-            // Table name
-            std::string tableName_ = "results";
+        // Table name
+        static std::string tableName_;
 };

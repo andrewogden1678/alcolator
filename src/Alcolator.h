@@ -1,5 +1,6 @@
 #include <AppCore/AppCore.h>
 #include "view_controllers/ViewController.h"
+#include "database/Database.h"
 
 using namespace ultralight;
 

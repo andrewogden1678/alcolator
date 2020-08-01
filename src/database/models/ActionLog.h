@@ -1,27 +1,31 @@
+#pragma once
 #include "Model.h"
 #include "Identity.h"
 
 ///
 /// Model: ActionLog
 ///
-class ActionLog : Model {
+class ActionLog : public Model {
 
     public: 
-        // Object constructor
+        // Main object constructor
         ActionLog(int pk, int identity_id, std::string message, std::string created_on);
+
+        // SQL Callback constructor
+        ActionLog(char** fields);
                     
-        ~ActionLog();
+        ~ActionLog() {};
 
         // Override members to strings conversion
         virtual std::vector<std::string> Serialise() override;
 
         // Get table name
-        static std::string GetTableName() override {
-            return this->tableName_;
+        static std::string GetTableName() {
+            return tableName_;
         }
 
         // Column list
-        std::string columns[3] = {"identity_id", "message", "created_on"};
+        static std::array<std::string, 3> columns_;
 
         /// DB Members
         // Foreign key to an Identity (One<->One)
@@ -31,7 +35,6 @@ class ActionLog : Model {
         // Date created
         std::string created_on_;      
 
-        private:
-            // Table name
-            std::string tableName_ = "action_logs";
+        // Table name
+        static std::string tableName_;
 };

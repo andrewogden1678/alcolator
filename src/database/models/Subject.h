@@ -1,3 +1,4 @@
+#pragma once
 #include "Model.h"
 #include "Experiment.h"
 #include "Identity.h"
@@ -5,32 +6,34 @@
 ///
 /// Model: Subject
 ///
-class Subject : Model {
+class Subject : public Model {
 
     public: 
         // Object constructor
         Subject(int pk, std::string subject_code, int experimenter_id, int experiment_id,
                     int age, bool gender, double height, double weight, std::string created_on);
 
-        ~Subject();
+        // SQL Callback constructor
+        Subject(char** fields);
+
+        ~Subject() {};
         
         // Override members to strings conversion
         virtual std::vector<std::string> Serialise() override;
         
         // Get table name
-        static std::string GetTableName() override {
-            return this->tableName_;
+        static std::string GetTableName() {
+            return tableName_;
         }
 
         // Column list
-        std::string columns[8] = {"subject_code", "experimenter_id", "experiment_id", "age", 
-                                    "gender", "height", "weight", "created_on"};
+        static std::array<std::string, 8> columns_;
 
         /// DB Members
         // Specific code for subject
         std::string subject_code_;
         // Foreign key to an Identity (One<->One)
-        Experimenter experimenter_;
+        Identity experimenter_;
          // Foreign key to an Experiment(One<->One)
         Experiment experiment_;
         // Subject age
@@ -44,7 +47,6 @@ class Subject : Model {
         // Date created on
         std::string created_on_;       
 
-        private:
-            // Table name
-            std::string tableName_ = "subjects";
+        // Table name
+        static std::string tableName_;
 };

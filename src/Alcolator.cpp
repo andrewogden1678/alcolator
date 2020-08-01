@@ -38,5 +38,6 @@ Alcolator::~Alcolator() {
 
 // Run the program
 void Alcolator::Run() {
+  // Run
   app_->Run();
 }

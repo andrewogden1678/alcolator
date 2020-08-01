@@ -1,28 +1,32 @@
+#pragma once
 #include "Model.h"
 #include "enums/AccessLevel.h"
 
 ///
 /// Model: Identity
 ///
-class Identity : Model {
+class Identity : public Model {
 
     public: 
-        // Object constructor
+        // Main object constructor
         Identity(int pk, std::string first_name, std::string last_name, AccessLevel access_level,
                     std::string username, std::string password);
                     
-        ~Identity();
+        // SQL Callback constructor
+        Identity(char** fields);
+
+        ~Identity() {};
         
         // Override members to strings conversion
-        virtual std::vector<std::string> Serialise() override;
+        std::vector<std::string> Serialise() override;
 
         // Get table name
-        static std::string GetTableName() override {
-            return this->tableName_;
+        static std::string GetTableName() {
+            return tableName_;
         }
 
         // Column list
-        std::string columns[5] = {"first_name", "last_name", "access_level", "username", "password"};
+        static std::array<std::string, 5> columns_;
 
         /// DB Members
         // First name
@@ -36,7 +40,6 @@ class Identity : Model {
         // Password
         std::string password_;
 
-        private:
-            // Table name
-            std::string tableName_ = "identities";
+        // Table name
+        static std::string tableName_;
 };

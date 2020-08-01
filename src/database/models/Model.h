@@ -1,8 +1,9 @@
 // Imports & Namespaces
 #pragma once
 #include <string>
-
-using namespace std;
+#include <vector>
+#include <array>
+#include "../Database.h"
 
 ///
 /// Model Base Class
@@ -12,13 +13,10 @@ class Model {
     // Constructor/Destructor
     public:
         Model(int pk) : pk_(pk) {};
-        virtual ~Model();
+        virtual ~Model() {};
 
         // Get members in format that can be processed by SQL
-        virtual std::vector<std::string> Serialise();
-        
-        // Get tablename
-        virtual std::string GetTableName();
+        virtual std::vector<std::string> Serialise() = 0;
 
         // Get primary key
         int GetPK() {
