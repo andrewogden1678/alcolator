@@ -1,5 +1,5 @@
 #include "Database.h"
-#define DB_PATH "Q:\\Programming\\Alcolator\\Alcolator.db"
+#define DB_PATH "Alcolator.db"
 
 // Pointer to database singleton
 Database* Database::instance_ = nullptr;
