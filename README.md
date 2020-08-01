@@ -28,6 +28,8 @@ After that, the run process is the same as before, just click on the run.sh file
 
 The login button will proceed to the main page. From there, I have (temporarily) mapped the 'file' button to a listener that lists the current Subjects in the database down the sidebar. The close buttons also work.
 
+I will also compress the list down the left hand side, like you said the sidebar won't be very usable unless they're made a bit smaller.
+
 I have also fixed the compiler to always compile to 64 bit. Sometimes I found it was actually compiling a 32 bit binary which was causing all sorts of problems :).
 
 Let me know if there are any issues. Also let me know if you would like a copy of the small console program I wrote to test my SQLite interface if you want to play around with the functionality I have implemented.
