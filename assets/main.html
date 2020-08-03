@@ -20,58 +20,135 @@
       </div>
       <div class="flexbox-row">
         <div class="flexbox-column--list light-grey">
-          <div class="flexbox-row--align" style="min-height: 50px;">
+          <div class="flexbox-row--align" style="padding: 0;">
             <strong><h2>Records</h2></strong>
           </div>   
           <div class="vertical-scroll">
-            <record 
+            <record
               v-for="record in records"
               v-bind:key="record.id"
-              v-bind:record="record">
+              v-bind:record="record"
+              @click.native="loadPrevRecord($event, record.id)">
             </record>
           </div>
         </div>
         <div class="flexbox-column--dat pad--10px">
-          <strong><h4 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">New Subject 003</h4></strong>
-          <div class="flexbox-row pad--10px" style="height: 63%;">
-            <div class="flexbox-column" style="width: 50%;">
-              <h3 class="margin-tb--10px"><strong>General Information</strong></h3>
-              <div class="flexbox-row--alignright margin-tb--13px">
-                <h3 class="margin-input input-label semibold">Age (years): </h3>
-                <input class="light-grey border--black regular--dat" type="text" id="age">
+          <template v-if="isNewStart">
+            <h3 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">Please select an operation.</h3>
+            <div class="flexbox-row pad--10px" style="height: 58.5%;"></div>
+          </template>
+          <template v-else>
+            <template v-if="isViewingSubject">
+              <strong><h4 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">Viewing Subject {{selected.subject_code}}</h4></strong>
+            </template>
+            <template v-else-if="isBacMode">
+              <strong><h4 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">Subject {{selected.subject_code}} - In Progress</h4></strong>
+            </template>
+            <template v-else>
+              <strong><h4 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">New Subject {{selected.subject_code}}</h4></strong>
+            </template>
+            <div class="flexbox-row pad--10px" style="height: 63%;">
+              <div class="flexbox-column" style="width: 50%;">
+                <h3 class="margin-tb--10px"><strong>General Information</strong></h3>
+                <div class="flexbox-row--alignright margin-tb--13px">
+                  <h3 class="margin-input input-label semibold">Age (years): </h3>
+                  <template v-if="isViewingSubject || isBacMode">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="age" v-model="selected.age">
+                    <i class="material-icons lock">lock</i>
+                  </template>
+                  <template v-else>
+                    <input class="light-grey border--black regular--dat" type="text" id="age">
+                  </template>
+                </div>
+                <div class="flexbox-row--alignright margin-tb--13px">
+                  <h3 class="margin-input input-label semibold">Gender: </h3>
+                  <template v-if="isViewingSubject || isBacMode">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="gender" v-model="selected.gender">
+                    <i class="material-icons lock">lock</i>
+                  </template>
+                  <template v-else>
+                    <input class="light-grey border--black regular--dat" type="text" id="gender">
+                  </template>
+                </div>
+                <div class="flexbox-row--alignright margin-tb--13px">
+                  <h3 class="margin-input input-label semibold">Height (m): </h3>
+                  <template v-if="isViewingSubject || isBacMode">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="height" v-model="selected.height">
+                    <i class="material-icons lock">lock</i>
+                  </template>
+                  <template v-else>
+                    <input class="light-grey border--black regular--dat" type="text" id="height">
+                  </template>
+                </div>
+                <div class="flexbox-row--alignright margin-tb--13px">
+                  <h3 class="margin-input input-label semibold">Weight (kg): </h3>
+                  <template v-if="isViewingSubject || isBacMode">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="weight" v-model="selected.weight">
+                    <i class="material-icons lock">lock</i>
+                  </template>
+                  <template v-else>
+                    <input class="light-grey border--black regular--dat" type="text" id="weight">
+                  </template>
+                </div>
               </div>
-              <div class="flexbox-row--alignright margin-tb--13px">
-                <h3 class="margin-input input-label semibold">Gender: </h3>
-                <input class="light-grey border--black regular--dat" type="text" id="gender">
-              </div>
-              <div class="flexbox-row--alignright margin-tb--13px">
-                <h3 class="margin-input input-label semibold">Height (m): </h3>
-                <input class="light-grey border--black regular--dat" type="text" id="height">
-              </div>
-              <div class="flexbox-row--alignright margin-tb--13px">
-                <h3 class="margin-input input-label semibold">Weight (kg): </h3>
-                <input class="light-grey border--black regular--dat" type="text" id="weight">
+              <div class="flexbox-column" style="width: 50%;">
+                <h3 class="margin-tb--10px"><strong>Calculate Target Consumption</strong></h3>
+                <div class="flexbox-row--alignright margin-tb--13px">
+                  <h3 class="margin-input input-label semibold">Target BAC: </h3>
+                  <template v-if="isViewingSubject || isBacMode">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="targetBAC" v-model="selected.target_bac">
+                  <i class="material-icons lock">lock</i>
+                  </template>
+                  <template v-else>
+                    <input class="light-grey border--black regular--dat" type="text" id="targetBAC">
+                  </template>
+                </div>
+                <div class="flexbox-row--alignright margin-tb--13px">
+                  <h3 class="margin-input input-label semibold">Reach at: </h3>
+                  <template v-if="isViewingSubject || isBacMode">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="bacReachTime" v-model="selected.target_bac_time">
+                  <i class="material-icons lock">lock</i>
+                  </template>
+                  <template v-else>
+                    <input class="light-grey border--black regular--dat" type="text" id="bacReachTime">
+                  </template>
+                </div>
+                <div class="flexbox-row--alignright margin-tb--13px">
+                  <template v-if="isViewingSubject">
+                    <h3 class="margin-input input-label semibold">Recorded at: </h3>
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="timeRecorded" v-model="selected.actual_bac_time">
+                    <i class="material-icons lock">lock</i>
+                  </template>
+                  <template v-else-if="isBacMode">
+                    <h3 class="margin-input input-label semibold">Actual BAC: </h3>
+                    <input class="light-grey border--black regular--dat" type="text" id="bacActual">
+                  </template>
+                  <template v-else>
+                    <h3 class="margin-input input-label semibold">Measure in: </h3>
+                    <input class="light-grey border--black regular--dat" type="text" id="measUnit">
+                  </template>
+                </div>
+                <template v-if="isViewingSubject">
+                  <div class="flexbox-row--alignright margin-tb--13px">
+                    <h3 class="margin-input input-label semibold">Actual BAC: </h3>
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="bacActual" v-model="selected.actual_bac">
+                    <i class="material-icons lock">lock</i>
+                  </div>
+                </template>
+                <template v-else-if="isBacMode">
+                  <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
+                    <button class="normal red white--text selectable" style="margin-right: 25px;" id="calculate">Record Actual BAC</button>
+                  </div>                
+                </template>
+                <template v-else>
+                  <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
+                    <button class="normal red white--text selectable" style="margin-right: 25px;" id="calculate">Calculate</button>
+                  </div>
+                </template>
               </div>
             </div>
-            <div class="flexbox-column" style="width: 50%;">
-              <h3 class="margin-tb--10px"><strong>Calculate Target Consumption</strong></h3>
-              <div class="flexbox-row--alignright margin-tb--13px">
-                <h3 class="margin-input input-label semibold">Target BAC: </h3>
-                <input class="light-grey border--black regular--dat" type="text" id="targetBAC">
-              </div>
-              <div class="flexbox-row--alignright margin-tb--13px">
-                <h3 class="margin-input input-label semibold">Reach at: </h3>
-                <input class="light-grey border--black regular--dat" type="text" id="bacReachTime">
-              </div>
-              <div class="flexbox-row--alignright margin-tb--13px">
-                <h3 class="margin-input input-label semibold">Measure in: </h3>
-                <input class="light-grey border--black regular--dat" type="text" id="measUnit">
-              </div>
-              <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
-                <button class="normal red white--text selectable" style="margin-right: 25px;" id="calculate">Calculate</button>
-              </div>
-            </div> 
-          </div>
+          </template>
+          
           <div class="flexbox-column light-grey" style="height: 37%;">
             <strong><h2 style="margin: 5px;">Results</h2></strong>
             <!-- <button class="dark-grey white--text selectable" id="calculate">Administer</button> -->
@@ -120,4 +197,4 @@
     <!-- Page Script -->
     <script src="js/main.js"></script>
   </body>
-</html
+</html>

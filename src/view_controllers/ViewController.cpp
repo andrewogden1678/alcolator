@@ -7,7 +7,14 @@ void ViewController::OnChangeCursor(ultralight::View* caller, Cursor cursor) {
 
 // Return the current view object
 RefPtr<View> ViewController::GetView() { 
-    return overlay_->view(); 
+    if (overlay_ != NULL) {
+        return overlay_->view();
+    }
+    else {
+        // Return null
+        return nullptr;
+    }
+    
 }
 
 // Memory deallocator

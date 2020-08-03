@@ -1,6 +1,7 @@
 #pragma once
 #include "ViewController.h"
 #include "../database/models/Subject.h"
+#include "../database/models/Result.h"
 #include <vector>
 #include <string>
 
@@ -29,4 +30,5 @@ class MainView : public ViewController
 
         /// Local JS-Invoked Methods
         JSValue OnLoadSubjects(const JSObject& obj, const JSArgs& args);
+        JSValue OnLoadPrevRecord(const JSObject& obj, const JSArgs& args);
 };

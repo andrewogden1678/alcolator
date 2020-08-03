@@ -11,9 +11,12 @@ AdminView::AdminView(Ref<Window> window) : ViewController::ViewController(window
 }
 
 AdminView::~AdminView() {
-    // Destroy listener instances
-    GetView()->set_load_listener(nullptr);
-    GetView()->set_view_listener(nullptr);
+    // Destroy instances
+    if (overlay_ != NULL) {
+        GetView()->set_load_listener(nullptr);
+        GetView()->set_view_listener(nullptr);
+        overlay_ = nullptr;
+    }
 }
 
 ///

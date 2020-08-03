@@ -85,22 +85,23 @@ class Database {
         template <class T> 
         std::vector<T> Select(std::string column, std::string condition, std::string comparison) {
             // Vector of T class
-            std::vector<T>* selected;
+            std::vector<T> selected;
 
             // Construct select query
             std::string stmt;
             stmt += "SELECT * FROM ";
             stmt += T::GetTableName();
-            stmt += "WHERE ";
+            stmt += " WHERE ";
             stmt += column;
+            stmt += " ";
             stmt += condition;
+            stmt += " ";
             stmt += comparison;
             stmt += ";";
 
             // Execute the query
             char* errMsg = 0;
             int status = sqlite3_exec(this->db_, stmt.c_str(), SelectCallback<T>, &selected, &errMsg);
-
             
             // Check success
             if (status != SQLITE_OK) {
@@ -255,6 +256,7 @@ class Database {
         static int SelectCallback(void* data, int fieldCount, char** fields, char** colNames) {
             // Cast data to vector
             std::vector<T>* selected = static_cast<std::vector<T>*>(data);
+
             try {
                 // Deserialise SQL data into the model and fill the vector
                 selected->emplace_back(fields);
