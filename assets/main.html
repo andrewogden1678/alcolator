@@ -10,9 +10,21 @@
   <body>
     <div id="vm">
       <div class="nav dark-grey white--text">
-          <a class="nav-item selectable--text" @click="fileMenu">File</a>
+          <a class="nav-item selectable--text" @click="fileMenu" ref="btnFile" id="fm">File</a>
           <img src="img/nav_separator.svg" class="nav-item cursor-default">
-          <a class="nav-item selectable--text">Settings</a>
+          <template v-if="isEnterSubjectOpen || isLoadExperimentOpen">
+            <a class="nav-item selectable--text disabled--text">Settings</a>
+          </template>
+          <template v-else>
+            <a class="nav-item selectable--text" @click="settingsOpen">Settings</a>
+          </template>
+          <img src="img/nav_separator.svg" class="nav-item cursor-default">
+          <template v-if="isExperimentLoaded">
+            <a class="nav-item"><strong>Experiment:</strong> {{experiment.name}}</a>
+          </template>
+          <template v-else>
+            <a class="nav-item"><strong>Experiment:</strong> None Loaded</a>
+          </template>
           <h2 class="yellow--text nav-item--push cursor-default"><strong>Alcolator</strong></h2>
           <img src="img/nav_separator.svg" class="nav-item cursor-default" style="opacity: 0.2">
           <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;">minimize</i>
@@ -24,11 +36,13 @@
             <strong><h2 style="margin: 10px;">Records</h2></strong>
           </div>   
           <div class="vertical-scroll">
+
             <record
               v-for="record in records"
               v-bind:key="record.id"
               v-bind:record="record"
-              @click.native="loadPrevRecord($event, record.id)">
+              v-bind:class="{draft: record.subject_code == draft.subject_code}"
+              @click.native="recordClick($event, record)">
             </record>
           </div>
         </div>
@@ -57,7 +71,7 @@
                     <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else>
-                    <input class="light-grey border--black regular--dat" type="text" id="age">
+                    <input class="light-grey border--black regular--dat" type="text" id="age" v-model="draft.age">
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
@@ -67,7 +81,7 @@
                     <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else>
-                    <input class="light-grey border--black regular--dat" type="text" id="gender">
+                    <input class="light-grey border--black regular--dat" type="text" id="gender" v-model="draft.gender">
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
@@ -77,7 +91,7 @@
                     <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else>
-                    <input class="light-grey border--black regular--dat" type="text" id="height">
+                    <input class="light-grey border--black regular--dat" type="text" id="height" v-model="draft.height">
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
@@ -87,7 +101,7 @@
                     <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else>
-                    <input class="light-grey border--black regular--dat" type="text" id="weight">
+                    <input class="light-grey border--black regular--dat" type="text" id="weight" v-model="draft.weight">
                   </template>
                 </div>
               </div>
@@ -100,7 +114,7 @@
                   <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else>
-                    <input class="light-grey border--black regular--dat" type="text" id="targetBAC">
+                    <input class="light-grey border--black regular--dat" type="text" id="targetBAC" v-model="draft.target_bac">
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
@@ -110,7 +124,7 @@
                   <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else>
-                    <input class="light-grey border--black regular--dat" type="text" id="bacReachTime">
+                    <input class="light-grey border--black regular--dat" type="text" id="bacReachTime" v-model="draft.target_bac_time">
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
@@ -121,11 +135,11 @@
                   </template>
                   <template v-else-if="isBacMode">
                     <h3 class="margin-input input-label semibold">Actual BAC: </h3>
-                    <input class="light-grey border--black regular--dat" type="text" id="bacActual">
+                    <input class="light-grey border--black regular--dat" type="text" id="bacActual" v-model="draft.actual_bac">
                   </template>
                   <template v-else>
                     <h3 class="margin-input input-label semibold">Measure in: </h3>
-                    <input class="light-grey border--black regular--dat" type="text" id="measUnit">
+                    <input class="light-grey border--black regular--dat" type="text" id="measUnit" v-model="draft.beverage_name">
                   </template>
                 </div>
                 <template v-if="isViewingSubject">
@@ -143,6 +157,7 @@
                 <template v-else>
                   <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
                     <button class="normal red white--text selectable" style="margin-right: 25px;" id="calculate">Calculate</button>
+                    <!-- TODO: CANCEL BUTTON -->
                   </div>
                 </template>
               </div>
@@ -155,9 +170,80 @@
             <img src="img/bottle.png" alt="beer bottle" class="nav-item--push" style="align-self: flex-end; margin-bottom: 0; margin-right: 20px; z-index: -2;" width="209px" height="145px">
           </div>
         </div>
-        
-        <div class="modal">
-          <div class="modal--settings centred-settings white">
+        <div class="file-menu white" v-bind:class="{show: isFileMenuOpen === true}" ref="menuFile">
+          <div class="flexbox-column">
+            <template v-if="isSettingsMenuOpen || isEnterSubjectOpen || isLoadExperimentOpen || (draft.subject_code != '')">
+              <h6 class="file-menu--text disabled--text">New Subject</h6>
+              <hr class="menu-sep" align="center">
+              <h6 class="file-menu--text disabled--text">Load Experiment</h6>
+            </template>
+            <template v-else>
+              <template v-if="isExperimentLoaded">
+                <h6 class="file-menu--text selectable--text" @click="fileNewSubject">New Subject</h6>
+              </template>
+              <template v-else>
+                <h6 class="file-menu--text disabled--text">New Subject</h6>
+              </template>
+              <hr class="menu-sep" align="center">
+              <h6 class="file-menu--text selectable--text" @click="fileLoadExp">Load Experiment</h6>
+            </template>
+            <!--<h6 class="file-menu--text selectable--text" @click="fileNew">New Experiment</h6>-->
+            <hr class="menu-sep" align="center">
+            <h6 class="file-menu--text selectable--text" @click="fileLogOut">Log Out</h6>
+            <h6 class="file-menu--text selectable--text" @click="winClose">Exit</h6>
+          </div>
+        </div>
+        <div class="modal" v-bind:class="{show: isEnterSubjectOpen === true}">
+          <div class="modal--input white">
+            <h1 style="font-size: 24px; margin: 0;">New Subject</h1>
+            <input v-model="draft.subject_code" class="light-grey border--black regular" type="text" id="subID" style="margin-top: 15px" placeholder=" Identification code">
+            <div class="flexbox-row--align" style="margin-top: 15px; margin-left: 20px; width: 100%;">
+              <template v-if="draft.subject_code != ''">
+                <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="newSubject">Proceed</button>
+              </template>
+              <template v-else>
+                <button class="dark-grey white--text disabled" style="margin-right: 5px;">Proceed</button>
+              </template>
+              <button class="red white--text selectable" style="margin-left: 5px; margin-right: 50px;" @click="newSubjectClose">Cancel</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal" v-bind:class="{show: isLoadExperimentOpen === true}">
+          <div class="modal--input white">
+            <h1 style="font-size: 24px; margin: 0;">Load Experiment</h1>
+            <div class="dropdown">
+                <template v-if="experiment.id != null">
+                  <button class="dropdown-btn light-grey" style="margin-top: 15px; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                      {{experiment.name}}
+                  </button>
+                </template>
+                <template v-else>
+                  <button class="dropdown-btn light-grey" style="margin-top: 15px; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                      Select experiment
+                  </button>                 
+                </template>
+              <div class="dropdown-content light-grey--notopaque" id="dropContent">
+                <experiment
+                  v-for="experiment in experiments"
+                  v-bind:key="experiment.id"
+                  v-bind:experiment="experiment"
+                  @click.native="chooseExperiment($event, experiment)">
+                </experiment>
+              </div>
+            </div>	
+            <div class="flexbox-row--align" style="margin-top: 15px; margin-left: 20px; width: 100%;">
+              <template v-if="experiment.id != null">
+                <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="loadExp">Load</button>
+              </template>
+              <template v-else>
+                <button class="dark-grey white--text disabled" style="margin-right: 5px;">Load</button>
+              </template>
+              <button class="red white--text selectable" style="margin-left: 5px; margin-right: 50px;" @click="loadExpClose">Cancel</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal" v-bind:class="{show: isSettingsMenuOpen === true}">
+          <div class="modal--settings white">
             <h1 style="font-size: 28px; margin: 0;">Settings</h1>
             <h3 class="semibold" style="font-size: 18px; margin-bottom: 30px;"><strong>Currently Logged-In:</strong> Jane Doe</h3>
             <h2 style="font-weight: bold; margin-bottom: 5px;">Beverages</h2>
@@ -184,9 +270,9 @@
                   <h3 class="margin-input input-label semibold">Alc. %: </h3>
                   <input class="light-grey border--black regular short" type="text" id="changeBevConc">
                 </div>
-                <div class="flexbox-row--alignright" style="margin-top: 20px; margin-left: 20px; width: 100%;">
+                <div class="flexbox-row--align" style="margin-top: 20px; margin-left: 20px; width: 100%;">
                   <button class="dark-grey white--text selectable" style="margin-right: 5px;">Save</button>
-                  <button class="dark-grey white--text selectable" style="margin-left: 5px;">Close</button>
+                  <button class="red white--text selectable" style="margin-left: 5px;" @click="settingsClose">Close</button>
                 </div>
               </div>
             </div>
@@ -194,7 +280,7 @@
         </div>
       </div>
     </div>
-    <!-- Page Script -->
-    <script src="js/main.js"></script>
   </body>
+  <!-- Page Script -->
+  <script src="js/main.js"></script>
 </html>

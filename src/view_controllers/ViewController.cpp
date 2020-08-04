@@ -13,8 +13,7 @@ RefPtr<View> ViewController::GetView() {
     else {
         // Return null
         return nullptr;
-    }
-    
+    }    
 }
 
 // Memory deallocator

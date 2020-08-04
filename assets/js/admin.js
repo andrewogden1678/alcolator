@@ -16,6 +16,9 @@ let vm = new Vue({
         fileLogOut: function () {
             window.OnLogOut();
         },
+        fileNewExp: function () {
+
+        },
         /// Settings methods
         settingsOpen: function () {
             window.OnClickSettings();

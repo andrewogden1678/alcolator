@@ -37,6 +37,12 @@ h5 {
     font-weight: bold;  
 }
 
+h6 {
+    font-family: "Open Sans", sans-serif;
+    font-size: 12pt;
+    font-weight: 500;
+}
+
 /* Semi bold */
 .semibold {
     font-weight: 600;
@@ -131,6 +137,43 @@ input.short {
     text-align: right;
 }
 
+/* Dropdown menus */
+.dropdown-btn {
+    height: 6.5vh;
+    width: 95%;
+    font-size: 14pt;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.dropdown {
+    width: 100%;
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    min-width: 94.25%;
+    z-index: 6;
+    border-top: 0px;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+} 
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-option {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
 /**** Button format ****/
 button {
     border-radius: 20px;
@@ -161,7 +204,7 @@ button {
 /* Select class for text */
 .selectable--text:hover {
     cursor: pointer;
-    color: #d8d8d8;
+    color: #c3c3c3;
 }
 
 /**** Colour related ****/
@@ -170,8 +213,16 @@ button {
     background-color: rgba(52, 54, 66, 0.1);
 }
 
+.light-grey--notopaque {
+    background-color: #eaebec;
+}
+
 .red {
     background-color: #e53833;
+}
+
+.draft {
+    color: #b42b27;
 }
 
 .dark-grey {
@@ -179,7 +230,7 @@ button {
 }
 
 .locked-grey {
-    background-color: rgba(52, 54, 66, 0.3);;
+    background-color: rgba(52, 54, 66, 0.3);
 }
 
 .yellow--text {
@@ -189,6 +240,7 @@ button {
 .black {
     background-color: black;
 }
+
 .black--text {
     color: black;
 }
@@ -218,7 +270,7 @@ button {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 2;
     bottom: 0;
     right: 0;
     width: 100%;
@@ -226,6 +278,60 @@ button {
     overflow: auto; 
     /*background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);*/
+}
+
+/* Dropdown menu for File, etc */
+.file-menu {
+    display: none;
+    z-index: 5;
+    position: fixed;
+    padding: 4px;
+    width: 145px;
+    height: 135px;
+    top: 5.5vh; /* account for nav bar */
+    left: 0%;
+    border: 1px solid #7070708e;
+}
+
+/* Text in the file menu */
+.file-menu--text {
+    padding: 0;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-left: 6px;
+}
+
+/* Disabled  */
+.disabled {
+    color: #c3c3c3;
+    opacity: 0.8;
+}
+
+/* Disabled text  */
+.disabled--text {
+    color: #c3c3c3;
+}
+
+/* Hover */
+.disabled--text:hover {
+    cursor: default;
+}
+
+/* Simple class for showing elements */
+.show {
+    display: block !important;
+}
+
+.hide {
+    display: none !important;
+}
+
+hr.menu-sep {
+    border: 1px solid #70707057;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 90%;
+    z-index: inherit;
 }
 
 /* Blur background style */
@@ -236,16 +342,7 @@ button {
     width: 100%;
 }
 
-/* Perfect centre */
-.centred-settings {
-    position: fixed;
-    bottom: 50%;
-    right: 50%;
-    margin-bottom: -205px;
-    margin-right: -255px;
-}
-
-/* The modal */
+/* The settings modal */
 .modal--settings {    
     width: 510px;
     height: 360px;
@@ -253,7 +350,31 @@ button {
     border-width: 1px;
     border-radius: 3px;
     padding: 15px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
+
+/* Add subject or experiment models */
+.modal--input {    
+    width: 260px;
+    height: 135px;
+    border: solid #707070;
+    border-width: 1px;
+    border-radius: 3px;
+    padding: 15px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Load experiment modal
+.modal--experiment {
+    
+}
+*/
 
 /**** Flexbox ****/
 /* Row */

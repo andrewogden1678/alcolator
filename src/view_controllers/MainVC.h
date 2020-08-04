@@ -30,5 +30,6 @@ class MainView : public ViewController
 
         /// Local JS-Invoked Methods
         JSValue OnLoadSubjects(const JSObject& obj, const JSArgs& args);
-        JSValue OnLoadPrevRecord(const JSObject& obj, const JSArgs& args);
+        JSValue OnClickRecord(const JSObject& obj, const JSArgs& args);
+        JSValue OnLoadExperiments(const JSObject& obj, const JSArgs& args);
 };

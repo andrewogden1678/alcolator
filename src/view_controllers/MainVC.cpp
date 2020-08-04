@@ -38,19 +38,46 @@ void MainView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, c
     // Bind methods to be invoked from JS
     global["OnWindowClose"] = BindJSCallback(&MainView::OnWindowClose);
     global["OnLoadSubjects"] = BindJSCallbackWithRetval(&MainView::OnLoadSubjects);
-    global["OnLoadPrevRecord"] = BindJSCallbackWithRetval(&MainView::OnLoadPrevRecord);
+    global["OnLoadExperiments"] = BindJSCallbackWithRetval(&MainView::OnLoadExperiments);
+    global["OnClickRecord"] = BindJSCallbackWithRetval(&MainView::OnClickRecord);
 
-    // Load subjects on first load
-    GetView()->EvaluateScript("vm.loadSubjects()");
+    // Load initial data
+    GetView()->EvaluateScript("vm.initialLoad()");
 }
 
 ///
 /// Local JS-Invoked Methods
 ///
+JSValue MainView::OnLoadExperiments(const JSObject& obj, const JSArgs& args) {
+    // Get all experiments
+    std::vector<Experiment> experiments(Database::Instance()->Select<Experiment>("is_concluded", "IS", to_string(0)));
+
+    // JS Array
+    JSArray jArray;
+
+    // Loop through and push values to array
+    for (std::vector<Experiment>::iterator experiment = experiments.begin(); experiment != experiments.end(); experiment++) { 
+        // Temporary array
+        JSArray tempArray;
+
+        /// Assign to the temp array
+        // [0] Primary key
+        // [1] Name
+        tempArray.push(JSValue(JSString(std::to_string(experiment->GetPK()).c_str())));
+        tempArray.push(JSValue(JSString(experiment->name_.c_str())));
+
+        // Push the array to the main array
+        jArray.push(JSValue(tempArray));
+    }
+
+    // Send to javascript
+    return JSValue(jArray);
+}
+
 JSValue MainView::OnLoadSubjects(const JSObject& obj, const JSArgs& args) {
 
-    // Get all subjects from database
-    std::vector<Subject> subjects(Database::Instance()->Select<Subject>());
+    // Get all subjects
+    std::vector<Subject> subjects(Database::Instance()->Select<Subject>("experiment_id", "IS", to_string(args[0].ToInteger())));
 
     // Javascript array
     JSArray jArray;
@@ -76,11 +103,10 @@ JSValue MainView::OnLoadSubjects(const JSObject& obj, const JSArgs& args) {
     return JSValue(jArray);
 }
 
-JSValue MainView::OnLoadPrevRecord(const JSObject& obj, const JSArgs& args) {
+JSValue MainView::OnClickRecord(const JSObject& obj, const JSArgs& args) {
 
     // ID of subject to retrieve
     int64_t subId = args[0].ToInteger();
-
     
     try {
         // Get result and corresponding foreign keys
