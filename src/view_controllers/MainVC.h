@@ -32,4 +32,7 @@ class MainView : public ViewController
         JSValue OnLoadSubjects(const JSObject& obj, const JSArgs& args);
         JSValue OnClickRecord(const JSObject& obj, const JSArgs& args);
         JSValue OnLoadExperiments(const JSObject& obj, const JSArgs& args);
+        JSValue OnLoadBeverages(const JSObject& obj, const JSArgs& args);
+        void OnAddNewBeverage(const JSObject& obj, const JSArgs& args);
+        void OnAddNewSubject(const JSObject& obj, const JSArgs& args);
 };

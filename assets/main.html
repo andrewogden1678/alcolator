@@ -36,7 +36,6 @@
             <strong><h2 style="margin: 10px;">Records</h2></strong>
           </div>   
           <div class="vertical-scroll">
-
             <record
               v-for="record in records"
               v-bind:key="record.id"
@@ -66,8 +65,12 @@
                 <h3 class="margin-tb--10px"><strong>General Information</strong></h3>
                 <div class="flexbox-row--alignright margin-tb--13px">
                   <h3 class="margin-input input-label semibold">Age (years): </h3>
-                  <template v-if="isViewingSubject || isBacMode">
+                  <template v-if="isViewingSubject">
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="age" v-model="selected.age">
+                    <i class="material-icons lock">lock</i>
+                  </template>
+                  <template v-else-if="isBacMode">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="age" v-model="draft.age">
                     <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else>
@@ -76,18 +79,48 @@
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
                   <h3 class="margin-input input-label semibold">Gender: </h3>
-                  <template v-if="isViewingSubject || isBacMode">
+                  <template v-if="isViewingSubject">
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="gender" v-model="selected.gender">
                     <i class="material-icons lock">lock</i>
                   </template>
+                  <template v-else-if="isBacMode">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="gender" v-model="draft.gender">
+                    <i class="material-icons lock">lock</i>
+                  </template>
                   <template v-else>
-                    <input class="light-grey border--black regular--dat" type="text" id="gender" v-model="draft.gender">
+                    <div class="dropdown">
+                      <template v-if="draft.gender != ''">
+                        <button class="dropdown-btn regular--dat light-grey" style="width: 88.9%; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                            {{draft.gender}}
+                        </button>
+                      </template>
+                      <template v-else>
+                        <button class="dropdown-btn regular--dat light-grey" style="width: 88.9%; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                            Select
+                        </button>                 
+                      </template>
+                    <div class="dropdown-content light-grey--notopaque" style="min-width: 88%;" id="dropContent">
+                      <dropdown
+                        v-bind:key="1"
+                        v-bind:obj="gender_male"
+                        @click.native="setGender($event, gender_male.name)">
+                      </dropdown>
+                      <dropdown
+                        v-bind:key="2"
+                        v-bind:obj="gender_female"
+                        @click.native="setGender($event, gender_female.name)">
+                      </dropdown>
+                    </div>
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
-                  <h3 class="margin-input input-label semibold">Height (m): </h3>
-                  <template v-if="isViewingSubject || isBacMode">
+                  <h3 class="margin-input input-label semibold">Height (cm): </h3>
+                  <template v-if="isViewingSubject">
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="height" v-model="selected.height">
+                    <i class="material-icons lock">lock</i>
+                  </template>
+                  <template v-else-if="isBacMode">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="height" v-model="draft.height">
                     <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else>
@@ -96,8 +129,12 @@
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
                   <h3 class="margin-input input-label semibold">Weight (kg): </h3>
-                  <template v-if="isViewingSubject || isBacMode">
+                  <template v-if="isViewingSubject">
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="weight" v-model="selected.weight">
+                    <i class="material-icons lock">lock</i>
+                  </template>
+                  <template v-else-if="isBacMode">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="weight" v-model="draft.weight">
                     <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else>
@@ -109,8 +146,12 @@
                 <h3 class="margin-tb--10px"><strong>Calculate Target Consumption</strong></h3>
                 <div class="flexbox-row--alignright margin-tb--13px">
                   <h3 class="margin-input input-label semibold">Target BAC: </h3>
-                  <template v-if="isViewingSubject || isBacMode">
+                  <template v-if="isViewingSubject">
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="targetBAC" v-model="selected.target_bac">
+                  <i class="material-icons lock">lock</i>
+                  </template>
+                  <template v-else-if="isBacMode">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="targetBAC" v-model="draft.target_bac">
                   <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else>
@@ -118,10 +159,14 @@
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
-                  <h3 class="margin-input input-label semibold">Reach at: </h3>
-                  <template v-if="isViewingSubject || isBacMode">
+                  <h3 class="margin-input input-label semibold">Reach in: </h3>
+                  <template v-if="isViewingSubject">
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="bacReachTime" v-model="selected.target_bac_time">
-                  <i class="material-icons lock">lock</i>
+                    <i class="material-icons lock">lock</i>
+                  </template>
+                  <template v-else-if="isBacMode">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="bacReachTime" v-model="draft.target_bac_time">
+                    <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else>
                     <input class="light-grey border--black regular--dat" type="text" id="bacReachTime" v-model="draft.target_bac_time">
@@ -139,7 +184,25 @@
                   </template>
                   <template v-else>
                     <h3 class="margin-input input-label semibold">Measure in: </h3>
-                    <input class="light-grey border--black regular--dat" type="text" id="measUnit" v-model="draft.beverage_name">
+                    <div class="dropdown">
+                      <template v-if="draft.beverage_name != ''">
+                        <button class="dropdown-btn regular--dat light-grey" style="width: 88.9%; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                            {{draft.beverage_name}}
+                        </button>
+                      </template>
+                      <template v-else>
+                        <button class="dropdown-btn regular--dat light-grey" style="width: 88.9%; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                            Select
+                        </button>                 
+                      </template>
+                    <div class="dropdown-content light-grey--notopaque" style="min-width: 88.3%;" id="dropContent">
+                      <dropdown
+                        v-for="beverage in beverages"
+                        v-bind:key="beverage.id"
+                        v-bind:obj="beverage"
+                        @click.native="chooseBeverageSubject($event, beverage)">
+                      </dropdown>
+                    </div>
                   </template>
                 </div>
                 <template v-if="isViewingSubject">
@@ -151,13 +214,13 @@
                 </template>
                 <template v-else-if="isBacMode">
                   <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
-                    <button class="normal red white--text selectable" style="margin-right: 25px;" id="calculate">Record Actual BAC</button>
+                    <button class="normal red white--text selectable" style="margin-right: 25px;" id="recordBAC" @click="bacRecord">Record Actual BAC</button>
                   </div>                
                 </template>
                 <template v-else>
                   <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
-                    <button class="normal red white--text selectable" style="margin-right: 25px;" id="calculate">Calculate</button>
-                    <!-- TODO: CANCEL BUTTON -->
+                    <button class="normal dark-grey white--text selectable" style="margin-right: 25px; width: 172px;" id="cancel" @click="cancelSubject">Cancel</button>
+                    <button class="normal red white--text selectable" style="margin-right: 25px;" id="calculate" @click="calculateClick">Calculate</button>
                   </div>
                 </template>
               </div>
@@ -165,9 +228,40 @@
           </template>
           
           <div class="flexbox-column light-grey" style="height: 37%;">
-            <strong><h2 style="margin: 5px;">Results</h2></strong>
-            <!-- <button class="dark-grey white--text selectable" id="calculate">Administer</button> -->
-            <img src="img/bottle.png" alt="beer bottle" class="nav-item--push" style="align-self: flex-end; margin-bottom: 0; margin-right: 20px; z-index: -2;" width="209px" height="145px">
+            <strong><h2 style="margin: 5px;">Results</h2></strong> 
+            <div class="flexbox-row--alignleft" style="align-items: flex-end; margin-left: 10px; margin-top: 10%; width: 76%;">
+              <template v-if="isCalculateClicked">
+                <p>
+                  GIVE <strong>SUBJECT {{draft.subject_code}}</strong> {{draft.amount_grams}} grams of alcohol as {{draft.amount_beverage}} ml 
+                  of {{draft.beverage_name.toLowerCase()}} to reach a blood alcohol concentration of {{draft.target_bac}}% in {{draft.target_bac_time}} hours.
+                  <br><br>
+                  Click ADMINISTERED after giving subject calculated amount.
+                </p>
+              </template>
+              <template v-else-if="isBacMode">
+                <p>
+                <strong>SUBJECT {{draft.subject_code}}</strong> administered {{draft.amount_grams}} grams of alcohol targeting
+                  a blood alcohol concentration of {{draft.target_bac}}% in {{draft.target_bac_time}} hours.
+                </p>
+              </template>
+              <template v-else-if="isViewingSubject">
+                <p>
+                  <strong>SUBJECT {{selected.subject_code}}</strong> administered {{selected.amount_grams}} grams of alcohol targeting
+                  a blood alcohol concentration of {{selected.target_bac}}% in {{selected.target_bac_time}} hours.
+                  <br><br>
+                  Actual BAC recorded was {{selected.actual_bac}}% read at {{selected.actual_bac_time}}.
+                </p>
+              </template>
+            </div>                 
+            <div class="flexbox-row--alignleft" style="align-self: flex-end; margin-bottom: 0px;">
+              <template v-if="isCalculateClicked">
+                <button class="dark-grey white--text selectable" style="align-self: flex-end; margin-bottom: 20px; margin-top: 0; margin-left: 20px;" id="administer" @click="administeredClick">Administered</button>
+              </template>
+              <template v-else-if="isViewingSubject">
+                <button class="dark-grey white--text selectable" style="align-self: flex-end; margin-bottom: 20px; margin-top: 0; margin-left: 20px;" id="pdfRep">Download PDF Report</button>
+              </template>                    
+              <img src="img/bottle.png" alt="beer bottle" class="nav-item--push" style="align-self: flex-end; margin-bottom: 0; margin-right: 20px;" width="209px" height="145px">
+            </div>   
           </div>
         </div>
         <div class="file-menu white" v-bind:class="{show: isFileMenuOpen === true}" ref="menuFile">
@@ -222,13 +316,13 @@
                       Select experiment
                   </button>                 
                 </template>
-              <div class="dropdown-content light-grey--notopaque" id="dropContent">
-                <experiment
+              <div class="dropdown-content light-grey--notopaque" style="min-width: 94.25%;" id="dropContent">
+                <dropdown
                   v-for="experiment in experiments"
                   v-bind:key="experiment.id"
-                  v-bind:experiment="experiment"
+                  v-bind:obj="experiment"
                   @click.native="chooseExperiment($event, experiment)">
-                </experiment>
+                </dropdown>
               </div>
             </div>	
             <div class="flexbox-row--align" style="margin-top: 15px; margin-left: 20px; width: 100%;">
@@ -246,32 +340,55 @@
           <div class="modal--settings white">
             <h1 style="font-size: 28px; margin: 0;">Settings</h1>
             <h3 class="semibold" style="font-size: 18px; margin-bottom: 30px;"><strong>Currently Logged-In:</strong> Jane Doe</h3>
-            <h2 style="font-weight: bold; margin-bottom: 5px;">Beverages</h2>
+            <h2 style="font-weight: bold; margin-bottom: 10px;">Beverages</h2>
             <div class="flexbox-row">
-              <!-- TODO fix alignment issues -->
               <div class="flexbox-column" style="width: 50%; padding-right: 30px;">
                 <h3 style="font-size: 18px; font-weight: bold; margin: 0;">Add New Beverage: </h3>
                 <div class="flexbox-row--alignleft margin-tb--10px">
                   <h3 class="margin-input input-label semibold">Name: </h3>
-                  <input class="light-grey border--black regular short" type="text" id="newBevName">
+                  <input class="light-grey border--black regular short" type="text" id="newBevName" v-model="settingsBeverage.newName">
                 </div>
                 <div class="flexbox-row--alignleft margin-tb--10px">
                   <h3 class="margin-input input-label semibold">Alc. %: </h3>
-                  <input class="light-grey border--black regular short" type="text" id="newBevConc">
+                  <input class="light-grey border--black regular short" type="text" id="newBevConc" v-model="settingsBeverage.newConc">
                 </div>
               </div>
               <div class="flexbox-column" style="padding-right: 30px;">
                 <h3 style="font-size: 18px; font-weight: bold; margin: 0;">Change Alc. %: </h3>
                 <div class="flexbox-row--alignleft margin-tb--10px">
                   <h3 class="margin-input input-label semibold">Select: </h3>
-                  <input class="light-grey border--black regular short" type="text" id="bevName">
+                  <div class="dropdown short">
+                    <template v-if="settingsBeverage.id != null">
+                      <button class="dropdown-btn light-grey" style="width: 150px; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                          {{settingsBeverage.name}}
+                      </button>
+                    </template>
+                    <template v-else>
+                      <button class="dropdown-btn light-grey" style="width: 150px; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                          Select
+                      </button>                 
+                    </template>
+                  <div class="dropdown-content light-grey--notopaque" style="min-width: 96.75%;" id="dropContent">
+                    <dropdown
+                      v-for="beverage in beverages"
+                      v-bind:key="beverage.id"
+                      v-bind:obj="beverage"
+                      @click.native="chooseBeverage($event, beverage)">
+                    </dropdown>
+                  </div>
+                </div>	
                 </div>
                 <div class="flexbox-row--alignleft margin-tb--10px">
                   <h3 class="margin-input input-label semibold">Alc. %: </h3>
-                  <input class="light-grey border--black regular short" type="text" id="changeBevConc">
+                  <input class="light-grey border--black regular short" type="text" id="changeBevConc" v-model="settingsBeverage.concentration">
                 </div>
                 <div class="flexbox-row--align" style="margin-top: 20px; margin-left: 20px; width: 100%;">
-                  <button class="dark-grey white--text selectable" style="margin-right: 5px;">Save</button>
+                  <template v-if="settingsBeverage.id != null || settingsBeverage.newName != '' || settingsBeverage.newConc != '' || settingsBeverage.concentration != ''">
+                    <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="settingsSave">Save</button>
+                  </template>
+                  <template v-else>
+                    <button class="dark-grey white--text disabled" style="margin-right: 5px;">Save</button>
+                  </template>
                   <button class="red white--text selectable" style="margin-left: 5px;" @click="settingsClose">Close</button>
                 </div>
               </div>

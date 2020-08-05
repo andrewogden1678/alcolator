@@ -43,6 +43,12 @@ h6 {
     font-weight: 500;
 }
 
+p {
+    font-family: "Open Sans", sans-serif;
+    font-size: 12pt;
+    font-weight: 600;
+}
+
 /* Semi bold */
 .semibold {
     font-weight: 600;
@@ -127,7 +133,7 @@ input.long {
 }
 
 /* Shorter input */
-input.short {
+.short {
     width: 150px;
 }
 
@@ -155,7 +161,7 @@ input.short {
 .dropdown-content {
     display: none;
     position: absolute;
-    min-width: 94.25%;
+    min-width: 96.75%;
     z-index: 6;
     border-top: 0px;
     border-bottom: 1px solid black;

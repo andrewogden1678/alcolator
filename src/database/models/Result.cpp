@@ -2,7 +2,7 @@
 
 // Assign table name and column array
 std::string Result::tableName_ = "results";
-std::array<std::string, 8> Result::columns_ = {"subject_id", "beverage_id", "target_bad", "target_bac_time", 
+std::array<std::string, 8> Result::columns_ = {"subject_id", "beverage_id", "target_bac", "target_bac_time", 
                                     "amount_grams", "amount_beverage", "actual_bac", "actual_bac_time"};
 
 Result::Result(int pk, int subject_id, int beverage_id,

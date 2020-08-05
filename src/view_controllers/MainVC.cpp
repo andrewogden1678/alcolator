@@ -39,7 +39,10 @@ void MainView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, c
     global["OnWindowClose"] = BindJSCallback(&MainView::OnWindowClose);
     global["OnLoadSubjects"] = BindJSCallbackWithRetval(&MainView::OnLoadSubjects);
     global["OnLoadExperiments"] = BindJSCallbackWithRetval(&MainView::OnLoadExperiments);
+    global["OnLoadBeverages"] = BindJSCallbackWithRetval(&MainView::OnLoadBeverages);
     global["OnClickRecord"] = BindJSCallbackWithRetval(&MainView::OnClickRecord);
+    global["OnAddNewBeverage"] = BindJSCallback(&MainView::OnAddNewBeverage);
+    global["OnAddNewSubject"] = BindJSCallback(&MainView::OnAddNewSubject);
 
     // Load initial data
     GetView()->EvaluateScript("vm.initialLoad()");
@@ -48,6 +51,95 @@ void MainView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, c
 ///
 /// Local JS-Invoked Methods
 ///
+void MainView::OnAddNewBeverage(const JSObject& obj, const JSArgs& args) {
+    // Parse args to JSArray and to respective values
+    JSArray jArray(args[0].ToArray());
+    // Existing ID
+    int id(jArray[0].ToInteger());
+    // New name
+    ultralight::String rawNewName(jArray[1].ToString());
+    std::string newName(static_cast<std::string>(rawNewName.utf8().data()));
+    // New concentration
+    ultralight::String rawNewConc(jArray[2].ToString());
+    double newConc(atof(rawNewConc.utf8().data()));
+    // Existing name
+    ultralight::String rawName(jArray[3].ToString());
+    std::string name(static_cast<std::string>(rawName.utf8().data()));
+    // Existing concentration
+    ultralight::String rawConc(jArray[4].ToString());
+    double conc(atof(rawConc.utf8().data()));
+
+    // Updated beverage
+    if (jArray[5].ToBoolean()) { // If edited
+        Beverage updatedBev(id, name, conc);
+        Database::Instance()->Update<Beverage>(&updatedBev);
+    }
+
+    // New beverage
+    if (jArray[6].ToBoolean()) { // If new added
+        Beverage newBev(-1, newName, newConc);
+        Database::Instance()->Insert<Beverage>(&newBev);
+    }
+}
+void MainView::OnAddNewSubject(const JSObject& obj, const JSArgs& args) {
+    // Parse args to JSArray and to respective values
+    JSArray jArray(args[0].ToArray());
+    // Subject code
+    ultralight::String rawSubjectCode(jArray[0].ToString());
+    std::string subjectCode(static_cast<std::string>(rawSubjectCode.utf8().data()));
+    // Experimenter ID
+    int experimenter(jArray[1].ToInteger());
+    // Experiment ID
+    int experiment(jArray[2].ToInteger());
+    // Age
+    int age(jArray[3].ToInteger());
+    // Gender
+    bool gender(jArray[4].ToBoolean());
+    // Height
+    ultralight::String rawHeight(jArray[5].ToString());
+    double height(atof(rawHeight.utf8().data()));
+    // Weight
+    ultralight::String rawWeight(jArray[6].ToString());
+    double weight(atof(rawWeight.utf8().data()));
+    // Created on
+    ultralight::String rawCreatedOn(jArray[7].ToString());
+    std::string createdOn;
+    createdOn += static_cast<std::string>(rawCreatedOn.utf8().data());
+    // Beverage ID
+    int beverage(jArray[8].ToInteger());
+    // Target BAC
+    ultralight::String rawTargetBAC(jArray[9].ToString());
+    double targetBAC(atof(rawTargetBAC.utf8().data()));
+    // Target BAC Time
+    int targetBACTime(jArray[10].ToInteger());
+    // Amount (grams)
+    ultralight::String rawAmountGrams(jArray[11].ToString());
+    double amountGrams(atof(rawAmountGrams.utf8().data()));
+    // Amount (beverage)
+    ultralight::String rawAmountBeverage(jArray[12].ToString());
+    double amountBeverage(atof(rawAmountBeverage.utf8().data()));
+    // Actual BAC
+    ultralight::String rawActualBAC(jArray[13].ToString());
+    double actualBAC(atof(rawActualBAC.utf8().data()));
+    // Actual BAC recorded time
+    ultralight::String rawActualBACTime(jArray[14].ToString());
+    std::string actualBACTime(static_cast<std::string>(rawActualBACTime.utf8().data()));
+
+    // Create and insert subject
+    Subject subject(-1, subjectCode, experimenter, experiment, age, gender, height, weight, createdOn);
+    Database::Instance()->Insert<Subject>(&subject);
+
+    // Get ID for subject just inserted
+    std::string condition;
+    condition += "\"";
+    condition += createdOn;
+    condition += "\"";
+    int subID(Database::Instance()->Select<Subject>("created_on", "IS", condition).at(0).GetPK());
+    
+    // Create and insert result
+    Result result(-1, subID, beverage, targetBAC, targetBACTime, amountGrams, amountBeverage, actualBAC, actualBACTime);
+    Database::Instance()->Insert<Result>(&result);
+}
 JSValue MainView::OnLoadExperiments(const JSObject& obj, const JSArgs& args) {
     // Get all experiments
     std::vector<Experiment> experiments(Database::Instance()->Select<Experiment>("is_concluded", "IS", to_string(0)));
@@ -94,6 +186,35 @@ JSValue MainView::OnLoadSubjects(const JSObject& obj, const JSArgs& args) {
         tempArray.push(JSValue(JSString(std::to_string(subject->GetPK()).c_str())));
         tempArray.push(JSValue(JSString(subject->subject_code_.c_str())));
         tempArray.push(JSValue(JSString(subject->created_on_.c_str())));
+
+        // Push the array to the main array
+        jArray.push(JSValue(tempArray));
+    }
+
+    // Send to javascript
+    return JSValue(jArray);
+}
+
+JSValue MainView::OnLoadBeverages(const JSObject& obj, const JSArgs& args) {
+
+    // Get all beverages
+    std::vector<Beverage> beverages(Database::Instance()->Select<Beverage>());
+
+    // Javascript array
+    JSArray jArray;
+    
+    // Loop through and push values to array
+    for (std::vector<Beverage>::iterator beverage = beverages.begin(); beverage != beverages.end(); beverage++) { 
+        // Temporary array
+        JSArray tempArray;
+
+        /// Assign to the temp array
+        // [0] Primary key
+        // [1] Name
+        // [2] Concentration
+        tempArray.push(JSValue(JSString(std::to_string(beverage->GetPK()).c_str())));
+        tempArray.push(JSValue(JSString(beverage->name_.c_str())));
+        tempArray.push(JSValue(JSString(std::to_string(beverage->concentration_).c_str())));
 
         // Push the array to the main array
         jArray.push(JSValue(tempArray));
