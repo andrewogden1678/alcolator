@@ -143,6 +143,22 @@ input.long {
     text-align: right;
 }
 
+.error-text {
+    display: block;
+    background-color: rgb(219, 75, 75);
+    position: absolute;
+    width: 176px;
+    bottom: 100%;
+    left: 116px;
+    height: 36px;
+    align-items: center;
+    padding-top: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    border-radius: 3px 3px 0px 0px;
+    z-index: 2;
+} 
+
 /* Dropdown menus */
 .dropdown-btn {
     height: 6.5vh;
@@ -265,6 +281,10 @@ button {
     border-color: black;
 }
 
+.error {
+    border: 3px solid red !important;
+}
+
 /**** Centering ****/
 /* Horizontal */
 .h-centred {
@@ -276,7 +296,7 @@ button {
 .modal {
     display: none;
     position: fixed;
-    z-index: 2;
+    z-index: 4;
     bottom: 0;
     right: 0;
     width: 100%;
@@ -423,6 +443,7 @@ div.flexbox-row--align {
 /* Align horizontal left */
 div.flexbox-row--alignleft {
     display: flex;
+    position: relative;
     flex-direction: row;
     justify-content: right;
     align-items: center;
@@ -432,6 +453,7 @@ div.flexbox-row--alignleft {
 /* Align horizontal right */
 div.flexbox-row--alignright {
     display: flex;
+    position: relative;
     flex-direction: row;
     justify-content: left;
     align-items: center;
@@ -441,6 +463,7 @@ div.flexbox-row--alignright {
 /* Vertical align */
 div.flexbox-column--align {
     display: flex;
+    position: relative;
     flex-direction: column;
     align-items: center;
     justify-content: center;

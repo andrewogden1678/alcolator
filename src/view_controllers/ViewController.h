@@ -37,7 +37,6 @@ class ViewController : public WindowListener, // Window handlers
 
         /// Shared JS-Invoked Methods
         void OnWindowClose(const JSObject& obj, const JSArgs& args);
-        void OnWindowMove(const JSObject& obj, const JSArgs& args);
 
     protected:
         Ref<Window> window_; // Window ref

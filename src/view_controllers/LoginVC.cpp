@@ -18,9 +18,7 @@ LoginView::LoginView(Ref<Window> window) : ViewController::ViewController(window
 LoginView::~LoginView() {
     // Destroy instances
     if (overlay_ != NULL) {
-        GetView()->set_load_listener(nullptr);
-        GetView()->set_view_listener(nullptr);
-        overlay_ = nullptr;
+        this->ViewDealloc();
     }
 }
 

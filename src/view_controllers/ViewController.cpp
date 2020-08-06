@@ -34,7 +34,3 @@ void ViewController::OnWindowClose(const JSObject& obj, const JSArgs& args) {
         App::instance()->Quit();
     }
 }
-
-void OnWindowMove(const JSObject& obj, const JSArgs& args) {
-    
-}

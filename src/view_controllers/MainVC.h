@@ -35,4 +35,5 @@ class MainView : public ViewController
         JSValue OnLoadBeverages(const JSObject& obj, const JSArgs& args);
         void OnAddNewBeverage(const JSObject& obj, const JSArgs& args);
         void OnAddNewSubject(const JSObject& obj, const JSArgs& args);
+        JSValue OnClickCalculate(const JSObject& obj, const JSArgs& args);
 };

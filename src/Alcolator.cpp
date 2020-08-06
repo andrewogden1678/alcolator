@@ -17,6 +17,9 @@ Alcolator::Alcolator() {
   // Tell the app that this is the main window
   app_->set_window(*window_.get());
 
+  // Set window title
+  window_->SetTitle("Alcolator");
+
   // Go to the login page
   nextView_.reset(new LoginView(*window_.get()));
 

@@ -34,7 +34,8 @@ set(SOURCES "src/database/Database.h"
             "src/view_controllers/AdminVC.cpp"
             "src/view_controllers/MainVC.h"
             "src/view_controllers/MainVC.cpp"
-            "src/database/models/enums/AccessLevel.h"
+            "src/utils/Utilities.h"
+            "src/utils/Utilities.cpp"
             "src/main.cpp")
 
 find_package(SQLITE3)

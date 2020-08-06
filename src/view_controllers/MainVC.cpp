@@ -1,4 +1,5 @@
 #include "MainVC.h"
+#include "../utils/Utilities.h"
 
 MainView::MainView(Ref<Window> window) : ViewController::ViewController(window) {
     // Create overlay
@@ -13,9 +14,7 @@ MainView::MainView(Ref<Window> window) : ViewController::ViewController(window) 
 MainView::~MainView() {
     // Destroy instances
     if (overlay_ != NULL) {
-        GetView()->set_load_listener(nullptr);
-        GetView()->set_view_listener(nullptr);
-        overlay_ = nullptr;
+        this->ViewDealloc();
     }
 }
 
@@ -41,9 +40,10 @@ void MainView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, c
     global["OnLoadExperiments"] = BindJSCallbackWithRetval(&MainView::OnLoadExperiments);
     global["OnLoadBeverages"] = BindJSCallbackWithRetval(&MainView::OnLoadBeverages);
     global["OnClickRecord"] = BindJSCallbackWithRetval(&MainView::OnClickRecord);
+    global["OnClickCalculate"] = BindJSCallbackWithRetval(&MainView::OnClickCalculate);
     global["OnAddNewBeverage"] = BindJSCallback(&MainView::OnAddNewBeverage);
     global["OnAddNewSubject"] = BindJSCallback(&MainView::OnAddNewSubject);
-
+    
     // Load initial data
     GetView()->EvaluateScript("vm.initialLoad()");
 }
@@ -222,6 +222,56 @@ JSValue MainView::OnLoadBeverages(const JSObject& obj, const JSArgs& args) {
 
     // Send to javascript
     return JSValue(jArray);
+}
+
+JSValue MainView::OnClickCalculate(const JSObject& obj, const JSArgs& args) {
+    // Parse args to JSArray
+    JSArray jArray(args[0].ToArray());
+    // Vector to hold parsed values
+    std::vector<std::string> tempVec;
+
+    /// Push arguments to vector
+    // BAC
+    ultralight::String rawBac(jArray[0].ToString());
+    std::string bac(static_cast<std::string>(rawBac.utf8().data()));
+    tempVec.push_back(bac);
+    // Weight
+    ultralight::String rawWeight(jArray[1].ToString());
+    std::string weight(static_cast<std::string>(rawWeight.utf8().data()));
+    tempVec.push_back(weight);
+    // Height
+    ultralight::String rawHeight(jArray[2].ToString());
+    std::string height(static_cast<std::string>(rawHeight.utf8().data()));
+    tempVec.push_back(height);
+    // Age
+    ultralight::String rawAge(jArray[3].ToString());
+    std::string age(static_cast<std::string>(rawAge.utf8().data()));
+    tempVec.push_back(age);
+    // Gender
+    ultralight::String rawGender(jArray[4].ToString());
+    std::string gender(static_cast<std::string>(rawGender.utf8().data()));
+    tempVec.push_back(gender);
+    // Target BAC time
+    ultralight::String rawTime(jArray[5].ToString());
+    std::string time(static_cast<std::string>(rawTime.utf8().data()));
+    tempVec.push_back(time);
+
+    // Concentration of beverage
+    ultralight::String rawConcentration(jArray[6].ToString());
+    double concentration(atof(rawConcentration.utf8().data()));
+
+    // Calculate grams
+    double amountGrams = Utilities::CalculateGrams(tempVec);
+    // Calculate beverage
+    int amountBeverage = Utilities::CalculateBeverage(amountGrams, concentration);
+
+    // Create return JSArray
+    JSArray ret;
+    ret.push(JSValue(JSString(std::to_string(amountGrams).c_str())));
+    ret.push(JSValue(JSString(std::to_string(amountBeverage).c_str())));
+
+    // Return the array
+    return JSValue(ret);
 }
 
 JSValue MainView::OnClickRecord(const JSObject& obj, const JSArgs& args) {

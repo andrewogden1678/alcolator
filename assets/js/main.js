@@ -17,6 +17,9 @@ let vm = new Vue({
         records: [ // List of all records
 
         ],
+        searchRecords: [
+
+        ],
         experiments: [ // List of all experiments
 
         ],
@@ -66,12 +69,28 @@ let vm = new Vue({
         selected: {
             subject_code: ""
         }, // Currently selected record
-        isExperimentLoaded: false,
-        isCalculateClicked: false,
+        validated: {
+            age: true,
+            height: true,
+            weight: true,
+            target_bac: true,
+            target_bac_time: true,
+            actual_bac: true,
+            newBeverage: true,
+            changeBeverage: true
+        },
+        xCoordChange: 0,
+        yCoordChange: 0,
+        searchText: "",
+        sortCycle: 1,
+        isExperimentLoaded: false, // Is an experiment loaded
+        isCalculateClicked: false, // Is the calculate button clicked
         isNewStart: true, // Program just started
         isBacMode: false, // Subject is in BAC mode
         isViewingSubject: false, // Subject is being viewed
         isFileMenuOpen: false, // File menu is open
+        isSearchOpen: false,
+        isSearchActive: false,
         isSettingsMenuOpen: false, // Settings menu is open
         isEnterSubjectOpen: false, // Menu for entering subject code is open
         isLoadExperimentOpen: false // Menu for loading experiment is open
@@ -79,6 +98,82 @@ let vm = new Vue({
     components: {
         'record': ComponentRecord,
         'dropdown': ComponentDropdown
+    },
+    watch: { 
+        // Search whilst typing
+        searchText: function (value) { 
+            // Clear search records
+            this.searchRecords = [];
+
+            // Check if empty
+            if (value != "") {
+                // Box is not empty, search is active
+                this.isSearchActive = true; 
+            } else {
+                // Box is empty, search is inactive
+                this.isSearchActive = false;
+            }
+
+            // If search is active
+            if (this.isSearchActive) {
+                // Check if a number
+                if (!isNaN(this.searchText)) {
+                    // It's a number, so check if it is an age
+                    if (parseInt(this.searchText) >= 18 && parseInt(this.searchText) <= 75) {
+                        // Probably an age so get all subjects with the corresponding age
+                        let records = this.records.filter(r => parseInt(r.age) == parseInt(this.searchText));
+                        
+                        // Also get all subject codes
+                        let recordsCodes = this.records.filter(r => r.subject_code.includes(this.searchText));
+
+                        // Loop through pulled age records and add them to search records
+                        for (i = 0; i < records.length; i++) {
+                            this.searchRecords.push(records[i]);
+                        }
+
+                        // Also loop through subjects and add
+                        for (i = 0; i < recordsCodes.length; i++) {
+                            this.searchRecords.push(recordsCodes[i]);
+                        }
+                    } else {
+                        // It's not an age, so get corresponding subject IDs and dates
+                        let records = this.records.filter(r => r.subject_code.includes(this.searchText));
+                        let recordsDates = this.records.filter(r => r.created_on.join(" ").includes(this.searchText));
+                        
+                        // Loop through pulled records and add them to search records
+                        for (i = 0; i < records.length; i++) {
+                            this.searchRecords.push(records[i]);
+                        }
+                        for (i = 0; i < recordsDates.length; i++) {
+                            this.searchRecords.push(recordsDates[i]);
+                        }
+                    }
+                } else { // It's not a number, so it's a subject ID or a date
+                    if (this.searchText.includes('/') || this.searchText.includes('-')) {
+                        // It might be a date, so format the string into date format if includes a '/' instead of a '-'
+                        let tempText = "";
+                        if (this.searchText.includes('/')) {
+                            tempText = this.searchText.split('/').join("-");
+                        }
+
+                        // Get records
+                        let records = this.records.filter(r => r.created_on.join(" ").includes(tempText));
+                        // Loop through pulled records and add them to search records
+                        for (i = 0; i < records.length; i++) {
+                            this.searchRecords.push(records[i]);
+                        }
+                    } else {
+                        // Not a date, so search subject IDs
+                        let records = this.records.filter(r => r.subject_code.includes(this.searchText));
+                        
+                        // Loop through pulled records and add them to search records
+                        for (i = 0; i < records.length; i++) {
+                            this.searchRecords.push(records[i]);
+                        }
+                    }
+                }
+            }
+        }
     },
     methods: {
         /// Data events
@@ -117,7 +212,6 @@ let vm = new Vue({
             }
         },
         loadExp: function () {
-            // TODO: VALIDATE
             // Display subjects if experiment has been chosen
             if (this.experiment.id != null) {
                 this.isExperimentLoaded = true;
@@ -231,6 +325,13 @@ let vm = new Vue({
             // Reset selected
             this.resetSelected();
 
+            // Reset validation
+            this.validated.age = true;
+            this.validated.height = true;
+            this.validated.weight = true;
+            this.validated.target_bac = true;
+            this.validated.target_bac_time = true;
+
             // Remove the draft sidebar record
             this.records.shift();
 
@@ -240,14 +341,101 @@ let vm = new Vue({
             
         },
         calculateClick: function () {
-            // TODO: VALIDATE
-            this.draft.amount_grams = this.calculateConsumption();
-            this.draft.amount_beverage = this.calculateBeverage();
+            let invalid = false; // Hold whether anything is invalid
+            // Age
+            if (this.isNotNumberOrIsDecimal(this.draft.age)) {
+                // If NaN or decimal
+                this.validated.age = false;
+                invalid = true;
+            } else if (parseInt(this.draft.age) < 18 || parseInt(this.draft.age) > 75) {
+                // If outside range
+                this.validated.age = false;
+                invalid = true;
+            } else {
+                // All good
+                this.validated.age = true;
+            }
+
+            // Height
+            if (this.isNotNumberOrIsDecimal(this.draft.height)) {
+                // If NaN or is decimal
+                this.validated.height = false;
+                invalid = true;
+            } else if (parseInt(this.draft.height) < 130 || parseInt(this.draft.height) > 200) {
+                // If outside range
+                this.validated.height = false;
+                invalid = true;
+            } else {
+                // All good
+                this.validated.height = true;
+            }
+
+            // Weight
+            if (isNaN(this.draft.weight)) {
+                // If NaN
+                this.validated.weight = false;
+                invalid = true;
+            } else if (parseFloat(this.draft.weight) < 35 || parseFloat(this.draft.weight) > 150) {
+                // If outside range
+                this.validated.weight = false;
+                invalid = true;
+            } else {
+                // All good
+                this.validated.weight = true
+            }
+
+            // Target BAC
+            if (isNaN(this.draft.target_bac)) {
+                // If NaN
+                this.validated.target_bac = false;
+                invalid = true;
+            } else if (parseFloat(this.draft.target_bac) < 0 || parseFloat(this.draft.target_bac) > 0.15) {
+                // If outside range
+                this.validated.target_bac = false;
+                invalid = true;
+            } else {
+                // All good
+                this.validated.target_bac = true
+            }
+
+            // Target BAC Time
+            if (isNaN(this.draft.target_bac_time)) {
+                // If NaN
+                this.validated.target_bac_time = false;
+                invalid = true;
+            } else if (parseFloat(this.draft.target_bac_time) < 0 || parseFloat(this.draft.target_bac_time) > 8) {
+                // If outside range
+                this.validated.target_bac_time = false;
+                invalid = true;
+            } else {
+                // All good
+                this.validated.target_bac_time = true;
+            }
+
+            // Don't send values for calculation if anything invalid
+            if (invalid) return;
+
+            // Create array
+            let sendValues = [];
+
+            // Push all values for calculation
+            sendValues.push(this.draft.target_bac);
+            sendValues.push(this.draft.weight);
+            sendValues.push(this.draft.height);
+            sendValues.push(this.draft.age);
+            sendValues.push(this.draft.gender == "Male" ? 1 : 0);
+            sendValues.push(this.draft.target_bac_time);
+            sendValues.push(this.draft.beverage_concentration);
+
+            // Calculate and assign
+            let values = window.OnClickCalculate(sendValues);
+            this.draft.amount_grams = parseFloat(values[0]).toFixed(1);
+            this.draft.amount_beverage = values[1];
+            
             // Show administer button
             this.isCalculateClicked = true;
         },
         administeredClick: function () {        
-            // TODO: VALIDATE   
             // Set created on time
             this.draft.created_on = this.getDateNow();
 
@@ -257,7 +445,20 @@ let vm = new Vue({
             this.isBacMode = true;
         },
         bacRecord: function () {
-            // TODO: VALIDATE
+            // Catch invalid input for actual BAC
+            if (isNaN(this.draft.actual_bac)) {
+                // If NaN
+                this.validated.actual_bac = false;
+                return;
+            } else if (parseFloat(this.draft.actual_bac) < 0 || parseFloat(this.draft.actual_bac) > 0.15) {
+                // If outside range
+                this.validated.actual_bac = false;
+                return;
+            } else {
+                // All good
+                this.validated.actual_bac = true
+            }            
+
             // Get current date
             let date = this.getDateNow();
             // Set actual BAC datetime
@@ -349,16 +550,17 @@ let vm = new Vue({
         },
         newSubjectClose: function () {
             this.isEnterSubjectOpen = false;
+            this.isNewStart = true;
         },
         newSubject: function () {
-            // TODO: VALIDATE
             // Get current datetime and format
             let date = this.getDateNow().split(" ");
             // Add new card
             this.records.unshift({
                 id: this.records.length, 
                 subject_code: this.draft.subject_code,
-                created_on: date
+                created_on: date,
+                draft: true
             });
             // Add code to selected
             this.selected.subject_code = this.draft.subject_code;
@@ -394,11 +596,51 @@ let vm = new Vue({
                 name: "",
                 concentration: ""
             };
+            // Reset validation
+            this.validated.newBeverage = true;
+            this.validated.changeBeverage = true;
             // Close menu
             this.isSettingsMenuOpen = false; 
         },
         settingsSave: function () {
-            // TODO: VALIDATE
+            // Record whether validation fails
+            let invalid = false;
+            // Existing concentration
+            if (this.settingsBeverage.concentration == "") {
+                // Continue if empty
+                invalid = false;
+            } else if (this.isNotNumberOrIsDecimal(this.settingsBeverage.concentration)) {
+                // If NaN or is decimal
+                this.validated.changeBeverage = false;
+                invalid = true;
+            } else if (parseInt(this.settingsBeverage.concentration) < 0 || parseInt(this.settingsBeverage.concentration) > 100) {
+                // If outside range
+                this.validated.changeBeverage = false;
+                invalid = true;
+            } else {
+                // All good
+                this.validated.changeBeverage = true;
+            }
+            // New concentration
+            if (this.settingsBeverage.newConc == "") {
+                // Continue if empty
+                invalid = false;
+            } else if (this.isNotNumberOrIsDecimal(this.settingsBeverage.newConc)) {
+                // If NaN or is decimal
+                this.validated.newBeverage = false;
+                invalid = true;
+            } else if (parseInt(this.settingsBeverage.newConct) < 0 || parseInt(this.settingsBeverage.newConc) > 100) {
+                // If outside range
+                this.validated.newBeverage = false;
+                invalid = true;
+            } else {
+                // All good
+                this.validated.newBeverage = true;
+            }
+
+            // Don't save if invalid
+            if (invalid) return;
+
             // Define return array and push values
             let returnArray = [];
             // Return ID if edited and -1 if not
@@ -445,59 +687,61 @@ let vm = new Vue({
             this.draft.beverage_name = beverage.name;
             this.draft.beverage_concentration = beverage.concentration;
         },
-        // CALCULATION METHOD
-        calculateConsumption: function () {
-            let bac = parseFloat(this.draft.target_bac); // Blood alcohol concentration
-            let w = parseFloat(this.draft.weight); // Body weight (kg)
-            let h = parseFloat(this.draft.height) / 100; // Height (m)
-            let a = parseInt(this.draft.age); // Age (years)
-            let gender = Boolean(this.draft.gender == "Male" ? true : false); // Gender (male/female)
-            let elimRate = 10; // Alcohol elimination rate (g/h)
-            let time = parseFloat(this.draft.target_bac_time); // Time at which to reach target BAC
-            let r; // Widmark factor (average)
-
-            // Total body water (TBW) formulae
-            let rWidmark;
-            let rWatson;
-            let rForrest;
-            let rSeidl;
-            let rUlrich;
-
-            // Calculate R factor
-            if (gender) { // Subject is male
-                // Set formulae
-                rWidmark = 0.68;
-                rWatson = 0.39834 + ((12.725 * h) / w) - ((0.11275 * a) / w) + (2.8993 / w);
-                rForrest = 1.0178 - ((0.012127 * w) / (h * h));
-                rSeidl = 0.31608 - (0.004821 * w) + (0.4632 * (h));
-                rUlrich = 0.715 - (0.00462 * w) + (0.22 * h);
-
-                // Average together to produce r value
-                r = 0.2 * (rWidmark + rWatson + rForrest + rSeidl + rUlrich);
-
-            } else { // Subject is female
-                // Set formulae
-                rWidmark = 0.55;
-                rWatson = 0.29218 + ((12.666 * h) / w) - (2.4846 / w);
-                rForrest = 0.8736 - ((0.0124 * w) / (h * h));
-                rSeidl = 0.31223 - (0.006446 * w) + (0.4466 * (h));
-
-                // Average together to produce r value
-                r = 0.25 * (rWidmark + rWatson + rForrest + rSeidl);
-            }
-
-            // Substitute into Widmark's formula and return
-            return ((bac * 10) * (r * w) + (elimRate * time)).toFixed(1); 
-        },
-        calculateBeverage: function () { // Get mililitres of drink
-            return Math.round((this.draft.amount_grams / parseFloat(this.draft.beverage_concentration)) / 0.7935);
+        isNotNumberOrIsDecimal: function (data) {
+            // If not number
+            if (isNaN(data)) return true;
+    
+            // If decimal
+            if (data.indexOf('.') != -1) return true;
+    
+            // Otherwise
+            return false;
         },
         /// Sorting methods
         sortClick: function() {
-            window.OnClickSort();
+            // TODO: default sort
+            // Increment sort counter
+            if (this.sortCycle != 4) { // Increment counter
+                this.sortCycle++;
+            } else { // Go back to first cycle if already 4
+                this.sortCycle = 1;
+            }
+
+            // Sort elements
+            if (this.sortCycle == 1) {
+                // Sorting by age descending
+
+            }
         },
-        searchSubmit: function () {
-            window.OnSearchSubmit();
+        searchClick: function () {
+            // If already open
+            if (this.isSearchOpen === true) {
+                // Close, clear bar, and return
+                this.isSearchOpen = false;
+                this.searchText = "";
+                this.isSearchActive = false;
+                return;
+            }
+            // Open the search box
+            this.isSearchOpen = true;
+        },
+        searchHide: function (event) {
+            // Get menu & target
+            let element = this.$refs.searchBox;
+            let target = event.target;
+            // Check if the target is the file button
+            if (target.id === "searchBtn") {
+                // Skip next block
+                return;
+            }
+            // If click outside the menu
+            if ((element !== target) && !element.contains(target)) {
+                // Close menu
+                this.isSearchOpen = false;
+                // Clear search box
+                this.searchText = "";
+                this.isSearchActive = false;
+            }
         },
         // WINDOW methods
         winClose: function () {
@@ -506,11 +750,13 @@ let vm = new Vue({
         }
     },
     created () {
-        // Add the click listener
+        // Add the click listeners
         document.addEventListener('click', this.fileMenuHide);
+        document.addEventListener('click', this.searchHide);
     },
     destroyed () {
         // Remove the click listener
         document.removeEventListener('click', this.fileMenuHide);
+        document.removeEventListener('click', this.searchHide);
     }
 });
