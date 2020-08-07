@@ -82,7 +82,7 @@
               v-bind:record="record"
               v-bind:class="{draft: record.draft}"
               @click.native="recordClick($event, record)">
-            </record>
+              </record>
             </template>
             <template v-else>
               <record
@@ -91,7 +91,7 @@
               v-bind:record="record"
               v-bind:class="{draft: record.draft}"
               @click.native="recordClick($event, record)">
-            </record>
+              </record>
             </template>
           </div>
         </div>
@@ -318,7 +318,7 @@
                 <template v-else>
                   <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
                     <button class="normal dark-grey white--text selectable" style="margin-right: 25px; width: 172px;" id="cancel" @click="cancelSubject">Cancel</button>
-                    <template v-if="this.draft.age == '' || this.draft.gender == '' || this.draft.height == '' || this.draft.weight == '' || this.draft.target_bac == '' || this.draft.target_bac_time == '' || this.draft.beverage_name == ''">
+                    <template v-if="draft.age == '' || draft.gender == '' || draft.height == '' || draft.weight == '' || draft.target_bac == '' || draft.target_bac_time == '' || draft.beverage_name == ''">
                       <button class="normal red white--text disabled" style="margin-right: 25px;" id="calculate">Calculate</button>
                     </template>
                     <template v-else>

@@ -40,7 +40,9 @@ set(SOURCES "src/database/Database.h"
 
 find_package(SQLITE3)
 if (SQLITE3_FOUND)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/bcrypt)
   include_directories(${SQLITE3_INCLUDE_DIRS})
   add_app("${SOURCES}")
   target_link_libraries (Alcolator ${SQLITE3_LIBRARIES})
+  target_link_libraries (Alcolator ${CMAKE_CURRENT_SOURCE_DIR}/include/bcrypt/bcrypt.lib)
 endif (SQLITE3_FOUND)

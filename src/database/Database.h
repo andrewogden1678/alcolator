@@ -199,7 +199,7 @@ class Database {
 
         // UPDATE
         template <class T> 
-        int Update(T* model) {
+        int Update(T* model, std::string excluded = "none") {
             // Get all object members
             std::vector<std::string> members = model->Serialise();
 
@@ -211,6 +211,11 @@ class Database {
             // Add items
             int counter = 0; // Counter for formatting
             for (std::vector<std::string>::iterator i = members.begin(); i != members.end(); i++) {
+                // Skip excluded column (for identity)
+                if (*i == excluded) {
+                    continue;
+                }
+
                 // Add comma if not first item
                 if (counter != 0) {
                     stmt += ",";

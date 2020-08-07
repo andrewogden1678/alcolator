@@ -1,0 +1,225 @@
+<html>
+  <head>
+    <!-- Main app stylesheet-->
+    <link rel="stylesheet" href="css/app.css">
+    <!-- Material Design Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Vue.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="vm">
+      <div class="nav dark-grey white--text" id="window">
+          <a class="nav-item selectable--text" id="fm" @click="fileMenu" ref="btnFile">File</a>
+          <img src="img/nav_separator.svg" class="nav-item cursor-default">
+          <a class="nav-item"><strong>Administration Mode</strong></a>
+          <h2 class="yellow--text nav-item--push cursor-default"><strong>Alcolator</strong></h2>
+          <img src="img/nav_separator.svg" class="nav-item cursor-default" style="opacity: 0.2">
+          <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;">minimize</i>
+          <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;" @click="winClose">close</i>
+      </div>
+      <div class="flexbox-row" id="vm">
+        <div class="flexbox-column--list light-grey">
+          <input v-model="searchText" class="white border--black regular" ref="searchBox" v-bind:class="{show: isSearchOpen}" style="padding-left: 38px; position: absolute; left: 196px; top: 35px; display: none;" id="search">
+          <div class="flexbox-row--align" style="padding-top: 5px;">
+            <strong><h2 style="margin: 0;">Users</h2></strong>
+            <i @click="searchClick" id="searchBtn" class="material-icons selectable--text" style="margin-right: 9px; margin-left: 96px; margin-top: 2px; position: absolute; font-size: 30px;">search</i>
+          </div>       
+          <div class="vertical-scroll">
+            <template v-if="isSearchActive">
+              <user
+              v-for="user in searchUsers"
+              v-bind:key="user.id"
+              v-bind:record="user"
+              v-bind:class="{draft: user.draft}"
+              @click.native="userClick($event, user)">
+            </user>
+            </template>
+            <template v-else>
+              <user
+                v-for="user in users"
+                v-bind:key="user.id"
+                v-bind:user="user"
+                v-bind:class="{draft: user.draft}"
+                @click.native="userClick($event, user)">
+              </user>
+            </template>
+          </div>
+        </div>
+        <div class="flexbox-column--dat pad--10px">
+          <template v-if="isNewStart">
+            <h3 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">Please select an operation.</h3>
+            <div class="flexbox-row pad--10px" style="height: 63%;"></div>
+          </template>
+          <template v-else>
+            <template v-if="isNewUserOpen">
+              <strong><h4 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">New User {{draft.firstName}} {{draft.lastName}}</h4></strong>
+            </template>
+            <template v-else-if="isViewingUser">
+              <strong><h4 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">Viewing User {{this.viewName}}</h4></strong>
+            </template>
+            <div class="flexbox-row pad--10px" style="height: 63%; padding-bottom: 20px;">
+              <div class="flexbox-column" style="width: 50%;">
+                <div class="flexbox-row--alignright margin-tb--16px">
+                  <h3 class="margin-input input-label semibold">First Name: </h3>
+                  <template v-if="isNewUserOpen">
+                    <input class="light-grey border--black regular--dat" type="text" id="fname" v-model="draft.firstName">
+                  </template>
+                  <template v-else-if="isViewingUser">
+                    <input class="light-grey border--black regular--dat" type="text" id="fname" v-model="selected.firstName">
+                  </template>
+                </div>
+                <div class="flexbox-row--alignright margin-tb--16px">
+                  <h3 class="margin-input input-label semibold">Last Name: </h3>
+                  <template v-if="isNewUserOpen">
+                    <input class="light-grey border--black regular--dat" type="text" id="lname" v-model="draft.lastName">
+                  </template>
+                  <template v-else-if="isViewingUser">
+                    <input class="light-grey border--black regular--dat" type="text" id="lname" v-model="selected.lastName">
+                  </template>
+                </div>
+                <div class="flexbox-row--alignright margin-tb--16px">
+                  <h3 class="margin-input input-label semibold">Username: </h3>
+                  <template v-if="isNewUserOpen">
+                    <input class="light-grey border--black regular--dat" style="display: inline-block;"type="text" id="username" v-model="draft.username">
+                  </template>
+                  <template v-else-if="isViewingUser">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="username" v-model="selected.username">
+                    <i class="material-icons lock">lock</i>
+                  </template>
+                </div>
+                <div class="flexbox-row--alignright margin-tb--16px">
+                  <h3 class="margin-input input-label semibold">Password: </h3>
+                  <template v-if="isNewUserOpen">
+                    <input class="light-grey border--black regular--dat" type="password" id="userpass" v-model="draft.password">
+                  </template>
+                  <template v-else-if="isViewingUser">
+                    <input readonly class="locked-grey border--black regular--dat" type="text" id="userpass">
+                    <i class="material-icons lock">lock</i>
+                  </template>
+                </div>
+              </div>
+              <div class="flexbox-column" style="width: 50%;">
+                <div class="flexbox-row--alignright margin-tb--16px">
+                  <h3 class="margin-input input-label semibold">Access Level: </h3>
+                  <template v-if="isNewUserOpen">
+                    <div class="dropdown">
+                      <template v-if="draft.accessLevelFull != ''">
+                        <button class="dropdown-btn regular--dat light-grey" style="width: 88.9%; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                            {{draft.accessLevelFull}}
+                        </button>
+                      </template>
+                      <template v-else>
+                        <button class="dropdown-btn regular--dat light-grey" style="width: 88.9%; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                            Select
+                        </button>                 
+                      </template>
+                    <div class="dropdown-content light-grey--notopaque" style="min-width: 88%;" id="dropContent">
+                      <dropdown
+                        v-bind:key="1"
+                        v-bind:obj="accessLevels.observer"                        
+                        @click.native="setAccessLevel($event, 0)">
+                      </dropdown>
+                      <dropdown
+                        v-bind:key="2"
+                        v-bind:obj="accessLevels.experimenter"
+                        @click.native="setAccessLevel($event, 1)">
+                      </dropdown>
+                      <dropdown
+                        v-bind:key="3"
+                        v-bind:obj="accessLevels.administrator"
+                        @click.native="setAccessLevel($event, 2)">
+                      </dropdown>
+                    </div>
+                  </template>
+                  <template v-else-if="isViewingUser">
+                    <template v-if="selected.accessLevel == 2">
+                      <input readonly class="locked-grey border--black regular--dat" type="text" v-model="selected.accessLevelFull">
+                      <i class="material-icons lock">lock</i>
+                    </template>
+                    <template v-else>
+                      <div class="dropdown">
+                        <template v-if="selected.accessLevelFull != ''">
+                          <button class="dropdown-btn regular--dat light-grey" style="width: 88.9%; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                              {{selected.accessLevelFull}}
+                          </button>
+                        </template>
+                        <template v-else>
+                          <button class="dropdown-btn regular--dat light-grey" style="width: 88.9%; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                              Select
+                          </button>                 
+                        </template>
+                      <div class="dropdown-content light-grey--notopaque" style="min-width: 88%;" id="dropContent">
+                        <dropdown
+                          v-bind:key="1"
+                          v-bind:obj="accessLevels.observer"
+                          @click.native="setAccessLevel($event, 0, true)">
+                        </dropdown>
+                        <dropdown
+                          v-bind:key="2"
+                          v-bind:obj="accessLevels.experimenter"
+                          @click.native="setAccessLevel($event, 1, true)">
+                        </dropdown>
+                        <dropdown
+                          v-bind:key="3"
+                          v-bind:obj="accessLevels.administrator"
+                          @click.native="setAccessLevel($event, 2, true)">
+                        </dropdown>
+                      </div>
+                    </template>
+                  </template>
+                </div>
+                <div class="flexbox-row--alignright" style="justify-content: flex-end; margin-top: 50px;">
+                  <template v-if="isViewingUser">
+                    <template v-if="selected.firstName == '' || selected.lastName == '' || selected.username == '' || selected.accessLevelFull == ''">
+                      <button class="normal dark-grey white--text disabled" style="margin-right: 25px; width: 172px; padding-right: 25px; padding-left: 25px;" id="changesSave">Save Changes</button>
+                    </template>
+                    <template v-else>
+                      <button class="normal dark-grey white--text selectable" style="margin-right: 25px; width: 172px; padding-right: 25px; padding-left: 25px;" id="changesSave" @click="editUser">Save Changes</button>
+                    </template>
+                  </template>
+                  <template v-else-if="draft.firstName == '' || draft.lastName == '' || draft.username == '' || draft.password == '' || draft.accessLevel == ''">
+                    <button class="normal dark-grey white--text disabled" style="margin-right: 25px; width: 172px; padding-right: 25px; padding-left: 25px;">Save Changes</button>
+                  </template>
+                  <template v-else>
+                    <button class="normal dark-grey white--text selectable" style="margin-right: 25px; width: 172px; padding-right: 25px; padding-left: 25px;" id="saveNewUser" @click="saveNewUser">Save Changes</button>
+                  </template>
+                </div>
+                <div class="flexbox-row--alignright" style="justify-content: flex-end; margin-top: 30px;">
+                  <template v-if="isViewingUser">
+                    <button class="normal red white--text selectable" style="margin-right: 25px; width: 172px;" id="deleteUser" @click="deleteUser">Delete User</button>
+                  </template>
+                  <template v-else-if="isNewUserOpen">
+                    <button class="normal red white--text selectable" style="margin-right: 25px; width: 172px;" id="cancel" @click="cancelNewUser">Cancel</button>
+                  </template>
+                </div>
+              </div> 
+            </div>
+          </template>
+          <div class="flexbox-row light-grey" style="height: 37%;">
+            <strong><h2 style="margin: 5px;">Recent Activity</h2></strong>
+            <img src="img/bottle.png" alt="beer bottle" class="nav-item--push" style="align-self: flex-end; margin-bottom: 0; margin-right: 20px;" width="209px" height="145px">
+          </div>
+        </div>
+        <div class="file-menu white" style="height: 158px;" v-bind:class="{show: isFileMenuOpen === true}" ref="menuFile">
+          <div class="flexbox-column">
+            <template v-if="isNewUserOpen || draft.active">
+              <h6 class="file-menu--text disabled--text">New User</h6>
+            </template>
+            <template v-else>
+              <h6 class="file-menu--text selectable--text" @click="fileNewUser">New User</h6>
+            </template>
+            <hr class="menu-sep" align="center">
+            <h6 class="file-menu--text selectable--text" @click="fileNewExp">New Experiment</h6>
+            <hr class="menu-sep" align="center">
+            <h6 class="file-menu--text selectable--text" @click="fileExpMode">Experimenter</h6>
+            <h6 class="file-menu--text selectable--text" @click="fileLogOut">Log Out</h6>
+            <h6 class="file-menu--text selectable--text" @click="winClose">Exit</h6>
+          </div>
+        </div>
+      </div>      
+    </div>
+  </body>
+  <!-- Page Script -->
+  <script src="js/admin.js"></script> 
+</html>

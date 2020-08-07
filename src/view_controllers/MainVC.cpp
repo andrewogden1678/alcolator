@@ -142,7 +142,7 @@ void MainView::OnAddNewSubject(const JSObject& obj, const JSArgs& args) {
 }
 JSValue MainView::OnLoadExperiments(const JSObject& obj, const JSArgs& args) {
     // Get all experiments
-    std::vector<Experiment> experiments(Database::Instance()->Select<Experiment>("is_concluded", "IS", to_string(0)));
+    std::vector<Experiment> experiments(Database::Instance()->Select<Experiment>("is_concluded", "IS", std::to_string(0)));
 
     // JS Array
     JSArray jArray;

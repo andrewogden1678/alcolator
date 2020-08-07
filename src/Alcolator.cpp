@@ -1,5 +1,6 @@
 #include "Alcolator.h"
 #include "view_controllers/LoginVC.h"
+#include "view_controllers/AdminVC.h"
 
 // Definitions
 #define WINDOW_WIDTH  900
@@ -21,7 +22,7 @@ Alcolator::Alcolator() {
   window_->SetTitle("Alcolator");
 
   // Go to the login page
-  nextView_.reset(new LoginView(*window_.get()));
+  nextView_.reset(new AdminView(*window_.get()));
 
   // Set the view listener to the current view
   window_->set_listener(nextView_.get());

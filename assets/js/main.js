@@ -557,7 +557,7 @@ let vm = new Vue({
             let date = this.getDateNow().split(" ");
             // Add new card
             this.records.unshift({
-                id: this.records.length, 
+                id: this.records.length + 1, 
                 subject_code: this.draft.subject_code,
                 created_on: date,
                 draft: true

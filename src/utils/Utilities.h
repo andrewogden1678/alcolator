@@ -1,5 +1,6 @@
 #include "../database/Database.h"
 
+
 ///
 /// App Utilities
 ///
@@ -13,4 +14,7 @@ class Utilities {
 
         // Authenticate user
         static int Authenticate(std::string username, std::string password);
+
+        // Hash password
+        static std::string Hash(std::string password);
 };
