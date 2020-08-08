@@ -13,27 +13,28 @@ cd (path)/Alcolator
 mkdir build
 ```
 
-## 3. Run the application
+## 3. Build & run the application
 
-Execute the `run.sh` file to build and run the solution.
+Execute the `build.sh` file first, then the `run.sh` file to run the solution.
 
-## Mr N Instructions 1st August
+## Mr N Instructions 8th August
 
-Ready to test!
+Here's this week's effort. Solution is effectively feature complete.
 
-Process is no different than before, however I have uploaded a new sqlite3 folder to the Canvas assignment.
-Replace the contents of `include/sqlite3` in the project with the files inside the zip folder I uploaded.
+The process has barely changed. Take the include folder I sent you on Canvas and extract it into the root directory. (like alcolator/include/).
+After that, create a 'build' folder in the root directory if it is not already there, build the solution using 'build.sh' and then you can run it with 'run.sh'. The shell scripts will take care of everything.
 
-After that, the run process is the same as before, just click on the run.sh file. It will handle the building, copying of dependencies and running of the program.
+Only things missing are the ability to generate reports (not hard to do according to a google search) and the minimise button functionality. 
 
-The login button will proceed to the main page. From there, I have (temporarily) mapped the 'file' button to a listener that lists the current Subjects in the database down the sidebar. The close buttons also work.
+I have made you a user account with Administrator permissions. Details are below:
 
-I will also compress the list down the left hand side, like you said the sidebar won't be very usable unless they're made a bit smaller.
+```
+Username: t.nguyen
+Password: tnguyen123
+```
 
-I have also fixed the compiler to always compile to 64 bit. Sometimes I found it was actually compiling a 32 bit binary which was causing all sorts of problems :).
+As an administrator you can switch between the admin panel and the experimenting panel. Click 'Experimenter' under the 'file' menu to switch to experimenting mode, and 'Administration' to do the reverse inside the experimenting panel. Data manipulation, calculation, searching, sorting, permissions logic, password security, you name it, it's been done :).
 
-Let me know if there are any issues. Also let me know if you would like a copy of the small console program I wrote to test my SQLite interface if you want to play around with the functionality I have implemented.
-
-Hope you like so far :).
+Hope you like it!
 
 *Created by Andrew Ogden (2020).*
