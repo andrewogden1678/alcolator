@@ -35,6 +35,8 @@ Password: tnguyen123
 
 As an administrator you can switch between the admin panel and the experimenting panel. Click 'Experimenter' under the 'file' menu to switch to experimenting mode, and 'Administration' to do the reverse inside the experimenting panel. Data manipulation, calculation, searching, sorting, permissions logic, password security, you name it, it's been done :).
 
+The app's main task is to assist research involving alcohol in a laboratory environment. The idea is to make it easier for researchers to calculate a predicted amount of alcohol to give someone for them to reach a certain BAC. The BAC that they will target will never be greater than 0.15. The calculator specifies alcohol volume not only in grams, but also in mls of a beverage type specified by the experimenter. After administering the alcohol to the subject, the experimenter is able to then add their actual recorded BAC. According to my client, subject codes will likely be in a 4-5 digit numeric form, with the experiment code at the beginning. I have factored that into the display.
+
 Hope you like it!
 
 *Created by Andrew Ogden (2020).*
