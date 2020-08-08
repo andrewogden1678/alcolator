@@ -10,13 +10,13 @@
   <body>
     <div id="vm">
       <div class="nav dark-grey white--text" id="window">
-          <a class="nav-item selectable--text" id="fm" @click="fileMenu" ref="btnFile">File</a>
+          <a class="nav-item selectable--text" style="font-weight: 700;" id="fm" @click="fileMenu" ref="btnFile">File</a>
           <img src="img/nav_separator.svg" class="nav-item cursor-default">
-          <a class="nav-item"><strong>Administration Mode</strong></a>
-          <h2 class="yellow--text nav-item--push cursor-default"><strong>Alcolator</strong></h2>
+          <a class="nav-item">Administration Mode</a>
+          <h2 class="yellow--text nav-item--push cursor-default"><strong></strong>Alcolator</strong></h2>
           <img src="img/nav_separator.svg" class="nav-item cursor-default" style="opacity: 0.2">
           <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;">minimize</i>
-          <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;" @click="winClose">close</i>
+          <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;" @click="areYouSureOpen(winClose)">close</i>
       </div>
       <div class="flexbox-row" id="vm">
         <div class="flexbox-column--list light-grey">
@@ -84,8 +84,7 @@
                     <input class="light-grey border--black regular--dat" style="display: inline-block;"type="text" id="username" v-model="draft.username">
                   </template>
                   <template v-else-if="isViewingUser">
-                    <input readonly class="locked-grey border--black regular--dat" type="text" id="username" v-model="selected.username">
-                    <i class="material-icons lock">lock</i>
+                    <input class="light-grey border--black regular--dat" type="text" id="username" v-model="selected.username">
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--16px">
@@ -94,14 +93,13 @@
                     <input class="light-grey border--black regular--dat" type="password" id="userpass" v-model="draft.password">
                   </template>
                   <template v-else-if="isViewingUser">
-                    <input readonly class="locked-grey border--black regular--dat" type="text" id="userpass">
-                    <i class="material-icons lock">lock</i>
+                    <input class="light-grey border--black regular--dat" type="password" id="userpass" v-model="selected.password">
                   </template>
                 </div>
               </div>
               <div class="flexbox-column" style="width: 50%;">
                 <div class="flexbox-row--alignright margin-tb--16px">
-                  <h3 class="margin-input input-label semibold">Access Level: </h3>
+                  <h3 class="margin-input input-label semibold">Access Type: </h3>
                   <template v-if="isNewUserOpen">
                     <div class="dropdown">
                       <template v-if="draft.accessLevelFull != ''">
@@ -178,7 +176,7 @@
                       <button class="normal dark-grey white--text selectable" style="margin-right: 25px; width: 172px; padding-right: 25px; padding-left: 25px;" id="changesSave" @click="editUser">Save Changes</button>
                     </template>
                   </template>
-                  <template v-else-if="draft.firstName == '' || draft.lastName == '' || draft.username == '' || draft.password == '' || draft.accessLevel == ''">
+                  <template v-else-if="draft.firstName == '' || draft.lastName == '' || draft.username == '' || draft.password == '' || draft.accessLevelFull == ''">
                     <button class="normal dark-grey white--text disabled" style="margin-right: 25px; width: 172px; padding-right: 25px; padding-left: 25px;">Save Changes</button>
                   </template>
                   <template v-else>
@@ -186,11 +184,8 @@
                   </template>
                 </div>
                 <div class="flexbox-row--alignright" style="justify-content: flex-end; margin-top: 30px;">
-                  <template v-if="isViewingUser">
-                    <button class="normal red white--text selectable" style="margin-right: 25px; width: 172px;" id="deleteUser" @click="deleteUser">Delete User</button>
-                  </template>
-                  <template v-else-if="isNewUserOpen">
-                    <button class="normal red white--text selectable" style="margin-right: 25px; width: 172px;" id="cancel" @click="cancelNewUser">Cancel</button>
+                  <template v-if="isNewUserOpen">
+                    <button class="normal red white--text selectable" style="margin-right: 25px; width: 172px;" id="cancel" @click="areYouSureOpen(cancelNewUser)">Cancel</button>
                   </template>
                 </div>
               </div> 
@@ -203,18 +198,48 @@
         </div>
         <div class="file-menu white" style="height: 158px;" v-bind:class="{show: isFileMenuOpen === true}" ref="menuFile">
           <div class="flexbox-column">
-            <template v-if="isNewUserOpen || draft.active">
+            <template v-if="isNewUserOpen || draft.active || isNewExperimentOpen">
               <h6 class="file-menu--text disabled--text">New User</h6>
             </template>
             <template v-else>
               <h6 class="file-menu--text selectable--text" @click="fileNewUser">New User</h6>
             </template>
             <hr class="menu-sep" align="center">
-            <h6 class="file-menu--text selectable--text" @click="fileNewExp">New Experiment</h6>
+            <template v-if="isNewExperimentOpen">
+              <h6 class="file-menu--text disabled--text">New Experiment</h6>
+            </template>
+            <template v-else>
+              <h6 class="file-menu--text selectable--text" @click="fileNewExp">New Experiment</h6>
+            </template>
             <hr class="menu-sep" align="center">
             <h6 class="file-menu--text selectable--text" @click="fileExpMode">Experimenter</h6>
             <h6 class="file-menu--text selectable--text" @click="fileLogOut">Log Out</h6>
             <h6 class="file-menu--text selectable--text" @click="winClose">Exit</h6>
+          </div>
+        </div>
+        <div class="modal" v-bind:class="{show: isAreYouSureOpen}">
+          <div class="modal--input white">
+            <h1 style="font-size: 24px; margin: 0;">Are you sure?</h1>
+            <h6 style="margin-top: 22px; margin-bottom: 27px; padding: 0;">You might lose some changes.</h6>
+            <div class="flexbox-row--align" style="margin-top: 15px; margin-left: 20px; width: 100%;">
+              <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="areYouSureYes">Proceed</button>
+              <button class="red white--text selectable" style="margin-left: 5px; margin-right: 50px;" @click="areYouSureNo">Cancel</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal" v-bind:class="{show: isNewExperimentOpen === true}">
+          <div class="modal--input white">
+            <h1 style="font-size: 24px; margin: 0;">New Experiment</h1>
+            <input v-model="experimentCode" maxlength="12" class="light-grey border--black regular" type="text" id="expID" style="margin-top: 15px" placeholder=" Experiment code">
+            <div class="flexbox-row--align" style="margin-top: 15px; margin-left: 20px; width: 100%;">
+              <template v-if="experimentCode != ''">
+                <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="newExperiment">Proceed</button>
+              </template>
+              <template v-else>
+                <button class="dark-grey white--text disabled" style="margin-right: 5px;">Proceed</button>
+              </template>
+              <button class="red white--text selectable" style="margin-left: 5px; margin-right: 50px;" @click="newExperimentClose">Cancel</button>
+            </div>
           </div>
         </div>
       </div>      

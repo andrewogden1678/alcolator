@@ -1,5 +1,6 @@
 #pragma once
 #include "ViewController.h"
+#include "../database/models/Identity.h"
 
 using namespace ultralight;
 
@@ -24,5 +25,5 @@ class LoginView : public ViewController
             bool is_main_frame, const String& url) override;
 
         /// Local JS-Invoked Methods
-        void OnLogin(const JSObject& obj, const JSArgs& args);
+        bool OnLogin(const JSObject& obj, const JSArgs& args);
 };

@@ -1,6 +1,7 @@
 #pragma once
 #include <AppCore/AppCore.h>
 #include <AppCore/JSHelpers.h>
+#include "../utils/Utilities.h"
 
 using namespace ultralight;
 

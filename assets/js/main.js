@@ -1,7 +1,7 @@
 // Record component
 var ComponentRecord = Vue.component('record', {
-    props: ["record"],
-    template: '<div class="flexbox-row--align margin--dataitem dataitem" style="min-height: 73px;"><i class="material-icons list-icon" style="width: 20%; margin-right: 20px; margin-left: 5px">assignment_ind</i><div class="flexbox-column--align"><div class="flexbox-row--alignleft"><h5 class="nomargin" style="text-align: left;">{{record.subject_code}}</h5></div><div class="flexbox-row--alignleft"><h3 class="nomargin" style="text-align: left;">{{record.created_on[0]}}</h3></div></div></div>'
+    props: ["record", "experiment"],
+    template: "<div class='flexbox-row--align margin--dataitem dataitem' style='min-height: 73px;'><i class='material-icons list-icon' style='width: 20%; margin-right: 20px; margin-left: 5px'>assignment_ind</i><div class='flexbox-column--align'><div class='flexbox-row--alignleft'><h5 class='nomargin' style='text-align: left; font-size: 16pt'>{{experiment.name}}-{{record.subject_code}}</h5></div><div class='flexbox-row--alignleft'><h3 class='nomargin' style='text-align: left;'>{{record.display_date}}</h3></div></div></div>"
 });
 
 // Dropdown component
@@ -37,7 +37,7 @@ let vm = new Vue({
             raw: false
         },
         user: { // Current user in session
-            id: 1,
+            id: -1,
             firstName: "",
             lastName: "",
             accessLevel: "",
@@ -67,7 +67,8 @@ let vm = new Vue({
             beverage_concentration: ""
         }, 
         selected: {
-            subject_code: ""
+            subject_code: "",
+            beverage_name: ""
         }, // Currently selected record
         validated: {
             age: true,
@@ -77,23 +78,25 @@ let vm = new Vue({
             target_bac_time: true,
             actual_bac: true,
             newBeverage: true,
-            changeBeverage: true
+            changeBeverage: true,
+            newSubjectCode: true
         },
-        xCoordChange: 0,
-        yCoordChange: 0,
+        fileMenuHeight: "135px",
         searchText: "",
-        sortCycle: 1,
+        sortCycle: 0,
+        areYouSureCallback: null,
         isExperimentLoaded: false, // Is an experiment loaded
         isCalculateClicked: false, // Is the calculate button clicked
         isNewStart: true, // Program just started
         isBacMode: false, // Subject is in BAC mode
         isViewingSubject: false, // Subject is being viewed
         isFileMenuOpen: false, // File menu is open
-        isSearchOpen: false,
-        isSearchActive: false,
+        isSearchOpen: false, // Search bar is open
+        isSearchActive: false, // Is the search bar being typed in
         isSettingsMenuOpen: false, // Settings menu is open
         isEnterSubjectOpen: false, // Menu for entering subject code is open
-        isLoadExperimentOpen: false // Menu for loading experiment is open
+        isLoadExperimentOpen: false, // Menu for loading experiment is open
+        isAreYouSureOpen: false // Is the are you sure window open        
     },
     components: {
         'record': ComponentRecord,
@@ -118,33 +121,18 @@ let vm = new Vue({
             if (this.isSearchActive) {
                 // Check if a number
                 if (!isNaN(this.searchText)) {
-                    // It's a number, so check if it is an age
-                    if (parseInt(this.searchText) >= 18 && parseInt(this.searchText) <= 75) {
-                        // Probably an age so get all subjects with the corresponding age
-                        let records = this.records.filter(r => parseInt(r.age) == parseInt(this.searchText));
-                        
-                        // Also get all subject codes
-                        let recordsCodes = this.records.filter(r => r.subject_code.includes(this.searchText));
-
-                        // Loop through pulled age records and add them to search records
-                        for (i = 0; i < records.length; i++) {
-                            this.searchRecords.push(records[i]);
-                        }
-
-                        // Also loop through subjects and add
-                        for (i = 0; i < recordsCodes.length; i++) {
-                            this.searchRecords.push(recordsCodes[i]);
-                        }
-                    } else {
-                        // It's not an age, so get corresponding subject IDs and dates
-                        let records = this.records.filter(r => r.subject_code.includes(this.searchText));
-                        let recordsDates = this.records.filter(r => r.created_on.join(" ").includes(this.searchText));
-                        
-                        // Loop through pulled records and add them to search records
-                        for (i = 0; i < records.length; i++) {
-                            this.searchRecords.push(records[i]);
-                        }
-                        for (i = 0; i < recordsDates.length; i++) {
+                    // Get corresponding subject IDs and dates
+                    let records = this.records.filter(r => r.subject_code.includes(this.searchText.toLowerCase()));
+                    let recordsDates = this.records.filter(r => r.created_on.join(" ").includes(this.searchText));
+                    
+                    // Loop through pulled records and add them to search records
+                    for (i = 0; i < records.length; i++) {
+                        this.searchRecords.push(records[i]);
+                    }
+                    for (i = 0; i < recordsDates.length; i++) {
+                        // Make sure no double ups occur
+                        let index = records.map((r) => r.id).indexOf(recordsDates[i].id);
+                        if (index != -1) {
                             this.searchRecords.push(recordsDates[i]);
                         }
                     }
@@ -164,7 +152,7 @@ let vm = new Vue({
                         }
                     } else {
                         // Not a date, so search subject IDs
-                        let records = this.records.filter(r => r.subject_code.includes(this.searchText));
+                        let records = this.records.filter(r => r.subject_code.toLowerCase().includes(this.searchText.toLowerCase()));
                         
                         // Loop through pulled records and add them to search records
                         for (i = 0; i < records.length; i++) {
@@ -178,8 +166,15 @@ let vm = new Vue({
     methods: {
         /// Data events
         initialLoad: function () {
-            // TODO: Get user
-            
+            // Get user
+            let user = window.OnGetUser();
+            this.user = {
+                id: parseInt(user[0]),
+                firstName: user[1],
+                lastName: user[2],
+                accessLevel: parseInt(user[3])
+            };
+
             // Get experiments
             let exps = window.OnLoadExperiments();
             for (i = 0; i < exps.length; i++) {
@@ -189,6 +184,11 @@ let vm = new Vue({
 
             // Get beverages
             this.loadBeverages();
+
+            // Set file menu height to fit menu item if adminstrator access
+            if (this.user.accessLevel == 2) {
+                this.fileMenuHeight = "158px";
+            }
         },
         loadBeverages: function () {
             // Get beverages
@@ -208,7 +208,8 @@ let vm = new Vue({
             for (i = 0; i < subjects.length; i++) {
                 this.records.push({id: subjects[i][0], 
                     subject_code: subjects[i][1], 
-                    created_on: subjects[i][2].split(" ")});
+                    created_on: subjects[i][2].split(" "),
+                    display_date: subjects[i][2].split(" ")[0].split('-').reverse().join('/')});
             }
         },
         loadExp: function () {
@@ -220,16 +221,21 @@ let vm = new Vue({
                 this.isLoadExperimentOpen = false;
             }
 
-            // Reset selected
+            // Reset selected & screens
             this.resetSelected();
+            this.isNewStart = true;
+            this.isViewingSubject = false;
+            this.isBacMode = false;
+            this.isCalculateClicked = false;
         },
         recordClick: function (event, record) {
             // Reset selected
             this.resetSelected();
             // If it is the draft
             if (record.subject_code == this.draft.subject_code) {
-                // Set the subject code
+                // Set the subject code and beverage name
                 this.selected.subject_code = this.draft.subject_code;
+                this.selected.beverage_name = this.draft.beverage_name.toLowerCase();
                 // Reset screen
                 this.isViewingSubject = false;
                 // Toggle correct screen if BAC mode
@@ -303,7 +309,6 @@ let vm = new Vue({
             };
         },
         cancelSubject: function () {
-            // TODO: ARE YOU SURE GATES
             // Reset draft
             this.draft = {
                 subject_code: "",
@@ -427,6 +432,12 @@ let vm = new Vue({
             sendValues.push(this.draft.target_bac_time);
             sendValues.push(this.draft.beverage_concentration);
 
+            // Assign selected beverage
+            this.selected.beverage_name = this.draft.beverage_name.toLowerCase();
+
+            // Parse float
+            this.draft.target_bac = parseFloat(this.draft.target_bac);
+
             // Calculate and assign
             let values = window.OnClickCalculate(sendValues);
             this.draft.amount_grams = parseFloat(values[0]).toFixed(1);
@@ -434,6 +445,13 @@ let vm = new Vue({
             
             // Show administer button
             this.isCalculateClicked = true;
+        },
+        checkPlural: function (i) {
+            // Return 'hours' if greater than 1
+            if (i > 1) return "hours";
+
+            // Otherwise return 'hour'
+            return "hour";
         },
         administeredClick: function () {        
             // Set created on time
@@ -466,6 +484,9 @@ let vm = new Vue({
 
             // Save the subject
             this.saveSubject();
+
+            // Parse float
+            this.draft.actual_bac = parseFloat(this.draft.actual_bac);
 
             // Set selected to the draft
             this.selected = Object.assign({}, this.draft);
@@ -545,6 +566,10 @@ let vm = new Vue({
                 this.isFileMenuOpen = false;
             }
         },
+        fileClickAdmin: function () {
+            // Change modes
+            window.OnClickAdminMode();
+        },
         fileNewSubject: function () {
             this.isEnterSubjectOpen = true;
         },
@@ -553,6 +578,15 @@ let vm = new Vue({
             this.isNewStart = true;
         },
         newSubject: function () {
+            // Check if there is a number
+            if (!/\d/.test(this.draft.subject_code)) {
+                // There is no number, validation failed
+                this.validated.newSubjectCode = false;
+                return;
+            } else {
+                // All good
+                this.validated.newSubjectCode = true;
+            }
             // Get current datetime and format
             let date = this.getDateNow().split(" ");
             // Add new card
@@ -580,6 +614,7 @@ let vm = new Vue({
             this.isLoadExperimentOpen = false;
         },
         fileLogOut: function () {
+            // Log out
             window.OnLogOut();
         },
         /// Settings methods
@@ -609,11 +644,11 @@ let vm = new Vue({
             if (this.settingsBeverage.concentration == "") {
                 // Continue if empty
                 invalid = false;
-            } else if (this.isNotNumberOrIsDecimal(this.settingsBeverage.concentration)) {
+            } else if (isNan(this.settingsBeverage.concentration.toString())) {
                 // If NaN or is decimal
                 this.validated.changeBeverage = false;
                 invalid = true;
-            } else if (parseInt(this.settingsBeverage.concentration) < 0 || parseInt(this.settingsBeverage.concentration) > 100) {
+            } else if (parseFloat(this.settingsBeverage.concentration) < 0 || parseFloat(this.settingsBeverage.concentration) > 100) {
                 // If outside range
                 this.validated.changeBeverage = false;
                 invalid = true;
@@ -625,11 +660,11 @@ let vm = new Vue({
             if (this.settingsBeverage.newConc == "") {
                 // Continue if empty
                 invalid = false;
-            } else if (this.isNotNumberOrIsDecimal(this.settingsBeverage.newConc)) {
+            } else if (isNan(this.settingsBeverage.newConc.toString())) {
                 // If NaN or is decimal
                 this.validated.newBeverage = false;
                 invalid = true;
-            } else if (parseInt(this.settingsBeverage.newConct) < 0 || parseInt(this.settingsBeverage.newConc) > 100) {
+            } else if (parseFloat(this.settingsBeverage.newConc) < 0 || parseFloat(this.settingsBeverage.newConc) > 100) {
                 // If outside range
                 this.validated.newBeverage = false;
                 invalid = true;
@@ -646,7 +681,7 @@ let vm = new Vue({
             // Return ID if edited and -1 if not
             returnArray.push(this.settingsBeverage.id);
             returnArray.push(this.settingsBeverage.newName);
-            returnArray.push(this.settingsBeverage.newConc);
+            returnArray.push(parseInt(this.settingsBeverage.newConc) / 100);
             returnArray.push(this.settingsBeverage.name);
             returnArray.push(parseInt(this.settingsBeverage.concentration) / 100);
             if (this.settingsBeverage.id != null || this.settingsBeverage.concentration != "") {
@@ -687,21 +722,30 @@ let vm = new Vue({
             this.draft.beverage_name = beverage.name;
             this.draft.beverage_concentration = beverage.concentration;
         },
+        deleteBeverage: function () {
+            // Delete
+            window.OnDeleteBeverage(this.settingsBeverage.id);
+
+            // Reset values
+            this.settingsBeverage.id = null;
+            this.settingsBeverage.name = "";
+            this.settingsBeverage.concentration = "";
+            
+            // Reset array and reload
+            this.beverages = [];
+            this.loadBeverages();
+        },
         isNotNumberOrIsDecimal: function (data) {
             // If not number
             if (isNaN(data)) return true;
-    
-            // If decimal
-            if (data.indexOf('.') != -1) return true;
     
             // Otherwise
             return false;
         },
         /// Sorting methods
         sortClick: function() {
-            // TODO: default sort
             // Increment sort counter
-            if (this.sortCycle != 4) { // Increment counter
+            if (this.sortCycle == 0 || this.sortCycle != 4) { // Increment counter if start or not end of toggle
                 this.sortCycle++;
             } else { // Go back to first cycle if already 4
                 this.sortCycle = 1;
@@ -709,8 +753,39 @@ let vm = new Vue({
 
             // Sort elements
             if (this.sortCycle == 1) {
-                // Sorting by age descending
+                // Sort by code descending (numbers)
+                this.records.sort((a, b) => parseInt(b.subject_code.replace(/\D/g, '')) - parseInt(a.subject_code.replace(/\D/g, '')));
+            } else if (this.sortCycle == 2) {
+                // Sort by code ascending (numbers)
+                this.records.sort((a, b) => parseInt(a.subject_code.replace(/\D/g, '')) - parseInt(b.subject_code.replace(/\D/g, '')));
+            } else if (this.sortCycle == 3) {
+                // Sort by date descending (descending)
+                this.records.sort(function(a, b) {
+                    // Split the elements into an array
+                    dateString1 = a.created_on.join('-').split(':').join('-').split('-');
+                    dateString2 = b.created_on.join('-').split(':').join('-').split('-');
+                    
+                    // Create dates
+                    date1 = new Date(parseInt(dateString1[0]), parseInt(dateString1[1]), parseInt(dateString1[2]), parseInt(dateString1[3]), parseInt(dateString1[4]), parseInt(dateString1[5]));
+                    date2 = new Date(parseInt(dateString2[0]), parseInt(dateString2[1]), parseInt(dateString2[2]), parseInt(dateString2[3]), parseInt(dateString2[4]), parseInt(dateString2[5]));
 
+                    // Compare dates
+                    return date2 - date1;
+                });
+            } else {
+                // Sort by date ascending (newest)
+                this.records.sort(function(a, b) {
+                    // Split the elements into an array
+                    dateString1 = a.created_on.join('-').split(':').join('-').split('-');
+                    dateString2 = b.created_on.join('-').split(':').join('-').split('-');
+                    
+                    // Create dates
+                    date1 = new Date(parseInt(dateString1[0]), parseInt(dateString1[1]), parseInt(dateString1[2]), parseInt(dateString1[3]), parseInt(dateString1[4]), parseInt(dateString1[5]));
+                    date2 = new Date(parseInt(dateString2[0]), parseInt(dateString2[1]), parseInt(dateString2[2]), parseInt(dateString2[3]), parseInt(dateString2[4]), parseInt(dateString2[5]));
+
+                    // Compare dates
+                    return date1 - date2;
+                });
             }
         },
         searchClick: function () {
@@ -722,7 +797,8 @@ let vm = new Vue({
                 this.isSearchActive = false;
                 return;
             }
-            // Open the search box
+            // Open the search box and focus
+            //this.$refs.searchBox.$el.focus();
             this.isSearchOpen = true;
         },
         searchHide: function (event) {
@@ -743,9 +819,34 @@ let vm = new Vue({
                 this.isSearchActive = false;
             }
         },
+        areYouSureOpen: function (callback) {
+            // Set the callback
+            this.areYouSureCallback = callback;
+
+            // Close modals
+            this.isSettingsMenuOpen = false;
+            this.isLoadExperimentOpen = false;
+            this.isEnterSubjectOpen = false;
+
+            // Open the window
+            this.isAreYouSureOpen = true;
+        },
+        areYouSureYes: function () {
+            // Run the callback
+            this.areYouSureCallback();
+
+            // Close window
+            this.isAreYouSureOpen = false;
+        },
+        areYouSureNo: function () {
+            // Clear the callback
+            this.areYouSureCallback = null;
+
+            // Close the window
+            this.isAreYouSureOpen = false;
+        },
         // WINDOW methods
         winClose: function () {
-            // TODO: ARE YOU SURE WINDOW
             window.OnWindowClose();
         }
     },

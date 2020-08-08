@@ -10,9 +10,9 @@
   <body>
     <div id="vm">
       <div class="nav dark-grey white--text">
-          <a class="nav-item selectable--text" @click="fileMenu" ref="btnFile" id="fm">File</a>
+          <a class="nav-item selectable--text" style="font-weight: 700;" @click="fileMenu" ref="btnFile" id="fm">File</a>
           <img src="img/nav_separator.svg" class="nav-item cursor-default">
-          <template v-if="isEnterSubjectOpen || isLoadExperimentOpen">
+          <template v-if="isEnterSubjectOpen || isLoadExperimentOpen || user.accessLevel == 0">
             <a class="nav-item selectable--text disabled--text">Settings</a>
           </template>
           <template v-else>
@@ -20,58 +20,64 @@
           </template>
           <img src="img/nav_separator.svg" class="nav-item cursor-default">
           <template v-if="isExperimentLoaded">
-            <a class="nav-item"><strong>Experiment:</strong> {{experiment.name}}</a>
+            <a class="nav-item"><i>Experiment:</i> {{experiment.name}}</a>
           </template>
           <template v-else>
-            <a class="nav-item"><strong>Experiment:</strong> None Loaded</a>
+            <a class="nav-item"><i>Experiment:</i> None Loaded</a>
           </template>
           <h2 class="yellow--text nav-item--push cursor-default"><strong>Alcolator</strong></h2>
           <img src="img/nav_separator.svg" class="nav-item cursor-default" style="opacity: 0.2">
-          <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;">minimize</i>
-          <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;" @click="winClose">close</i>
+          <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;">minimize</i> <!-- TODO: Minimise -->
+          <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;" @click="areYouSureOpen(winClose)">close</i>
       </div>
       <div class="flexbox-row">
         <div class="flexbox-column--list light-grey">
-          <input v-model="searchText" class="white border--black regular" ref="searchBox" v-bind:class="{show: isSearchOpen}" style="padding-left: 38px; position: absolute; left: 196px; top: 38px; display: none;" id="search">
+          <input v-model="searchText" class="white border--black regular" ref="searchBox" v-bind:class="{show: isSearchOpen}" style="padding-left: 38px; position: absolute; left: 185px; top: 38px; display: none;" id="search">
           <template v-if="isExperimentLoaded">
             <template v-if="sortCycle == 1">
               <div class="selectable--text" @click="sortClick">
-                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 10px; left: 8px">Age</h6>
-                <i class="material-icons" style="margin-left: 32px; top: 40px; position: absolute; font-size: 30px;">keyboard_arrow_down</i>
+                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 5px">Code</h6>
+                <i class="material-icons" style="margin-left: 40px; top: 42px; position: absolute; font-size: 30px;">keyboard_arrow_down</i>
               </div>
             </template>
             <template v-else-if="sortCycle == 2">
               <div class="selectable--text" @click="sortClick">
-                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 10px; left: 8px">Age</h6>
-                <i class="material-icons" style="margin-left: 32px; top: 40px; position: absolute; font-size: 30px;">keyboard_arrow_up</i>
+                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 5px">Code</h6>
+                <i class="material-icons" style="margin-left: 40px; top: 42px; position: absolute; font-size: 30px;">keyboard_arrow_up</i>
               </div>
             </template>
             <template v-else-if="sortCycle == 3">
               <div class="selectable--text" @click="sortClick">
-                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 10px; left: 14px">ID</h6>
-                <i class="material-icons" style="margin-left: 32px; top: 40px; position: absolute; font-size: 30px;">keyboard_arrow_down</i>
+                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 6px">Date</h6>
+                <i class="material-icons" style="margin-left: 40px; top: 42px; position: absolute; font-size: 30px;">keyboard_arrow_down</i>
               </div>
             </template>
             <template v-else-if="sortCycle == 4">
               <div class="selectable--text" @click="sortClick">
-                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 10px; left: 14px">ID</h6>
-                <i class="material-icons" style="margin-left: 32px; top: 40px; position: absolute; font-size: 30px;">keyboard_arrow_up</i>
+                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 6px">Date</h6>
+                <i class="material-icons" style="margin-left: 40px; top: 42px; position: absolute; font-size: 30px;">keyboard_arrow_up</i>
+              </div>
+            </template>
+            <template v-else-if="sortCycle == 0">
+              <div class="selectable--text" @click="sortClick">
+                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 5px">Sort</h6>
+                <i class="material-icons" style="margin-left: 34px; top: 42px; position: absolute; font-size: 30px;">import_export</i>
               </div>
             </template>
           </template>
           <template v-else>
             <div class="disabled--text">
-              <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 10px; left: 8px">Age</h6>
-              <i class="material-icons" style="margin-left: 32px; top: 40px; position: absolute; font-size: 30px;">keyboard_arrow_down</i>
+              <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 5px">Sort</h6>
+              <i class="material-icons" style="margin-left: 34px; top: 42px; position: absolute; font-size: 30px;">import_export</i>
             </div>
           </template>
           <div class="flexbox-row--align">
             <strong><h2 style="margin: 10px;">Records</h2></strong>
             <template v-if="isExperimentLoaded">
-              <i @click="searchClick" id="searchBtn" class="material-icons selectable--text" style="margin-right: 9px; margin-left: 96px; position: absolute; font-size: 30px;">search</i>
+              <i @click="searchClick" id="searchBtn" class="material-icons selectable--text" style="margin-right: 9px; margin-left: 85px; position: absolute; font-size: 30px;">search</i>
             </template>
             <template v-else>
-              <i id="searchBtn" class="material-icons disabled--text" style="margin-right: 9px; margin-left: 96px; position: absolute; font-size: 30px;">search</i>
+              <i id="searchBtn" class="material-icons disabled--text" style="margin-right: 9px; margin-left: 85px; position: absolute; font-size: 30px;">search</i>
             </template>
           </div>   
           <div class="vertical-scroll">
@@ -80,6 +86,7 @@
               v-for="record in searchRecords"
               v-bind:key="record.id"
               v-bind:record="record"
+              v-bind:experiment="experiment"
               v-bind:class="{draft: record.draft}"
               @click.native="recordClick($event, record)">
               </record>
@@ -89,6 +96,7 @@
               v-for="record in records"
               v-bind:key="record.id"
               v-bind:record="record"
+              v-bind:experiment="experiment"
               v-bind:class="{draft: record.draft}"
               @click.native="recordClick($event, record)">
               </record>
@@ -317,7 +325,7 @@
                 </template>
                 <template v-else>
                   <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
-                    <button class="normal dark-grey white--text selectable" style="margin-right: 25px; width: 172px;" id="cancel" @click="cancelSubject">Cancel</button>
+                    <button class="normal dark-grey white--text selectable" style="margin-right: 25px; width: 172px;" id="cancel" @click="areYouSureOpen(cancelSubject)">Cancel</button>
                     <template v-if="draft.age == '' || draft.gender == '' || draft.height == '' || draft.weight == '' || draft.target_bac == '' || draft.target_bac_time == '' || draft.beverage_name == ''">
                       <button class="normal red white--text disabled" style="margin-right: 25px;" id="calculate">Calculate</button>
                     </template>
@@ -336,7 +344,7 @@
               <template v-if="isCalculateClicked">
                 <p>
                   GIVE <strong>SUBJECT {{draft.subject_code}}</strong> {{draft.amount_grams}} grams of alcohol as {{draft.amount_beverage}} ml 
-                  of {{draft.beverage_name.toLowerCase()}} to reach a blood alcohol concentration of {{draft.target_bac}}% in {{draft.target_bac_time}} hours.
+                  of {{selected.beverage_name}} to reach a blood alcohol concentration of {{draft.target_bac}}% in {{draft.target_bac_time}} {{checkPlural(draft.target_bac_time)}}.
                   <br><br>
                   Click ADMINISTERED after giving subject calculated amount.
                 </p>
@@ -350,7 +358,7 @@
               <template v-else-if="isViewingSubject">
                 <p>
                   <strong>SUBJECT {{selected.subject_code}}</strong> administered {{selected.amount_grams}} grams of alcohol targeting
-                  a blood alcohol concentration of {{selected.target_bac}}% in {{selected.target_bac_time}} hours.
+                  a blood alcohol concentration of {{selected.target_bac}}% in {{selected.target_bac_time}} {{checkPlural(selected.target_bac_time)}}.
                   <br><br>
                   Actual BAC recorded was {{selected.actual_bac}}% read at {{selected.actual_bac_time}}.
                 </p>
@@ -367,15 +375,15 @@
             </div>   
           </div>
         </div>
-        <div class="file-menu white" v-bind:class="{show: isFileMenuOpen === true}" ref="menuFile">
+        <div class="file-menu white" v-bind:class="{show: isFileMenuOpen === true}" v-bind:style="{height: fileMenuHeight}" ref="menuFile">
           <div class="flexbox-column">
-            <template v-if="isSettingsMenuOpen || isEnterSubjectOpen || isLoadExperimentOpen || (draft.subject_code != '')">
+            <template v-if="isSettingsMenuOpen || isEnterSubjectOpen || isLoadExperimentOpen || isAreYouSureOpen || (draft.subject_code != '')">
               <h6 class="file-menu--text disabled--text">New Subject</h6>
               <hr class="menu-sep" align="center">
               <h6 class="file-menu--text disabled--text">Load Experiment</h6>
             </template>
             <template v-else>
-              <template v-if="isExperimentLoaded">
+              <template v-if="isExperimentLoaded && user.accessLevel != 0">
                 <h6 class="file-menu--text selectable--text" @click="fileNewSubject">New Subject</h6>
               </template>
               <template v-else>
@@ -384,16 +392,29 @@
               <hr class="menu-sep" align="center">
               <h6 class="file-menu--text selectable--text" @click="fileLoadExp">Load Experiment</h6>
             </template>
-            <!--<h6 class="file-menu--text selectable--text" @click="fileNew">New Experiment</h6>-->
             <hr class="menu-sep" align="center">
-            <h6 class="file-menu--text selectable--text" @click="fileLogOut">Log Out</h6>
-            <h6 class="file-menu--text selectable--text" @click="winClose">Exit</h6>
+            <template v-if="user.accessLevel == 2 && !isAreYouSureOpen">
+              <h6 class="file-menu--text selectable--text" @click="areYouSureOpen(fileClickAdmin)">Administration</h6>
+            </template>
+            <template v-else-if="user.accessLevel == 2 && isAreYouSureOpen">
+              <h6 class="file-menu--text disabled--text">Administration</h6>
+            </template>
+            <h6 class="file-menu--text selectable--text" @click="areYouSureOpen(fileLogOut)">Log Out</h6>
+            <h6 class="file-menu--text selectable--text" @click="areYouSureOpen(winClose)">Exit</h6>
           </div>
         </div>
         <div class="modal" v-bind:class="{show: isEnterSubjectOpen === true}">
           <div class="modal--input white">
             <h1 style="font-size: 24px; margin: 0;">New Subject</h1>
-            <input v-model="draft.subject_code" maxlength="12" class="light-grey border--black regular" type="text" id="subID" style="margin-top: 15px" placeholder=" Identification code">
+            <template v-if="validated.newSubjectCode">
+              <input v-model="draft.subject_code" maxlength="12" class="light-grey border--black regular" type="text" id="subID" style="margin-top: 15px" placeholder=" Identification code">
+            </template>
+            <template v-else>
+              <div class="error-text flexbox-row white--text" style="bottom: 106px; left: 17px; width: 229px;">
+                <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Must include at least one digit.</h4>
+              </div>
+              <input v-model="draft.subject_code" maxlength="12" class="light-grey error regular" type="text" id="subID" style="margin-top: 15px" placeholder=" Identification code">
+            </template>
             <div class="flexbox-row--align" style="margin-top: 15px; margin-left: 20px; width: 100%;">
               <template v-if="draft.subject_code != ''">
                 <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="newSubject">Proceed</button>
@@ -405,7 +426,7 @@
             </div>
           </div>
         </div>
-        <div class="modal" v-bind:class="{show: isLoadExperimentOpen === true}">
+        <div class="modal" v-bind:class="{show: isLoadExperimentOpen}">
           <div class="modal--input white">
             <h1 style="font-size: 24px; margin: 0;">Load Experiment</h1>
             <div class="dropdown">
@@ -419,6 +440,7 @@
                       Select experiment
                   </button>                 
                 </template>
+                <!-- TODO: Have dropdown go away on click -->
               <div class="dropdown-content light-grey--notopaque" style="min-width: 94.25%;" id="dropContent">
                 <dropdown
                   v-for="experiment in experiments"
@@ -429,7 +451,7 @@
               </div>
             </div>	
             <div class="flexbox-row--align" style="margin-top: 15px; margin-left: 20px; width: 100%;">
-              <template v-if="experiment.id != null">
+              <template v-if="experiment.id != null && experiment">
                 <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="loadExp">Load</button>
               </template>
               <template v-else>
@@ -439,10 +461,20 @@
             </div>
           </div>
         </div>
+        <div class="modal" v-bind:class="{show: isAreYouSureOpen}">
+          <div class="modal--input white">
+            <h1 style="font-size: 24px; margin: 0;">Are you sure?</h1>
+            <h6 style="margin-top: 22px; margin-bottom: 27px; padding: 0;">You might lose some changes.</h6>
+            <div class="flexbox-row--align" style="margin-top: 15px; margin-left: 20px; width: 100%;">
+              <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="areYouSureYes">Proceed</button>
+              <button class="red white--text selectable" style="margin-left: 5px; margin-right: 50px;" @click="areYouSureNo">Cancel</button>
+            </div>
+          </div>
+        </div>
         <div class="modal" v-bind:class="{show: isSettingsMenuOpen === true}">
           <div class="modal--settings white">
             <h1 style="font-size: 28px; margin: 0;">Settings</h1>
-            <h3 class="semibold" style="font-size: 18px; margin-bottom: 30px;"><strong>Currently Logged-In:</strong> Jane Doe</h3>
+            <h3 class="semibold" style="font-size: 18px; margin-bottom: 30px;"><strong>Currently Logged-In:</strong> {{user.firstName}} {{user.lastName}}</h3>
             <h2 style="font-weight: bold; margin-bottom: 10px;">Beverages</h2>
             <div class="flexbox-row">
               <div class="flexbox-column" style="width: 50%; padding-right: 30px;">
@@ -458,14 +490,14 @@
                   </template>
                   <template v-else>
                     <div class="error-text flexbox-row white--text" style="left: 80px; width: 144px;">
-                      <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a whole number between 0 & 100.</h4>
+                      <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a number between 1 & 100.</h4>
                     </div>
                     <input class="light-grey border--black error regular short" type="text" id="newBevConc" v-model="settingsBeverage.newConc">
                   </template>
                 </div>
               </div>
               <div class="flexbox-column" style="padding-right: 30px;">
-                <h3 style="font-size: 18px; font-weight: bold; margin: 0;">Change Alc. %: </h3>
+                <h3 style="font-size: 18px; font-weight: bold; margin: 0;">Edit Beverage: </h3>
                 <div class="flexbox-row--alignleft margin-tb--10px">
                   <h3 class="margin-input input-label semibold">Select: </h3>
                   <div class="dropdown short">
@@ -496,12 +528,15 @@
                   </template>
                   <template v-else>
                     <div class="error-text flexbox-row white--text" style="left: 90px; width: 144px;">
-                      <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a whole number between 0 & 100.</h4>
+                      <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a number between 1 & 100.</h4>
                     </div>
                     <input class="light-grey border--black error regular short" type="text" id="changeBevConc" v-model="settingsBeverage.concentration">
                   </template>
                 </div>
                 <div class="flexbox-row--align" style="margin-top: 20px; margin-left: 20px; width: 100%;">
+                  <template v-if="settingsBeverage.id != null">
+                    <button class="red white--text selectable" style="margin-left: 5px; position: absolute; width: 200px; right: 315px; margin-bottom: 8px;" @click="deleteBeverage">Delete Selected</button>
+                  </template>
                   <template v-if="settingsBeverage.id != null || settingsBeverage.newName != '' || settingsBeverage.newConc != '' || settingsBeverage.concentration != ''">
                     <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="settingsSave">Save</button>
                   </template>

@@ -2,13 +2,17 @@
 let vm = new Vue({
     el: '#vm', // container ID 
     data: {
-        username: '',
-        password: ''
+        username: "",
+        password: "",
+        incorrectLogin: false
     },
     methods: {
         /// Login
         login: function () {
-            window.OnLogin(this.username, this.password);
+            // Check credentials
+            if (username == "" || password == "") return; // Don't register if not all filled in
+            let isCorrect = window.OnLogin(this.username, this.password);
+            if (!isCorrect) this.incorrectLogin = true;
         }
     }
 });

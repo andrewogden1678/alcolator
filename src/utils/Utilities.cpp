@@ -51,9 +51,9 @@ int Utilities::CalculateBeverage(double amountGrams, double concentration) {
     return round((amountGrams / concentration) / 0.7935);
 }
 
-int Utilities::Authenticate(std::string username, std::string password) {
-
-    return 1.0;
+bool Utilities::Authenticate(std::string password, std::string hash) {
+    // Validate password
+    return BCrypt::validatePassword(password, hash);
 }
 
 std::string Utilities::Hash(std::string password) {

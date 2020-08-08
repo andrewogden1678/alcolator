@@ -212,7 +212,7 @@ class Database {
             int counter = 0; // Counter for formatting
             for (std::vector<std::string>::iterator i = members.begin(); i != members.end(); i++) {
                 // Skip excluded column (for identity)
-                if (*i == excluded) {
+                if (model->columns_[counter] == excluded) {
                     continue;
                 }
 

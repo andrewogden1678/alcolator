@@ -1,7 +1,6 @@
 #include "MainVC.h"
-#include "../utils/Utilities.h"
 
-MainView::MainView(Ref<Window> window) : ViewController::ViewController(window) {
+MainView::MainView(Ref<Window> window, Identity usr) : ViewController::ViewController(window), user_(usr) {
     // Create overlay
     overlay_ = Overlay::Create(window_, 900, 600, 0, 0);
 
@@ -29,6 +28,7 @@ void MainView::OnClose() {
 void MainView::OnResize(uint32_t width, uint32_t height) {}
 
 void MainView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, const String& url) {
+    double scale(App::instance()->main_monitor()->scale());
     // Lock and set the javascript context for all future calls
     Ref<JSContext> locked_context = GetView()->LockJSContext();
     SetJSContext(locked_context.get());
@@ -41,8 +41,12 @@ void MainView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, c
     global["OnLoadBeverages"] = BindJSCallbackWithRetval(&MainView::OnLoadBeverages);
     global["OnClickRecord"] = BindJSCallbackWithRetval(&MainView::OnClickRecord);
     global["OnClickCalculate"] = BindJSCallbackWithRetval(&MainView::OnClickCalculate);
+    global["OnGetUser"] = BindJSCallbackWithRetval(&MainView::OnGetUser);
     global["OnAddNewBeverage"] = BindJSCallback(&MainView::OnAddNewBeverage);
     global["OnAddNewSubject"] = BindJSCallback(&MainView::OnAddNewSubject);
+    global["OnClickAdminMode"] = BindJSCallback(&MainView::OnClickAdminMode);
+    global["OnLogOut"] = BindJSCallback(&MainView::OnLogOut);
+    global["OnDeleteBeverage"] = BindJSCallback(&MainView::OnDeleteBeverage);
     
     // Load initial data
     GetView()->EvaluateScript("vm.initialLoad()");
@@ -81,6 +85,12 @@ void MainView::OnAddNewBeverage(const JSObject& obj, const JSArgs& args) {
         Database::Instance()->Insert<Beverage>(&newBev);
     }
 }
+
+void MainView::OnDeleteBeverage(const JSObject& obj, const JSArgs& args) {
+    // Delete the beverage
+    Database::Instance()->Delete<Beverage>(args[0].ToInteger());
+}
+
 void MainView::OnAddNewSubject(const JSObject& obj, const JSArgs& args) {
     // Parse args to JSArray and to respective values
     JSArray jArray(args[0].ToArray());
@@ -140,6 +150,13 @@ void MainView::OnAddNewSubject(const JSObject& obj, const JSArgs& args) {
     Result result(-1, subID, beverage, targetBAC, targetBACTime, amountGrams, amountBeverage, actualBAC, actualBACTime);
     Database::Instance()->Insert<Result>(&result);
 }
+
+void MainView::OnClickAdminMode(const JSObject& obj, const JSArgs& args) {
+    // Set next view and deallocate memory items
+    NextView(new AdminView(window_.get(), this->user_));
+    ViewDealloc();
+}
+
 JSValue MainView::OnLoadExperiments(const JSObject& obj, const JSArgs& args) {
     // Get all experiments
     std::vector<Experiment> experiments(Database::Instance()->Select<Experiment>("is_concluded", "IS", std::to_string(0)));
@@ -324,4 +341,28 @@ JSValue MainView::OnClickRecord(const JSObject& obj, const JSArgs& args) {
         // Return error code
         return JSValue(1);
     }
+}
+
+JSValue MainView::OnGetUser(const JSObject& obj, const JSArgs& args) {
+    // Return array
+    JSArray jArray;
+
+    // Assign to return array
+    // [0] ID
+    // [1] First name
+    // [2] Last name
+    // [3] Access level
+    jArray.push(JSValue(JSString(std::to_string(this->user_.GetPK()).c_str())));
+    jArray.push(JSValue(JSString(this->user_.first_name_.c_str())));
+    jArray.push(JSValue(JSString(this->user_.last_name_.c_str())));
+    jArray.push(JSValue(JSString(std::to_string(static_cast<int>(this->user_.access_level_)).c_str())));
+
+    // Return array
+    return JSValue(jArray);
+}
+
+void MainView::OnLogOut(const JSObject& obj, const JSArgs& args) {
+    // Set login view and deallocate memory items
+    NextView(new LoginView(window_.get()));
+    ViewDealloc();
 }

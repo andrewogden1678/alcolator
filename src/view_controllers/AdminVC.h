@@ -1,6 +1,7 @@
 #pragma once
 #include "ViewController.h"
-#include "../utils/Utilities.h"
+#include "MainVC.h"
+#include "LoginVC.h"
 #include "../database/models/Identity.h"
 #include "../database/models/Experiment.h"
 
@@ -15,7 +16,7 @@ class AdminView : public ViewController
     
     public:
         // Constructor/Destructor
-        AdminView(Ref<Window> window);
+        AdminView(Ref<Window> window, Identity usr);
         ~AdminView();   
         
         /// ViewController Events
@@ -30,8 +31,13 @@ class AdminView : public ViewController
         /// Local JS-Invoked Methods
         JSValue OnLoadUsers(const JSObject& obj, const JSArgs& args);
         JSValue OnLoadExperiments(const JSObject& obj, const JSArgs& args);
+        JSValue OnGetUser(const JSObject& obj, const JSArgs& args);
         void OnSaveUser(const JSObject& obj, const JSArgs& args);
         void OnEditUser(const JSObject& obj, const JSArgs& args);
-        void OnDeleteUser(const JSObject& obj, const JSArgs& args);
+        void OnAddNewExperiment(const JSObject& obj, const JSArgs& args);
         void OnClickExperimenterMode(const JSObject& obj, const JSArgs& args);
+        void OnLogOut(const JSObject& obj, const JSArgs& args);
+
+        // User
+        Identity user_;
 };

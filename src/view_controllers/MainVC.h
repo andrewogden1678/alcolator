@@ -1,5 +1,7 @@
 #pragma once
 #include "ViewController.h"
+#include "AdminVC.h"
+#include "LoginVC.h"
 #include "../database/models/Subject.h"
 #include "../database/models/Result.h"
 #include <vector>
@@ -16,7 +18,7 @@ class MainView : public ViewController
     
     public:
         // Constructor/Destructor
-        MainView(Ref<Window> window);
+        MainView(Ref<Window> window, Identity usr);
         ~MainView();   
         
         /// ViewController Events
@@ -35,5 +37,12 @@ class MainView : public ViewController
         JSValue OnLoadBeverages(const JSObject& obj, const JSArgs& args);
         void OnAddNewBeverage(const JSObject& obj, const JSArgs& args);
         void OnAddNewSubject(const JSObject& obj, const JSArgs& args);
+        void OnClickAdminMode(const JSObject& obj, const JSArgs& args);
         JSValue OnClickCalculate(const JSObject& obj, const JSArgs& args);
+        JSValue OnGetUser(const JSObject& obj, const JSArgs& args);
+        void OnLogOut(const JSObject& obj, const JSArgs& args);
+        void OnDeleteBeverage(const JSObject& obj, const JSArgs& args);
+        
+        // User
+        Identity user_;
 };

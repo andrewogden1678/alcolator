@@ -1,6 +1,6 @@
 #include "AdminVC.h"
 
-AdminView::AdminView(Ref<Window> window) : ViewController::ViewController(window) {
+AdminView::AdminView(Ref<Window> window, Identity usr) : ViewController::ViewController(window), user_(usr) {
     // Create overlay
     overlay_ = Overlay::Create(window_, 900, 600, 0, 0);
 
@@ -34,9 +34,12 @@ void AdminView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, 
     global["OnWindowClose"] = BindJSCallback(&AdminView::OnWindowClose);
     global["OnLoadUsers"] = BindJSCallbackWithRetval(&AdminView::OnLoadUsers);
     global["OnLoadExperiments"] = BindJSCallbackWithRetval(&AdminView::OnLoadExperiments);
+    global["OnClickExperimenterMode"] = BindJSCallback(&AdminView::OnClickExperimenterMode);
+    global["OnGetUser"] = BindJSCallbackWithRetval(&AdminView::OnGetUser);
     global["OnSaveUser"] = BindJSCallback(&AdminView::OnSaveUser);
     global["OnEditUser"] = BindJSCallback(&AdminView::OnEditUser);
-    global["OnDeleteUser"] = BindJSCallback(&AdminView::OnDeleteUser);
+    global["OnAddNewExperiment"] = BindJSCallback(&AdminView::OnAddNewExperiment);
+    global["OnLogOut"] = BindJSCallback(&AdminView::OnLogOut);
 
     // Load initial data
     GetView()->EvaluateScript("vm.initialLoad()");
@@ -140,17 +143,60 @@ void AdminView::OnEditUser(const JSObject& obj, const JSArgs& args) {
     // Username
     ultralight::String rawUsername(jArray[4].ToString());
     std::string username(static_cast<std::string>(rawUsername.utf8().data()));
+    // Username
+    ultralight::String rawPassword(jArray[5].ToString());
+    std::string password(static_cast<std::string>(rawPassword.utf8().data()));
 
     // Create Identity and update in DB
-    Identity identity(id, firstName, lastName, accessLevel, username, "");
-    Database::Instance()->Update<Identity>(&identity);
+    if (password == "" || password == "undefined") { // If password not updated
+        // Exclude the password
+        Identity identity(id, firstName, lastName, accessLevel, username, "");      
+        Database::Instance()->Update<Identity>(&identity, "password");
+    } else {
+        // Hash new password and edit
+        Identity identity(id, firstName, lastName, accessLevel, username, Utilities::Hash(password));
+        Database::Instance()->Update<Identity>(&identity);
+    }  
 }
 
-void AdminView::OnDeleteUser(const JSObject& obj, const JSArgs& args) {
-    // Delete the corresponding ID from identity table
-    Database::Instance()->Delete<Identity>(args[0].ToInteger());
+void AdminView::OnAddNewExperiment(const JSObject& obj, const JSArgs& args) {
+    // Get name
+    ultralight::String rawCode(args[0].ToString());
+    std::string code(static_cast<std::string>(rawCode.utf8().data()));
+
+    // Send to DB
+    Experiment exp(-1, code, false);
+    Database::Instance()->Insert<Experiment>(&exp);
 }
 
-void OnClickExperimenterMode(const JSObject& obj, const JSArgs& args) {
+void AdminView::OnClickExperimenterMode(const JSObject& obj, const JSArgs& args) {
+    // Set next view and deallocate memory items
+    NextView(new MainView(window_.get(), this->user_));
+    ViewDealloc();
+}
 
+JSValue AdminView::OnGetUser(const JSObject& obj, const JSArgs& args) {
+    // Return array
+    JSArray jArray;
+
+    // Assign to return array
+    // [0] ID
+    // [1] First name
+    // [2] Last name
+    // [3] Username
+    // [4] Access level
+    jArray.push(JSValue(JSString(std::to_string(this->user_.GetPK()).c_str())));
+    jArray.push(JSValue(JSString(this->user_.first_name_.c_str())));
+    jArray.push(JSValue(JSString(this->user_.last_name_.c_str())));
+    jArray.push(JSValue(JSString(this->user_.username_.c_str())));
+    jArray.push(JSValue(JSString(std::to_string(static_cast<int>(this->user_.access_level_)).c_str())));
+
+    // Return array
+    return JSValue(jArray);
+}
+
+void AdminView::OnLogOut(const JSObject& obj, const JSArgs& args) {
+    // Set login view and deallocate memory items
+    NextView(new LoginView(window_.get()));
+    ViewDealloc();
 }

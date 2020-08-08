@@ -17,7 +17,7 @@ class Subject : public Model {
         Subject(char** fields);
 
         ~Subject() {};
-        
+
         // Override members to strings conversion
         virtual std::vector<std::string> Serialise() override;
         

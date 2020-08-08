@@ -22,7 +22,7 @@ Alcolator::Alcolator() {
   window_->SetTitle("Alcolator");
 
   // Go to the login page
-  nextView_.reset(new AdminView(*window_.get()));
+  nextView_.reset(new LoginView(*window_.get()));
 
   // Set the view listener to the current view
   window_->set_listener(nextView_.get());

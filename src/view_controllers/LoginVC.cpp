@@ -1,5 +1,6 @@
 #include "LoginVC.h"
 #include "MainVC.h"
+#include "AdminVC.h"
 #include <iostream>
 #include <string>
 
@@ -44,16 +45,44 @@ void LoginView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, 
 /// Local JS-Invoked Methods
 ///
 // ARGS: Username (string), Password (string)
-void LoginView::OnLogin(const JSObject& obj, const JSArgs& args) {
-    /*
-    ** Login code/handling here
-    */  
-    /*std::cout << static_cast<int>(args.size()) << std::endl;
-    std::cout.flush();*/
-    std::cout << "test"<< std::endl;
-    std::cout.flush();
+bool LoginView::OnLogin(const JSObject& obj, const JSArgs& args) {
+    // Extract username
+    ultralight::String rawUsername(args[0].ToString());
+    std::string username;
+    username += "\"";
+    username += static_cast<std::string>(rawUsername.utf8().data());
+    username += "\"";
+    // Extract password
+    ultralight::String rawPassword(args[1].ToString());
+    std::string password(static_cast<std::string>(rawPassword.utf8().data()));
 
-    // Set next view and deallocate memory items
-    NextView(new MainView(window_.get()));
-    ViewDealloc();
+    // Try and select user
+    try {
+        Identity id = Database::Instance()->Select<Identity>("username", "IS", username).at(0);
+
+        bool isCorrect = Utilities::Authenticate(password, id.password_);
+
+        if (isCorrect) {
+            if (id.access_level_ == AccessLevel::ADMINISTRATOR) {
+                // Set next view and deallocate memory items
+                NextView(new AdminView(window_.get(), id));
+                ViewDealloc();
+                return JSValue(true);
+            }
+            else {
+                // Set next view and deallocate memory items
+                NextView(new MainView(window_.get(), id));
+                ViewDealloc();
+                return JSValue(true);
+            }          
+        }
+        else {
+            // Password incorrect
+            return JSValue(false);
+        }
+    } catch (...) { // User not found
+        // Return false
+        return JSValue(false);
+    }
+    
 }

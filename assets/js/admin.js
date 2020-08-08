@@ -7,7 +7,7 @@ var ComponentUser = Vue.component('user', {
 // Dropdown component
 var ComponentDropdown = Vue.component('dropdown', {
     props: ["obj"],
-    template: '<h6 class="dropdown-option">{{obj}}</h6>'
+    template: '<h6 class="dropdown-option selectable">{{obj}}</h6>'
 });
 
 // Vue instance
@@ -29,9 +29,10 @@ let vm = new Vue({
             administrator: "Administrator"
         },
         user: { // Current user in session
-            id: null,
+            id: -1,
             firstName: "",
             lastName: "",
+            username: "",
             accessLevel: "",
         }, 
         draft: {
@@ -48,13 +49,15 @@ let vm = new Vue({
         },
         viewName: "", // Display name when viewing subject
         searchText: "", // Text for search
+        experimentCode: "",
         isNewStart: true, // Program just started
         isFileMenuOpen: false, // File menu open
         isNewUserOpen: false, // New user open
         isViewingUser: false, // Is viewing a user
         isSearchOpen: false, // Check if search is open
-        isSearchActive: false // Check if currently typing
-        
+        isSearchActive: false, // Check if currently typing
+        isNewExperimentOpen: false, // Check if new experiment window is open
+        isAreYouSureOpen: false // Check if are you sure prompt is open
     },
     components: {
         'record': ComponentUser,
@@ -78,7 +81,7 @@ let vm = new Vue({
             // If search is active
             if (this.isSearchActive) {
                 // Get names and access codes
-                let users = this.users.filter(u => u.firstName.includes(this.searchText) || u.lastName.includes(this.searchText));
+                let users = this.users.filter(u => u.firstName.toLowerCase().includes(this.searchText.toLowerCase()) || u.lastName.toLowerCase().includes(this.searchText.toLowerCase()));
 
                 // Loop through found users and push
                 for (i = 0; i < users.length; i++) {
@@ -89,8 +92,16 @@ let vm = new Vue({
     },
     methods: {
         initialLoad: function () {
-            // TODO: Get user
-            
+            // Get user
+            let user = window.OnGetUser();
+            this.user = {
+                id: parseInt(user[0]),
+                firstName: user[1],
+                lastName: user[2],
+                username: user[3],
+                accessLevel: parseInt(user[4])
+            };
+
             // Get users
             let users = window.OnLoadUsers();
             for (i = 0; i < users.length; i++) {
@@ -171,10 +182,15 @@ let vm = new Vue({
             this.isNewUserOpen = true;
         },
         fileNewExp: function () {
-
+            // Set screens
+            this.isNewExperimentOpen = true;
+        },
+        newExperimentClose: function () {
+            // Set screens
+            this.isNewExperimentOpen = false;
         },
         fileExpMode: function () {
-            window.OnClickExperimenterMode(userId)
+            window.OnClickExperimenterMode()
         },
         fileLogOut: function () {
             window.OnLogOut();
@@ -204,6 +220,7 @@ let vm = new Vue({
                     accessLevel: user.accessLevel,
                     accessLevelFull: user.accessLevelFull,
                     username: user.username,
+                    password: user.password
                 }
                 
                 // Assign display name
@@ -275,24 +292,13 @@ let vm = new Vue({
             returnArray.push(this.selected.lastName);
             returnArray.push(this.selected.accessLevel);
             returnArray.push(this.selected.username);
+            returnArray.push(this.selected.password);
 
             // Send the array
             window.OnEditUser(returnArray);
 
             // Reload the name
             this.viewName = this.selected.firstName + " " + this.selected.lastName;
-
-            // Reload users
-            this.loadUsers();
-        },
-        deleteUser: function() {
-            // Send delete query
-            // TODO: ARE YOU SURE GATE
-            window.OnDeleteUser(this.selected.id); 
-
-            // Set screens
-            this.isViewingUser = false;
-            this.isNewStart = true;
 
             // Reload users
             this.loadUsers();
@@ -306,6 +312,13 @@ let vm = new Vue({
                 case 2:
                     return "Administrator";        
             }
+        },
+        newExperiment: function () {
+            // Add new experiment
+            window.OnAddNewExperiment(this.experimentCode);
+
+            // Set screens
+            this.isNewExperimentOpen = false;
         },
         setAccessLevel: function(event, level, isSelected = false) {
             if (isSelected) { // Set the selected access level (raw and full)
@@ -365,9 +378,29 @@ let vm = new Vue({
                 this.isSearchActive = false;
             }
         },
+        areYouSureOpen: function (callback) {
+            // Set the callback
+            this.areYouSureCallback = callback;
+
+            // Open the window
+            this.isAreYouSureOpen = true;
+        },
+        areYouSureYes: function () {
+            // Run the callback
+            this.areYouSureCallback();
+
+            // Close window
+            this.isAreYouSureOpen = false;
+        },
+        areYouSureNo: function () {
+            // Clear the callback
+            this.areYouSureCallback = null;
+
+            // Close the window
+            this.isAreYouSureOpen = false;
+        },
         /// Window methods
         winClose: function () {
-            // TODO: ARE YOU SURE WINDOW
             window.OnWindowClose();
         }
     },
