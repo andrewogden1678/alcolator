@@ -1,5 +1,6 @@
 #include "AdminVC.h"
 
+// View constructor
 AdminView::AdminView(Ref<Window> window, Identity usr) : ViewController::ViewController(window), user_(usr) {
     // Create overlay
     overlay_ = Overlay::Create(window_, 900, 600, 0, 0);
@@ -10,6 +11,7 @@ AdminView::AdminView(Ref<Window> window, Identity usr) : ViewController::ViewCon
     GetView()->LoadURL("file:///admin.html");
 }
 
+// View destructor
 AdminView::~AdminView() {
     // Destroy instances
     if (overlay_ != NULL) {
@@ -20,22 +22,33 @@ AdminView::~AdminView() {
 ///
 /// Listeners inherited from Ultralight
 ///
-void AdminView::OnClose() {}
+// On window close (required override from AppCore)
+void AdminView::OnClose() {
+    // Close database instance
+    Database::Instance()->Disconnect();
+}
 
+// On window resize (required override from AppCore)
 void AdminView::OnResize(uint32_t width, uint32_t height) {}
 
+// On document ready
 void AdminView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, const String& url) {
     // Lock and set the javascript context for all future calls
     Ref<JSContext> locked_context = GetView()->LockJSContext();
     SetJSContext(locked_context.get());
+
+    // Get the global javascript object
     JSObject global = JSGlobalObject();
 
-    // Bind methods to be invoked from JS
+    /// Bind methods to be invoked from JS
+    // Events with return values
     global["OnWindowClose"] = BindJSCallback(&AdminView::OnWindowClose);
     global["OnLoadUsers"] = BindJSCallbackWithRetval(&AdminView::OnLoadUsers);
     global["OnLoadExperiments"] = BindJSCallbackWithRetval(&AdminView::OnLoadExperiments);
-    global["OnClickExperimenterMode"] = BindJSCallback(&AdminView::OnClickExperimenterMode);
     global["OnGetUser"] = BindJSCallbackWithRetval(&AdminView::OnGetUser);
+
+    // Events with no return value
+    global["OnClickExperimenterMode"] = BindJSCallback(&AdminView::OnClickExperimenterMode);
     global["OnSaveUser"] = BindJSCallback(&AdminView::OnSaveUser);
     global["OnEditUser"] = BindJSCallback(&AdminView::OnEditUser);
     global["OnAddNewExperiment"] = BindJSCallback(&AdminView::OnAddNewExperiment);
@@ -48,6 +61,7 @@ void AdminView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, 
 ///
 /// Local JS-Invoked Methods
 ///
+// On load all users
 JSValue AdminView::OnLoadUsers(const JSObject& obj, const JSArgs& args) {
     // Get all subjects
     std::vector<Identity> users(Database::Instance()->Select<Identity>());
@@ -79,6 +93,8 @@ JSValue AdminView::OnLoadUsers(const JSObject& obj, const JSArgs& args) {
     // Send to javascript
     return JSValue(jArray);
 }
+
+// On load all experiments
 JSValue AdminView::OnLoadExperiments(const JSObject& obj, const JSArgs& args) {
     // Get all experiments
     std::vector<Experiment> experiments(Database::Instance()->Select<Experiment>("is_concluded", "IS", std::to_string(0)));
@@ -104,6 +120,8 @@ JSValue AdminView::OnLoadExperiments(const JSObject& obj, const JSArgs& args) {
     // Send to javascript
     return JSValue(jArray);
 }
+
+// On save new user
 void AdminView::OnSaveUser(const JSObject& obj, const JSArgs& args) {
     // Parse args to JSArray and to respective values
     JSArray jArray(args[0].ToArray());
@@ -127,6 +145,7 @@ void AdminView::OnSaveUser(const JSObject& obj, const JSArgs& args) {
     Database::Instance()->Insert<Identity>(&identity);
 }
 
+// On edit existing user
 void AdminView::OnEditUser(const JSObject& obj, const JSArgs& args) {
     // Parse args to JSArray and to respective values
     JSArray jArray(args[0].ToArray());
@@ -159,6 +178,7 @@ void AdminView::OnEditUser(const JSObject& obj, const JSArgs& args) {
     }  
 }
 
+// On add new experiment
 void AdminView::OnAddNewExperiment(const JSObject& obj, const JSArgs& args) {
     // Get name
     ultralight::String rawCode(args[0].ToString());
@@ -169,12 +189,14 @@ void AdminView::OnAddNewExperiment(const JSObject& obj, const JSArgs& args) {
     Database::Instance()->Insert<Experiment>(&exp);
 }
 
+// On switch view mode to Experimenter
 void AdminView::OnClickExperimenterMode(const JSObject& obj, const JSArgs& args) {
     // Set next view and deallocate memory items
     NextView(new MainView(window_.get(), this->user_));
     ViewDealloc();
 }
 
+// On fetch currently logged-in user
 JSValue AdminView::OnGetUser(const JSObject& obj, const JSArgs& args) {
     // Return array
     JSArray jArray;
@@ -195,6 +217,7 @@ JSValue AdminView::OnGetUser(const JSObject& obj, const JSArgs& args) {
     return JSValue(jArray);
 }
 
+// On log out
 void AdminView::OnLogOut(const JSObject& obj, const JSArgs& args) {
     // Set login view and deallocate memory items
     NextView(new LoginView(window_.get()));

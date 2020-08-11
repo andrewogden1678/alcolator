@@ -71,11 +71,8 @@ class Database {
 
             // Check success
             if (status != SQLITE_OK) {                
-                try {
-                    throw errMsg; // Throw error         
-                } catch(std::exception &e) {
-                    std::cout << e.what() << std::endl;
-                }
+                throw errMsg; // Throw error   
+                delete errMsg;      
             } else {
                 return selected.at(0); // All ok, return the record (will always be at 0 position)
             }
@@ -105,7 +102,8 @@ class Database {
             
             // Check success
             if (status != SQLITE_OK) {
-                throw errMsg; // Throw error             
+                throw errMsg; // Throw error       
+                delete errMsg;    
             } else {
                 return selected; // All ok, return the records
             }
@@ -167,6 +165,7 @@ class Database {
             // Check success
             if (status != SQLITE_OK) {
                 throw errMsg; // Throw error
+                delete errMsg;
                 return 1;
             } else {
                 return 0; // All ok
@@ -192,6 +191,7 @@ class Database {
             // Check success
             if (status != SQLITE_OK) {
                 throw errMsg; // Throw error
+                delete errMsg;
             } else {
                 return 0; // All ok
             }
@@ -241,6 +241,7 @@ class Database {
             // Check success
             if (status != SQLITE_OK) {
                 throw errMsg; // Throw error
+                delete errMsg;
             } else {
                 return 0; // All ok
             }

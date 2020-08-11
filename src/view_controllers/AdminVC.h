@@ -20,7 +20,7 @@ class AdminView : public ViewController
         ~AdminView();   
         
         /// ViewController Events
-        // Members inherited from ViewListener
+        // Required overrides from ViewListener
         virtual void OnClose() override;
         virtual void OnResize(uint32_t width, uint32_t height) override;
 
@@ -38,6 +38,6 @@ class AdminView : public ViewController
         void OnClickExperimenterMode(const JSObject& obj, const JSArgs& args);
         void OnLogOut(const JSObject& obj, const JSArgs& args);
 
-        // User
+        // Logged-in User
         Identity user_;
 };

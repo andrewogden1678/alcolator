@@ -8,7 +8,9 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body class="light-grey" ref="login">
+    <!-- Close button -->
     <i class="material-icons selectable--text" style="position: absolute; right: 0px; padding: 5px; font-size: 32px; z-index: 10;" id="close" @click="winClose">close</i>
+    <!-- Main panel -->
     <div class="flexbox-column--align" style="min-height: 95vh;" id="vm">
       <!-- Title & login labels -->
       <h1 class="h-centred" style="margin: 0%; margin-left: 4.5%;">Alcolator</h1>
@@ -23,10 +25,11 @@
         <i class="material-icons margin-lr--10px default">lock</i>
         <input class="light-grey border--black regular long" type="password" id="password" v-model="password">
       </div>
+      <!-- Validation -->
       <template v-if="incorrectLogin">
         <h6 style="color: darkred; padding: 0; margin-top: 2px; margin-bottom: 3px; margin-left: 40px; font-size: 11pt;">Credentials not recognised.</h6>
       </template>
-      <!-- Login button & error message -->
+      <!-- Login button, don't register click if not all values are inputted -->
       <div class="flexbox-row margin-tb--10px" style="width: 37.5%; justify-content: flex-end;">
         <template v-if="username == '' || password == ''">
           <button class="normal red white--text disabled">Login</button>
@@ -36,7 +39,7 @@
         </template>
       </div>
     </div>
-    <!-- Page Scripts -->   
+    <!-- Page Script (all v-model, v-if/v-else and @click are defined here) -->
     <script src="js/login.js"></script>
   </body>
 </html>

@@ -6,6 +6,7 @@
 
 using namespace std;
 
+// View constructor
 LoginView::LoginView(Ref<Window> window) : ViewController::ViewController(window) {
     // Create overlay
     overlay_ = Overlay::Create(window_, 900, 600, 0, 0);
@@ -16,6 +17,7 @@ LoginView::LoginView(Ref<Window> window) : ViewController::ViewController(window
     GetView()->LoadURL("file:///login.html");
 }
 
+// View destructor
 LoginView::~LoginView() {
     // Destroy instances
     if (overlay_ != NULL) {
@@ -26,14 +28,22 @@ LoginView::~LoginView() {
 ///
 /// Listeners inherited from Ultralight
 ///
-void LoginView::OnClose() {}
+// On window close (required inherit from AppCore)
+void LoginView::OnClose() { 
+    // Close database instance
+    Database::Instance()->Disconnect();
+}
 
+// On window resize (required inherit from AppCore)
 void LoginView::OnResize(uint32_t width, uint32_t height) {}
 
+// On DOM ready
 void LoginView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, const String& url) {
     // Lock and set the javascript context for all future calls
     Ref<JSContext> locked_context = GetView()->LockJSContext();
     SetJSContext(locked_context.get());
+
+    // Get the global javascript object
     JSObject global = JSGlobalObject();
 
     // Bind methods to be invoked from JS
@@ -44,7 +54,7 @@ void LoginView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, 
 ///
 /// Local JS-Invoked Methods
 ///
-// ARGS: Username (string), Password (string)
+// On authentication
 bool LoginView::OnLogin(const JSObject& obj, const JSArgs& args) {
     // Extract username
     ultralight::String rawUsername(args[0].ToString());
@@ -58,10 +68,13 @@ bool LoginView::OnLogin(const JSObject& obj, const JSArgs& args) {
 
     // Try and select user
     try {
+        // Get identity
         Identity id = Database::Instance()->Select<Identity>("username", "IS", username).at(0);
 
+        // Store validation
         bool isCorrect = Utilities::Authenticate(password, id.password_);
 
+        // If credentials are correct
         if (isCorrect) {
             if (id.access_level_ == AccessLevel::ADMINISTRATOR) {
                 // Set next view and deallocate memory items

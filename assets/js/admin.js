@@ -1,10 +1,10 @@
-// Record component
+// Record component (loops and adds one for each user)
 var ComponentUser = Vue.component('user', {
     props: ["user"],
     template: '<div class="flexbox-row--align margin--dataitem dataitem" style="min-height: 73px;"><i class="material-icons list-icon" style="width: 20%; margin-right: 20px; margin-left: 5px">assignment_ind</i><div class="flexbox-column--align"><div class="flexbox-row--alignleft"><h5 class="nomargin" style="text-align: left; font-size: 14pt;">{{user.firstName}} {{user.lastName}}</h5></div><div class="flexbox-row--alignleft"><h3 class="nomargin" style="text-align: left;">{{user.accessLevelFull}}</h3></div></div></div>'
 });
 
-// Dropdown component
+// Dropdown component (loops and adds one for each dropdown record)
 var ComponentDropdown = Vue.component('dropdown', {
     props: ["obj"],
     template: '<h6 class="dropdown-option selectable">{{obj}}</h6>'
@@ -12,18 +12,18 @@ var ComponentDropdown = Vue.component('dropdown', {
 
 // Vue instance
 let vm = new Vue({
-    el: '#vm', // container ID 
+    el: '#vm', // Container ID 
     data: {
-        users: [ // Array of users
+        users: [ // Array of users pulled from DB
 
         ],
-        searchUsers: [
+        searchUsers: [ // Array of users currently fitting search criteria
 
         ],
-        experiments: [
+        experiments: [ // Array of experiments pulled from DB
 
         ],
-        accessLevels: {
+        accessLevels: { // Different access levels for display
             observer: "Data Observer",
             experimenter: "Experimenter",
             administrator: "Administrator"
@@ -35,7 +35,7 @@ let vm = new Vue({
             username: "",
             accessLevel: "",
         }, 
-        draft: {
+        draft: { // Current user being drafted
             firstName: "",
             lastName: "",
             accessLevel: "",
@@ -44,12 +44,13 @@ let vm = new Vue({
             password: "",
             active: false
         },
-        selected: {
+        selected: { // Currently selected user
             
         },
+        areYouSureCallback: null, // Callback for are you sure menu
         viewName: "", // Display name when viewing subject
         searchText: "", // Text for search
-        experimentCode: "",
+        experimentCode: "", // Code for new experiment
         isNewStart: true, // Program just started
         isFileMenuOpen: false, // File menu open
         isNewUserOpen: false, // New user open
@@ -59,7 +60,7 @@ let vm = new Vue({
         isNewExperimentOpen: false, // Check if new experiment window is open
         isAreYouSureOpen: false // Check if are you sure prompt is open
     },
-    components: {
+    components: { // Register the components
         'record': ComponentUser,
         'dropdown': ComponentDropdown
     },
@@ -91,8 +92,9 @@ let vm = new Vue({
         }
     },
     methods: {
+        // On initial page load
         initialLoad: function () {
-            // Get user
+            // Get user (object sent from C++ database interface)
             let user = window.OnGetUser();
             this.user = {
                 id: parseInt(user[0]),
@@ -102,7 +104,7 @@ let vm = new Vue({
                 accessLevel: parseInt(user[4])
             };
 
-            // Get users
+            // Get users (array sent from C++ database interface)
             let users = window.OnLoadUsers();
             for (i = 0; i < users.length; i++) {
                 this.users.push({
@@ -115,7 +117,7 @@ let vm = new Vue({
                 });
             }
 
-            // Get experiments
+            // Get experiments (array sent from C++ database interface)
             let exps = window.OnLoadExperiments();
             for (i = 0; i < exps.length; i++) {
                 this.experiments.push({
@@ -124,10 +126,11 @@ let vm = new Vue({
                 });
             }
         },
+        // Loading users from DB
         loadUsers: function () {
-            // Empty array
+            // Empty users array to avoid double up
             this.users = [];
-            // Get users
+            // Get users from DB
             let users = window.OnLoadUsers();
             for (i = 0; i < users.length; i++) {
                 this.users.push({
@@ -140,7 +143,7 @@ let vm = new Vue({
                 });
             }
         },
-        /// File menu methods
+        // Open file menu
         fileMenu: function () {
             // If already open
             if (this.isFileMenuOpen === true) {
@@ -151,6 +154,7 @@ let vm = new Vue({
             // Open the file menu
             this.isFileMenuOpen = true;
         },
+        // Hide file menu
         fileMenuHide: function (event) {
             // Get menu & target
             let element = this.$refs.menuFile;
@@ -166,6 +170,7 @@ let vm = new Vue({
                 this.isFileMenuOpen = false;
             }
         },
+        // Create new user draft
         fileNewUser: function () {
             // Add new card
             this.users.unshift({
@@ -181,21 +186,25 @@ let vm = new Vue({
             this.isNewStart = false;
             this.isNewUserOpen = true;
         },
+        // Add new experiment (file menu modal)
         fileNewExp: function () {
             // Set screens
             this.isNewExperimentOpen = true;
         },
+        // Close new experiment modal
         newExperimentClose: function () {
             // Set screens
             this.isNewExperimentOpen = false;
         },
+        // Make call to C++ and go into experimenter mode
         fileExpMode: function () {
             window.OnClickExperimenterMode()
         },
+        // Log out of app
         fileLogOut: function () {
             window.OnLogOut();
         },
-        /// User methods
+        // On click user
         userClick: function (event, user) {
             // Reset selected
             this.resetSelected();
@@ -206,13 +215,14 @@ let vm = new Vue({
                 this.isViewingUser = false;
                 this.isNewUserOpen = true;
             } else {
-                // If user is admin
+                // If user is admin, set variable
                 if (user.accessLevel == 2) {
                     this.isSelectedAdmin = true;
                 } else {
                     this.isSelectedAdmin = false;
                 }
-                // Assign user to the selected
+
+                // Assign user to the selected object
                 this.selected = {
                     id: user.id,
                     firstName: user.firstName,
@@ -232,12 +242,14 @@ let vm = new Vue({
                 this.isNewUserOpen = false;
             }
         },
+        // On reset selected
         resetSelected: function () {
             // Reset selected
             this.selected = {
                 subject_code: ""
             };
         },
+        // On save new user
         saveNewUser: function() {
             // Draft is no longer active
             this.draft.active = false;
@@ -252,7 +264,7 @@ let vm = new Vue({
             returnArray.push(this.draft.username);
             returnArray.push(this.draft.password);
 
-            // Send the array
+            // Send the array to the database
             window.OnSaveUser(returnArray);
 
             // Deactivate draft
@@ -262,12 +274,11 @@ let vm = new Vue({
             this.isNewUserOpen = false;
             this.isViewingUser = true;
 
-            // Set selected
+            // Set selected object to the draft
             this.selected = Object.assign({}, this.draft);
             this.viewName = this.draft.firstName + " " + this.draft.lastName;
 
-            // Reset draft
-            // Reset draft
+            // Annul draft values
             this.draft = {
                 firstName: "",
                 lastName: "",
@@ -281,8 +292,8 @@ let vm = new Vue({
             // Reload users
             this.loadUsers();
         },
+        // On edit user
         editUser: function() {
-            // TODO: UPDATED SUCCESSFULLY BANNER
             // Define return array
             let returnArray = [];
 
@@ -294,16 +305,17 @@ let vm = new Vue({
             returnArray.push(this.selected.username);
             returnArray.push(this.selected.password);
 
-            // Send the array
+            // Send the array to database
             window.OnEditUser(returnArray);
 
-            // Reload the name
+            // Reload the user view name
             this.viewName = this.selected.firstName + " " + this.selected.lastName;
 
             // Reload users
             this.loadUsers();
         },
-        switchAccessLevel: function (i) { // Get the titles
+        // Get access level titles from user
+        switchAccessLevel: function (i) {
             switch (i) {
                 case 0:
                     return "Data Observer";
@@ -313,13 +325,16 @@ let vm = new Vue({
                     return "Administrator";        
             }
         },
+        // On create new experiment
         newExperiment: function () {
             // Add new experiment
             window.OnAddNewExperiment(this.experimentCode);
 
-            // Set screens
+            // Set screens and annul code variable
             this.isNewExperimentOpen = false;
+            this.experimentCode = "";
         },
+        // Set access level for draft and selected
         setAccessLevel: function(event, level, isSelected = false) {
             if (isSelected) { // Set the selected access level (raw and full)
                 this.selected.accessLevel = level;
@@ -329,11 +344,12 @@ let vm = new Vue({
                 this.draft.accessLevelFull = this.switchAccessLevel(level);
             }
         },
+        // On cancel user
         cancelNewUser: function() {
             // Remove the draft sidebar user
             this.users.shift();
 
-            // Reset draft
+            // Annul draft values
             this.draft = {
                 firstName: "",
                 lastName: "",
@@ -348,6 +364,7 @@ let vm = new Vue({
             this.isNewUserOpen = false;
             this.isNewStart = true;
         },
+        // On click search button
         searchClick: function () {
             // If already open
             if (this.isSearchOpen === true) {
@@ -360,8 +377,9 @@ let vm = new Vue({
             // Open the search box
             this.isSearchOpen = true;
         },
+        // On click away from search bar
         searchHide: function (event) {
-            // Get menu & target
+            // Get menu & target from DOM
             let element = this.$refs.searchBox;
             let target = event.target;
             // Check if the target is the file button
@@ -378,6 +396,7 @@ let vm = new Vue({
                 this.isSearchActive = false;
             }
         },
+        // Open the are you sure menu and pass in the callback
         areYouSureOpen: function (callback) {
             // Set the callback
             this.areYouSureCallback = callback;
@@ -385,6 +404,7 @@ let vm = new Vue({
             // Open the window
             this.isAreYouSureOpen = true;
         },
+        // On click yes
         areYouSureYes: function () {
             // Run the callback
             this.areYouSureCallback();
@@ -392,6 +412,7 @@ let vm = new Vue({
             // Close window
             this.isAreYouSureOpen = false;
         },
+        // On click no
         areYouSureNo: function () {
             // Clear the callback
             this.areYouSureCallback = null;
@@ -399,18 +420,20 @@ let vm = new Vue({
             // Close the window
             this.isAreYouSureOpen = false;
         },
-        /// Window methods
+        // Close the window
         winClose: function () {
             window.OnWindowClose();
         }
     },
+    // On create instance
     created () {
-        // Add the click listeners
+        // Add the click listeners for file menu hide and search menu hide
         document.addEventListener('click', this.fileMenuHide);
         document.addEventListener('click', this.searchHide);
     },
+    // On destroy instance
     destroyed () {
-        // Remove the click listener
+        // Remove the click listeners for file menu hide and search menu hide
         document.removeEventListener('click', this.fileMenuHide);
         document.removeEventListener('click', this.searchHide);
     }

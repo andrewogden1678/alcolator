@@ -10,12 +10,14 @@
 ///
 class Model {
 
-    // Constructor/Destructor
     public:
+        // Constructor
         Model(int pk) : pk_(pk) {};
+
+        // Destructor
         virtual ~Model() {};
 
-        // Get members in format that can be processed by SQL
+        // Get model members in an SQL friendly format
         virtual std::vector<std::string> Serialise() = 0;
 
         // Get primary key

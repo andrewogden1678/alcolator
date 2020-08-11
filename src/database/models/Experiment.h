@@ -13,9 +13,10 @@ class Experiment : public Model {
         // SQL Callback constructor
         Experiment(char** fields);
 
+        // Default destructor
         ~Experiment() {};
         
-        // Override members to strings conversion
+        // OVERRIDES: Serialise() (Model.h)
         virtual std::vector<std::string> Serialise() override;
         
         // Get table name

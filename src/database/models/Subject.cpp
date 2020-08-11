@@ -5,6 +5,7 @@ std::string Subject::tableName_ = "subjects";
 std::array<std::string, 8> Subject::columns_ = {"subject_code", "experimenter_id", "experiment_id", "age", 
                                     "gender", "height", "weight", "created_on"};
 
+// Constructor (new object)
 Subject::Subject(int pk, std::string subject_code, int experimenter_id, int experiment_id,
                     int age, bool gender, double height, double weight, std::string created_on)
                     : Model(pk), subject_code_(subject_code), 
@@ -12,7 +13,7 @@ Subject::Subject(int pk, std::string subject_code, int experimenter_id, int expe
                     experiment_(Database::Instance()->GetForeignKey<Experiment>(experiment_id)),
                     age_(age), gender_(gender), height_(height), weight_(weight), created_on_(created_on) {};
 
-// SQL Callback
+// Constructor (SQL callback)
 Subject::Subject(char** fields) : Model(std::stoi(fields[0])), 
                     subject_code_(Database::ToStdString(fields[1])),
                     experimenter_(Database::Instance()->GetForeignKey<Identity>(std::stoi(fields[2]))),
@@ -20,6 +21,7 @@ Subject::Subject(char** fields) : Model(std::stoi(fields[0])),
                     age_(std::stoi(fields[4])), gender_(std::stoi(fields[5])), height_(atof(fields[6])),
                     weight_(atof(fields[7])), created_on_(Database::ToStdString(fields[8])) {};
 
+// Serialise object values into an SQL-friendly format
 std::vector<std::string> Subject::Serialise() {
     // Return vector
     std::vector<std::string> returnVec;

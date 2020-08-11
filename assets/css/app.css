@@ -65,10 +65,12 @@ i.nav-icon {
     font-size: 24px;
 }
 
+/* List icon */
 i.list-icon {
     font-size: 56px;
 }
 
+/* Lock icon */
 i.lock {
     position: absolute;
     z-index: 2;
@@ -105,6 +107,7 @@ i.lock {
     font-size: 16px;
 }
 
+/* Default cursor */
 .cursor-default {
     cursor: default;
 }
@@ -143,6 +146,7 @@ input.long {
     text-align: right;
 }
 
+/* Error message text flag */
 .error-text {
     display: block;
     background-color: rgb(219, 75, 75);
@@ -159,7 +163,8 @@ input.long {
     z-index: 2;
 } 
 
-/* Dropdown menus */
+/**** Dropdown menus ****/
+/* Button for dropdown */
 .dropdown-btn {
     height: 6.5vh;
     width: 95%;
@@ -168,12 +173,14 @@ input.long {
     cursor: pointer;
 }
 
+/* Actual dropdown */
 .dropdown {
     width: 100%;
     position: relative;
     display: inline-block;
 }
 
+/* Content for dropdown */
 .dropdown-content {
     display: none;
     position: absolute;
@@ -185,10 +192,12 @@ input.long {
     border-right: 1px solid black;
 } 
 
+/* Display dropdown on hover */
 .dropdown:hover .dropdown-content {
     display: block;
 }
 
+/* A dropdown option */
 .dropdown-option {
     margin-top: 2px;
     margin-bottom: 2px;
@@ -243,10 +252,6 @@ button {
     background-color: #e53833;
 }
 
-.draft {
-    color: #b42b27;
-}
-
 .dark-grey {
     background-color: #343642;
 }
@@ -255,27 +260,33 @@ button {
     background-color: rgba(52, 54, 66, 0.3);
 }
 
-.yellow--text {
-    color: #fbf06a;
+.white {
+    background-color: white;
 }
 
 .black {
     background-color: black;
 }
 
-.black--text {
-    color: black;
+/**** Text colours ****/
+.yellow--text {
+    color: #fbf06a;
 }
 
-.white {
-    background-color: white;
+
+.black--text {
+    color: black;
 }
 
 .white--text {
     color: white;
 }
 
-/* Borders */
+.draft {
+    color: #b42b27;
+}
+
+/**** Borders ****/
 .border--black {
     border-radius: 1px;
     border-color: black;
@@ -343,29 +354,23 @@ button {
     cursor: default;
 }
 
-/* Simple class for showing elements */
+/* Show an element */
 .show {
     display: block !important;
 }
 
+/* Hide an element */
 .hide {
     display: none !important;
 }
 
+/* File menu separator */
 hr.menu-sep {
     border: 1px solid #70707057;
     margin-top: 5px;
     margin-bottom: 5px;
     width: 90%;
     z-index: inherit;
-}
-
-/* Blur background style */
-.blur {
-    -webkit-filter: opacity(0.2) blur(8px);
-    filter: opacity(0.2) blur(8px);
-    height: 100vh;
-    width: 100%;
 }
 
 /* The settings modal */
@@ -395,12 +400,6 @@ hr.menu-sep {
     top: 50%;
     transform: translate(-50%, -50%);
 }
-
-/* Load experiment modal
-.modal--experiment {
-    
-}
-*/
 
 /**** Flexbox ****/
 /* Row */
@@ -521,6 +520,7 @@ div.vertical-scroll {
     padding: 10px;
 }
 
+/* Margin for a data item */
 .margin--dataitem {
     margin-bottom: 2.5px;
     margin-top: 2.5px;

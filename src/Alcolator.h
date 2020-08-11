@@ -14,7 +14,7 @@ class Alcolator {
     Alcolator();
     virtual ~Alcolator();
 
-    // Start the run loop
+    // Start the app loop
     virtual void Run();
 
   protected:

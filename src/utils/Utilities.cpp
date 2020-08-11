@@ -1,6 +1,7 @@
 #include "Utilities.h"
 #include <BCrypt.hpp>
 
+// Calculate grams of alcohol
 double Utilities::CalculateGrams(std::vector<std::string> values) {
     double bac = atof(values.at(0).c_str()); // Blood alcohol concentration
     double w = atof(values.at(1).c_str()); // Body weight (kg)
@@ -46,19 +47,22 @@ double Utilities::CalculateGrams(std::vector<std::string> values) {
     return (bac * 10) * (r * w) + (elimRate * time);
 }
 
+// Calculate mililitres of drink to give
 int Utilities::CalculateBeverage(double amountGrams, double concentration) {
     // Return mililitres of drink calculated with the specific gravity of alcohol (0.7935)
     return round((amountGrams / concentration) / 0.7935);
 }
 
+// Authenticate a username and password
 bool Utilities::Authenticate(std::string password, std::string hash) {
     // Validate password
     return BCrypt::validatePassword(password, hash);
 }
 
-std::string Utilities::Hash(std::string password) {
+// Hash a string using BCrypt
+std::string Utilities::Hash(std::string str) {
     // Generate the hash
-    std::string hash = BCrypt::generateHash(password);
+    std::string hash = BCrypt::generateHash(str);
 
     // Return the hash
     return hash;

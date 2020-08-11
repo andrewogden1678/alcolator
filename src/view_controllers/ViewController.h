@@ -26,21 +26,21 @@ class ViewController : public WindowListener, // Window handlers
         // Go to next view
         template <class T> 
         void NextView(T vc) {
-            // Set the pointer to the specified view
+            // Set the next view pointer to the desired view
             nextView_.reset(vc);
 
-            // Set the view listener
+            // Set the view listener to the new view
             window_->set_listener(nextView_.get());
         }
 
         // Deallocate certain items in memory (for changing pages)
         void ViewDealloc();
 
-        /// Shared JS-Invoked Methods
+        // Close window (Shared method)
         void OnWindowClose(const JSObject& obj, const JSArgs& args);
 
     protected:
         Ref<Window> window_; // Window ref
         RefPtr<Overlay> overlay_; // Overlay ref  
-        std::unique_ptr<ViewController> nextView_; // Next view to 
+        std::unique_ptr<ViewController> nextView_; // Next view requested
 }; 

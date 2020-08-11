@@ -11,9 +11,11 @@
   </head>
   <body>
     <div id="vm">
+      <!-- Navigation bar -->
       <div class="nav dark-grey white--text">
           <a class="nav-item selectable--text" style="font-weight: 700;" @click="fileMenu" ref="btnFile" id="fm">File</a>
           <img src="img/nav_separator.svg" class="nav-item cursor-default">
+          <!-- Only show settings if experimenter or above -->
           <template v-if="isEnterSubjectOpen || isLoadExperimentOpen || user.accessLevel == 0">
             <a class="nav-item selectable--text disabled--text">Settings</a>
           </template>
@@ -29,12 +31,15 @@
           </template>
           <h2 class="yellow--text nav-item--push cursor-default"><strong>Alcolator</strong></h2>
           <img src="img/nav_separator.svg" class="nav-item cursor-default" style="opacity: 0.2">
-          <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;" @click="downloadPDF">minimize</i> <!-- TODO: Minimise -->
+          <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;">minimize</i> <!-- TODO: Minimise -->
           <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;" @click="areYouSureOpen(winClose)">close</i>
       </div>
       <div class="flexbox-row">
+        <!-- Record sidebar -->
         <div class="flexbox-column--list light-grey">
+          <!-- Search box -->
           <input v-model="searchText" class="white border--black regular" ref="searchBox" v-bind:class="{show: isSearchOpen}" style="padding-left: 38px; position: absolute; left: 185px; top: 38px; display: none;" id="search">
+          <!-- Sort buttons, toggleable -->
           <template v-if="isExperimentLoaded">
             <template v-if="sortCycle == 1">
               <div class="selectable--text" @click="sortClick">
@@ -68,6 +73,7 @@
             </template>
           </template>
           <template v-else>
+            <!-- If no experiment loaded, don't allow click -->
             <div class="disabled--text">
               <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 5px">Sort</h6>
               <i class="material-icons" style="margin-left: 34px; top: 42px; position: absolute; font-size: 30px;">import_export</i>
@@ -75,6 +81,7 @@
           </template>
           <div class="flexbox-row--align">
             <strong><h2 style="margin: 10px;">Records</h2></strong>
+            <!-- Allow search if experiment is loaded -->
             <template v-if="isExperimentLoaded">
               <i @click="searchClick" id="searchBtn" class="material-icons selectable--text" style="margin-right: 9px; margin-left: 85px; position: absolute; font-size: 30px;">search</i>
             </template>
@@ -83,7 +90,9 @@
             </template>
           </div>   
           <div class="vertical-scroll">
+            <!-- Search if search box is active -->
             <template v-if="isSearchActive">
+              <!-- Display message if no records found -->
               <template v-if="searchRecords.length == 0">
                 <h6 style="text-align: center;">No records found.</h6>
               </template>
@@ -96,6 +105,7 @@
               @click.native="recordClick($event, record)">
               </record>
             </template>
+            <!-- Display all records if search not active -->
             <template v-else>
               <record
               v-for="record in records"
@@ -109,11 +119,13 @@
           </div>
         </div>
         <div class="flexbox-column--dat pad--10px">
+          <!-- If new start or nothing selected -->
           <template v-if="isNewStart">
             <h3 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">Please select an operation.</h3>
             <div class="flexbox-row pad--10px" style="height: 63%;"></div>
           </template>
           <template v-else>
+            <!-- Switch heading depending on status -->
             <template v-if="isViewingSubject">
               <strong><h4 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">Viewing Subject {{selected.subject_code}}</h4></strong>
             </template>
@@ -123,10 +135,12 @@
             <template v-else>
               <strong><h4 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">New Subject {{selected.subject_code}}</h4></strong>
             </template>
+            <!-- Data entry -->
             <div class="flexbox-row pad--10px" style="height: 63%;">
               <div class="flexbox-column" style="width: 50%;">
                 <h3 class="margin-tb--10px"><strong>General Information</strong></h3>
                 <div class="flexbox-row--alignright margin-tb--13px">
+                  <!-- Age -->
                   <h3 class="margin-input input-label semibold">Age (years): </h3>
                   <template v-if="isViewingSubject">
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="age" v-model="selected.age">
@@ -141,6 +155,7 @@
                       <input class="light-grey border--black regular--dat" maxlength="2" type="text" id="age" v-model="draft.age">
                     </template>
                     <template v-else>
+                      <!-- Validation -->
                       <div class="error-text flexbox-row white--text">
                         <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a whole number between 18 & 25.</h4>
                       </div>
@@ -149,6 +164,7 @@
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
+                  <!-- Gender -->
                   <h3 class="margin-input input-label semibold">Gender: </h3>
                   <template v-if="isViewingSubject">
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="gender" v-model="selected.gender">
@@ -159,6 +175,7 @@
                     <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else>
+                    <!-- Pick male or female -->
                     <div class="dropdown">
                       <template v-if="draft.gender != ''">
                         <button class="dropdown-btn regular--dat light-grey" style="width: 88.9%; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
@@ -185,6 +202,7 @@
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
+                  <!-- Height -->
                   <h3 class="margin-input input-label semibold">Height (cm): </h3>
                   <template v-if="isViewingSubject">
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="height" v-model="selected.height">
@@ -199,6 +217,7 @@
                       <input class="light-grey border--black regular--dat" maxlength="3" type="text" id="height" v-model="draft.height">
                     </template>
                     <template v-else>
+                      <!-- Validation -->
                       <div class="error-text flexbox-row white--text">
                         <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a whole number between 130 & 200.</h4>
                       </div>
@@ -207,6 +226,7 @@
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
+                  <!-- Weight -->
                   <h3 class="margin-input input-label semibold">Weight (kg): </h3>
                   <template v-if="isViewingSubject">
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="weight" v-model="selected.weight">
@@ -221,6 +241,7 @@
                       <input class="light-grey border--black regular--dat" type="text" id="weight" v-model="draft.weight">
                     </template>
                     <template v-else>
+                      <!-- Validation -->
                       <div class="error-text flexbox-row white--text">
                         <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a whole or decimal number between 35 & 150.</h4>
                       </div>
@@ -232,6 +253,7 @@
               <div class="flexbox-column" style="width: 50%;">
                 <h3 class="margin-tb--10px"><strong>Calculate Target Consumption</strong></h3>
                 <div class="flexbox-row--alignright margin-tb--13px">
+                  <!-- Target BAC -->
                   <h3 class="margin-input input-label semibold">Target BAC: </h3>
                   <template v-if="isViewingSubject">
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="targetBAC" v-model="selected.target_bac">
@@ -246,6 +268,7 @@
                       <input class="light-grey border--black regular--dat" type="text" id="targetBAC" v-model="draft.target_bac">
                     </template>
                     <template v-else>
+                      <!-- Validation -->
                       <div class="error-text flexbox-row white--text">
                         <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a decimal number between 0 & 0.15.</h4>
                       </div>
@@ -254,6 +277,7 @@
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
+                  <!-- When to reach target BAC -->
                   <h3 class="margin-input input-label semibold">Reach in: </h3>
                   <template v-if="isViewingSubject">
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="bacReachTime" v-model="selected.target_bac_time">
@@ -268,6 +292,7 @@
                       <input class="light-grey border--black regular--dat" type="text" id="bacReachTime" v-model="draft.target_bac_time">
                     </template>
                     <template v-else>
+                      <!-- Validation -->
                       <div class="error-text flexbox-row white--text">
                         <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a whole or decimal number between 0 & 8.</h4>
                       </div>
@@ -277,16 +302,19 @@
                 </div>
                 <div class="flexbox-row--alignright margin-tb--13px">
                   <template v-if="isViewingSubject">
+                    <!-- BAC Recorded at -->
                     <h3 class="margin-input input-label semibold">Recorded: </h3>
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="timeRecorded" v-model="selected.actual_bac_time">
                     <i class="material-icons lock">lock</i>
                   </template>
                   <template v-else-if="isBacMode">
+                    <!-- Actual BAC recorded-->
                     <h3 class="margin-input input-label semibold">Actual BAC: </h3>
                     <template v-if="validated.actual_bac">
                       <input class="light-grey border--black regular--dat" type="text" id="bacReachTime" v-model="draft.actual_bac">
                     </template>
                     <template v-else>
+                      <!-- Validation -->
                       <div class="error-text flexbox-row white--text">
                         <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a decimal number between 0 & 0.15.</h4>
                       </div>
@@ -294,6 +322,7 @@
                     </template>
                   </template>
                   <template v-else>
+                    <!-- Beverage measurement dropdown-->
                     <h3 class="margin-input input-label semibold">Measure in: </h3>
                     <div class="dropdown">
                       <template v-if="draft.beverage_name != ''">
@@ -318,6 +347,7 @@
                 </div>
                 <template v-if="isViewingSubject">
                   <div class="flexbox-row--alignright margin-tb--13px">
+                    <!-- Actual BAC recorded -->
                     <h3 class="margin-input input-label semibold">Actual BAC: </h3>
                     <input readonly class="locked-grey border--black regular--dat" type="text" id="bacActual" v-model="selected.actual_bac">
                     <i class="material-icons lock">lock</i>
@@ -325,13 +355,17 @@
                 </template>
                 <template v-else-if="isBacMode">
                   <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
+                    <!-- Record actual BAC button-->
                     <template v-if="draft.actual_bac == ''">
                       <button class="normal red white--text disabled" style="margin-right: 25px;" id="recordBAC">Record Actual BAC</button>
                     </template>
-                    <button class="normal red white--text selectable" style="margin-right: 25px;" id="recordBAC" @click="bacRecord">Record Actual BAC</button>
+                    <template v-else>
+                      <button class="normal red white--text selectable" style="margin-right: 25px;" id="recordBAC" @click="bacRecord">Record Actual BAC</button>
+                    </template>
                   </div>                
                 </template>
                 <template v-else>
+                  <!-- Calculate button-->
                   <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
                     <button class="normal dark-grey white--text selectable" style="margin-right: 25px; width: 172px;" id="cancel" @click="areYouSureOpen(cancelSubject)">Cancel</button>
                     <template v-if="draft.age == '' || draft.gender == '' || draft.height == '' || draft.weight == '' || draft.target_bac == '' || draft.target_bac_time == '' || draft.beverage_name == ''">
@@ -345,10 +379,11 @@
               </div>
             </div>
           </template>
-          
           <div class="flexbox-column light-grey" style="height: 37%;">
+            <!-- Results -->
             <strong><h2 style="margin: 5px;">Results</h2></strong> 
             <div class="flexbox-row--alignleft" style="align-items: flex-end; margin-left: 10px; margin-top: 10%; width: 76%;">
+              <!-- Results of calculation -->
               <template v-if="isCalculateClicked">
                 <p>
                   GIVE <strong>SUBJECT {{draft.subject_code}}</strong> {{draft.amount_grams}} grams of alcohol as {{draft.amount_beverage}} ml 
@@ -357,12 +392,14 @@
                   Click ADMINISTERED after giving subject calculated amount.
                 </p>
               </template>
+              <!-- Results of alcohol administration -->
               <template v-else-if="isBacMode">
                 <p>
                 <strong>SUBJECT {{draft.subject_code}}</strong> administered {{draft.amount_grams}} grams of alcohol targeting
                   a blood alcohol concentration of {{draft.target_bac}}% in {{draft.target_bac_time}} hours.
                 </p>
               </template>
+              <!-- Final results with actual BAC -->
               <template v-else-if="isViewingSubject">
                 <p>
                   <strong>SUBJECT {{selected.subject_code}}</strong> administered {{selected.amount_grams}} grams of alcohol targeting
@@ -371,11 +408,13 @@
                   Actual BAC recorded was {{selected.actual_bac}}% read at {{selected.actual_bac_time}}.
                 </p>
               </template>
-            </div>                 
+            </div>
             <div class="flexbox-row--alignleft" style="align-self: flex-end; margin-bottom: 0px;">
+              <!-- Administered button-->
               <template v-if="isCalculateClicked">
                 <button class="dark-grey white--text selectable" style="align-self: flex-end; margin-bottom: 20px; margin-top: 0; margin-left: 20px;" id="administer" @click="administeredClick">Administered</button>
               </template>
+              <!-- Button to download PDF report -->
               <template v-else-if="isViewingSubject">
                 <button class="dark-grey white--text selectable" style="align-self: flex-end; margin-bottom: 20px; margin-top: 0; margin-left: 20px;" id="pdfRep">Download PDF Report</button>
               </template>                    
@@ -383,14 +422,17 @@
             </div>   
           </div>
         </div>
+        <!-- File menu dropdown -->
         <div class="file-menu white" v-bind:class="{show: isFileMenuOpen === true}" v-bind:style="{height: fileMenuHeight}" ref="menuFile">
           <div class="flexbox-column">
+            <!-- Don't register clicks if any modal is open -->
             <template v-if="isSettingsMenuOpen || isEnterSubjectOpen || isLoadExperimentOpen || isAreYouSureOpen || (draft.subject_code != '')">
               <h6 class="file-menu--text disabled--text">New Subject</h6>
               <hr class="menu-sep" align="center">
               <h6 class="file-menu--text disabled--text">Load Experiment</h6>
             </template>
             <template v-else>
+              <!-- Don't register clicks for new subject if no experiment is loaded and the user is an Observer-->
               <template v-if="isExperimentLoaded && user.accessLevel != 0">
                 <h6 class="file-menu--text selectable--text" @click="fileNewSubject">New Subject</h6>
               </template>
@@ -401,6 +443,7 @@
               <h6 class="file-menu--text selectable--text" @click="fileLoadExp">Load Experiment</h6>
             </template>
             <hr class="menu-sep" align="center">
+            <!-- Switch to admin mode-->
             <template v-if="user.accessLevel == 2 && !isAreYouSureOpen">
               <h6 class="file-menu--text selectable--text" @click="areYouSureOpen(fileClickAdmin)">Administration</h6>
             </template>
@@ -411,6 +454,7 @@
             <h6 class="file-menu--text selectable--text" @click="areYouSureOpen(winClose)">Exit</h6>
           </div>
         </div>
+        <!-- New subject modal -->
         <div class="modal" v-bind:class="{show: isEnterSubjectOpen === true}">
           <div class="modal--input white">
             <h1 style="font-size: 24px; margin: 0;">New Subject</h1>
@@ -418,6 +462,7 @@
               <input v-model="draft.subject_code" maxlength="12" class="light-grey border--black regular" type="text" id="subID" style="margin-top: 15px" placeholder=" Identification code">
             </template>
             <template v-else>
+              <!-- Validation -->
               <div class="error-text flexbox-row white--text" style="bottom: 106px; left: 17px; width: 229px;">
                 <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Must include at least one digit.</h4>
               </div>
@@ -434,9 +479,11 @@
             </div>
           </div>
         </div>
+        <!-- Load experiment modal -->
         <div class="modal" v-bind:class="{show: isLoadExperimentOpen}">
           <div class="modal--input white">
             <h1 style="font-size: 24px; margin: 0;">Load Experiment</h1>
+            <!-- Choose experiment from dropdown-->
             <div class="dropdown">
                 <template v-if="experiment.id != null">
                   <button class="dropdown-btn light-grey" style="margin-top: 15px; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
@@ -468,6 +515,7 @@
             </div>
           </div>
         </div>
+        <!-- Are you sure modal -->
         <div class="modal" v-bind:class="{show: isAreYouSureOpen}">
           <div class="modal--input white">
             <h1 style="font-size: 24px; margin: 0;">Are you sure?</h1>
@@ -478,12 +526,15 @@
             </div>
           </div>
         </div>
+        <!-- Settings modal -->
         <div class="modal" v-bind:class="{show: isSettingsMenuOpen === true}">
           <div class="modal--settings white">
             <h1 style="font-size: 28px; margin: 0;">Settings</h1>
+            <!-- Display who is currently logged in -->
             <h3 class="semibold" style="font-size: 18px; margin-bottom: 30px;"><strong>Currently Logged-In:</strong> {{user.firstName}} {{user.lastName}}</h3>
             <h2 style="font-weight: bold; margin-bottom: 10px;">Beverages</h2>
             <div class="flexbox-row">
+              <!-- Add a new beverage and concentration -->
               <div class="flexbox-column" style="width: 50%; padding-right: 30px;">
                 <h3 style="font-size: 18px; font-weight: bold; margin: 0;">Add New Beverage: </h3>
                 <div class="flexbox-row--alignleft margin-tb--10px">
@@ -496,6 +547,7 @@
                     <input class="light-grey border--black regular short" type="text" id="newBevConc" v-model="settingsBeverage.newConc">
                   </template>
                   <template v-else>
+                    <!-- Validation -->
                     <div class="error-text flexbox-row white--text" style="left: 80px; width: 144px;">
                       <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a number between 1 & 100.</h4>
                     </div>
@@ -504,10 +556,12 @@
                 </div>
               </div>
               <div class="flexbox-column" style="padding-right: 30px;">
+                <!-- Edit an existing beverage and concentration-->
                 <h3 style="font-size: 18px; font-weight: bold; margin: 0;">Edit Beverage: </h3>
                 <div class="flexbox-row--alignleft margin-tb--10px">
                   <h3 class="margin-input input-label semibold">Select: </h3>
                   <div class="dropdown short">
+                    <!-- Pick existing beverage from dropdown -->
                     <template v-if="settingsBeverage.id != null">
                       <button class="dropdown-btn light-grey" style="width: 150px; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
                           {{settingsBeverage.name}}
@@ -534,6 +588,7 @@
                     <input class="light-grey border--black regular short" type="text" id="changeBevConc" v-model="settingsBeverage.concentration">
                   </template>
                   <template v-else>
+                    <!-- Validation -->
                     <div class="error-text flexbox-row white--text" style="left: 90px; width: 144px;">
                       <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a number between 1 & 100.</h4>
                     </div>
@@ -559,6 +614,6 @@
       </div>
     </div>
   </body>
-  <!-- Page Script -->
+  <!-- Page Script (all v-model, v-if/v-else and @click are defined here) -->
   <script src="js/main.js"></script>
 </html>

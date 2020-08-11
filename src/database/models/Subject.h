@@ -16,9 +16,10 @@ class Subject : public Model {
         // SQL Callback constructor
         Subject(char** fields);
 
+        // Default constructor
         ~Subject() {};
 
-        // Override members to strings conversion
+        // OVERRIDES: Serialise() (Model.h)
         virtual std::vector<std::string> Serialise() override;
         
         // Get table name

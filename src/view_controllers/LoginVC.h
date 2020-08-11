@@ -16,7 +16,7 @@ class LoginView : public ViewController
         ~LoginView();   
         
         /// ViewController Events
-        // Members inherited from ViewListener
+        // Required overrides from ViewListener
         virtual void OnClose() override;
         virtual void OnResize(uint32_t width, uint32_t height) override;
 

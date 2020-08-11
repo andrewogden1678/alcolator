@@ -15,9 +15,10 @@ class Identity : public Model {
         // SQL Callback constructor
         Identity(char** fields);
 
+        // Default destructor
         ~Identity() {};
         
-        // Override members to strings conversion
+        // OVERRIDES: Serialise() (Model.h)
         std::vector<std::string> Serialise() override;
 
         // Get table name

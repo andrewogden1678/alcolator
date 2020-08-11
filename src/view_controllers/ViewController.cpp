@@ -24,13 +24,11 @@ void ViewController::ViewDealloc() {
     overlay_ = nullptr;
 }
 
-///
-/// Shared JS-Invoked Methods
-///
+// On close window (Shared method)
 void ViewController::OnWindowClose(const JSObject& obj, const JSArgs& args) {
-    // Safety check
+    // Safety check (does instance exist?)
     if (App::instance()) {
-        // Quit
+        // Quit instance
         App::instance()->Quit();
     }
 }

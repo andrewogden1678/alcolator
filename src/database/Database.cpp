@@ -38,6 +38,9 @@ int Database::Disconnect() {
     // Close the database
     sqlite3_close(db_);
 
+    // Destroy the instance
+    delete instance_;
+
     // We don't need this anymore
     db_ = nullptr;
 
@@ -46,22 +49,20 @@ int Database::Disconnect() {
 
 // Format strings for SQL
 std::string Database::FormatStringSQL(std::string* str) {
-
     // Add preceding and trailing quotations
     std::string temp;
     temp += "\"";
     temp += *str;
     temp += "\"";
 
+    // Return
     return temp;
 }
 
-// Format char*  to string
+// Format char* to string
 std::string Database::ToStdString(char* str) {
-
     // Define, append and return
     std::string temp;
     temp += str;
     return temp;
-    
 }

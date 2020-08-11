@@ -17,9 +17,10 @@ class Result : public Model {
         // SQL Callback constructor
         Result(char** fields);
 
+        // Default constructor
         ~Result() {};
         
-        // Override members to strings conversion
+        // OVERRIDES: Serialise() (Model.h)
         virtual std::vector<std::string> Serialise() override;
         
         // Get table name

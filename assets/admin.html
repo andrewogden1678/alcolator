@@ -8,7 +8,9 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body>
+    <!-- Beginning of the Vue.JS instance -->
     <div id="vm">
+      <!-- Navigation bar -->
       <div class="nav dark-grey white--text" id="window">
           <a class="nav-item selectable--text" style="font-weight: 700;" id="fm" @click="fileMenu" ref="btnFile">File</a>
           <img src="img/nav_separator.svg" class="nav-item cursor-default">
@@ -19,14 +21,21 @@
           <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;" @click="areYouSureOpen(winClose)">close</i>
       </div>
       <div class="flexbox-row" id="vm">
+        <!-- Users div -->
         <div class="flexbox-column--list light-grey">
+          <!-- Search box -->
           <input v-model="searchText" class="white border--black regular" ref="searchBox" v-bind:class="{show: isSearchOpen}" style="padding-left: 38px; position: absolute; left: 196px; top: 35px; display: none;" id="search">
           <div class="flexbox-row--align" style="padding-top: 5px;">
             <strong><h2 style="margin: 0;">Users</h2></strong>
+            <!-- Button for search -->
             <i @click="searchClick" id="searchBtn" class="material-icons selectable--text" style="margin-right: 9px; margin-left: 96px; margin-top: 2px; position: absolute; font-size: 30px;">search</i>
           </div>       
           <div class="vertical-scroll">
+            <!-- Display searched users if search is active -->
             <template v-if="isSearchActive">
+              <template v-if="searchRecords.length == 0">
+                <h6 style="text-align: center;">No records found.</h6>
+              </template>
               <user
               v-for="user in searchUsers"
               v-bind:key="user.id"
@@ -35,6 +44,7 @@
               @click.native="userClick($event, user)">
             </user>
             </template>
+            <!-- Otherwise show normal users -->
             <template v-else>
               <user
                 v-for="user in users"
@@ -46,21 +56,28 @@
             </template>
           </div>
         </div>
+        <!-- Main operation panel -->
         <div class="flexbox-column--dat pad--10px">
+          <!-- If just opened up or nothing open -->
           <template v-if="isNewStart">
             <h3 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">Please select an operation.</h3>
             <div class="flexbox-row pad--10px" style="height: 63%;"></div>
           </template>
+          <!-- Else display data -->
           <template v-else>
+            <!-- New user -->
             <template v-if="isNewUserOpen">
               <strong><h4 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">New User {{draft.firstName}} {{draft.lastName}}</h4></strong>
             </template>
             <template v-else-if="isViewingUser">
+              <!-- Viewing existing user-->
               <strong><h4 style="margin-top: 15px; margin-left: 15px; margin-bottom: 0;">Viewing User {{this.viewName}}</h4></strong>
             </template>
+            <!-- Input dialogues, input model varies depending on whether user is new or being edited -->
             <div class="flexbox-row pad--10px" style="height: 63%; padding-bottom: 20px;">
               <div class="flexbox-column" style="width: 50%;">
                 <div class="flexbox-row--alignright margin-tb--16px">
+                  <!-- First name -->
                   <h3 class="margin-input input-label semibold">First Name: </h3>
                   <template v-if="isNewUserOpen">
                     <input class="light-grey border--black regular--dat" type="text" id="fname" v-model="draft.firstName">
@@ -70,6 +87,7 @@
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--16px">
+                  <!-- Last name -->
                   <h3 class="margin-input input-label semibold">Last Name: </h3>
                   <template v-if="isNewUserOpen">
                     <input class="light-grey border--black regular--dat" type="text" id="lname" v-model="draft.lastName">
@@ -79,6 +97,7 @@
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--16px">
+                  <!-- Username -->
                   <h3 class="margin-input input-label semibold">Username: </h3>
                   <template v-if="isNewUserOpen">
                     <input class="light-grey border--black regular--dat" style="display: inline-block;"type="text" id="username" v-model="draft.username">
@@ -88,6 +107,7 @@
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--16px">
+                  <!-- Password -->
                   <h3 class="margin-input input-label semibold">Password: </h3>
                   <template v-if="isNewUserOpen">
                     <input class="light-grey border--black regular--dat" type="password" id="userpass" v-model="draft.password">
@@ -99,6 +119,7 @@
               </div>
               <div class="flexbox-column" style="width: 50%;">
                 <div class="flexbox-row--alignright margin-tb--16px">
+                  <!-- Access levels -->
                   <h3 class="margin-input input-label semibold">Access Type: </h3>
                   <template v-if="isNewUserOpen">
                     <div class="dropdown">
@@ -131,6 +152,7 @@
                     </div>
                   </template>
                   <template v-else-if="isViewingUser">
+                    <!-- Administrator cannot choose a lower permission -->
                     <template v-if="selected.accessLevel == 2">
                       <input readonly class="locked-grey border--black regular--dat" type="text" v-model="selected.accessLevelFull">
                       <i class="material-icons lock">lock</i>
@@ -167,6 +189,7 @@
                     </template>
                   </template>
                 </div>
+                <!-- Save changes and cancel button, don't allow to click save unless all inputs are filled -->
                 <div class="flexbox-row--alignright" style="justify-content: flex-end; margin-top: 50px;">
                   <template v-if="isViewingUser">
                     <template v-if="selected.firstName == '' || selected.lastName == '' || selected.username == '' || selected.accessLevelFull == ''">
@@ -192,10 +215,12 @@
             </div>
           </template>
           <div class="flexbox-row light-grey" style="height: 37%;">
+            <!-- Show recent activity -->
             <strong><h2 style="margin: 5px;">Recent Activity</h2></strong>
             <img src="img/martini.png" alt="beer bottle" class="nav-item--push" style="align-self: flex-end; margin-bottom: 0; top: 25px; margin-right: 20px;" width="125px" height="157px">
           </div>
         </div>
+        <!-- File menu drop down -->
         <div class="file-menu white" style="height: 158px;" v-bind:class="{show: isFileMenuOpen === true}" ref="menuFile">
           <div class="flexbox-column">
             <template v-if="isNewUserOpen || draft.active || isNewExperimentOpen">
@@ -217,6 +242,7 @@
             <h6 class="file-menu--text selectable--text" @click="winClose">Exit</h6>
           </div>
         </div>
+        <!-- Are you sure modal -->
         <div class="modal" v-bind:class="{show: isAreYouSureOpen}">
           <div class="modal--input white">
             <h1 style="font-size: 24px; margin: 0;">Are you sure?</h1>
@@ -227,6 +253,7 @@
             </div>
           </div>
         </div>
+        <!-- New experiment modal -->
         <div class="modal" v-bind:class="{show: isNewExperimentOpen === true}">
           <div class="modal--input white">
             <h1 style="font-size: 24px; margin: 0;">New Experiment</h1>
@@ -245,6 +272,6 @@
       </div>      
     </div>
   </body>
-  <!-- Page Script -->
+  <!-- Page Script (all v-model, v-if/v-else and @click are defined here) -->
   <script src="js/admin.js"></script> 
 </html>

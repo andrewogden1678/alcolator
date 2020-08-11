@@ -22,7 +22,7 @@ class MainView : public ViewController
         ~MainView();   
         
         /// ViewController Events
-        // Members inherited from ViewListener
+        // Required overrides from ViewListener
         virtual void OnClose() override;
         virtual void OnResize(uint32_t width, uint32_t height) override;
 
@@ -35,14 +35,14 @@ class MainView : public ViewController
         JSValue OnClickRecord(const JSObject& obj, const JSArgs& args);
         JSValue OnLoadExperiments(const JSObject& obj, const JSArgs& args);
         JSValue OnLoadBeverages(const JSObject& obj, const JSArgs& args);
+        JSValue OnClickCalculate(const JSObject& obj, const JSArgs& args);
+        JSValue OnGetUser(const JSObject& obj, const JSArgs& args);
         void OnAddNewBeverage(const JSObject& obj, const JSArgs& args);
         void OnAddNewSubject(const JSObject& obj, const JSArgs& args);
         void OnClickAdminMode(const JSObject& obj, const JSArgs& args);
-        JSValue OnClickCalculate(const JSObject& obj, const JSArgs& args);
-        JSValue OnGetUser(const JSObject& obj, const JSArgs& args);
         void OnLogOut(const JSObject& obj, const JSArgs& args);
         void OnDeleteBeverage(const JSObject& obj, const JSArgs& args);
         
-        // User
+        // Logged-in User
         Identity user_;
 };

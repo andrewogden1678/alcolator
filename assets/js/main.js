@@ -1,10 +1,10 @@
-// Record component
+// Record component (loop and display for each record)
 var ComponentRecord = Vue.component('record', {
     props: ["record", "experiment"],
     template: "<div class='flexbox-row--align margin--dataitem dataitem' style='min-height: 73px;'><i class='material-icons list-icon' style='width: 20%; margin-right: 20px; margin-left: 5px'>assignment_ind</i><div class='flexbox-column--align'><div class='flexbox-row--alignleft'><h5 class='nomargin' style='text-align: left; font-size: 16pt'>{{experiment.name}}-{{record.subject_code}}</h5></div><div class='flexbox-row--alignleft'><h3 class='nomargin' style='text-align: left;'>{{record.display_date}}</h3></div></div></div>"
 });
 
-// Dropdown component
+// Dropdown component (loop and display for each dropdown)
 var ComponentDropdown = Vue.component('dropdown', {
     props: ["obj"],
     template: '<h6 class="selectable dropdown-option">{{obj.name}}</h6>'
@@ -12,26 +12,26 @@ var ComponentDropdown = Vue.component('dropdown', {
 
 // Vue instance
 let vm = new Vue({
-    el: '#vm', // container ID 
+    el: '#vm', // Container ID 
     data: {
-        records: [ // List of all records
+        records: [ // List of all records from DB
 
         ],
-        searchRecords: [
+        searchRecords: [ // List of all records currently matching search query
 
         ],
-        experiments: [ // List of all experiments
+        experiments: [ // List of all experiments fetched from DB
 
         ],
-        beverages : [
+        beverages : [ // List of all beverages fetched from DB
 
         ],
-        // For dropdown component
+        // Male gender for dropdown component
         gender_male: {
             name: "Male",
             raw: true
         },
-        // For dropdown component
+        // Female gender dropdown component
         gender_female: {
             name: "Female",
             raw: false
@@ -43,7 +43,7 @@ let vm = new Vue({
             accessLevel: "",
         }, 
         experiment: {}, // Currently loaded experiment
-        settingsBeverage: {
+        settingsBeverage: { // Beverage settings selected in modal
             id: null,
             newName: "",
             newConc: "",
@@ -66,11 +66,11 @@ let vm = new Vue({
             beverage_name: "",
             beverage_concentration: ""
         }, 
-        selected: {
+        selected: { // Currently selected record
             subject_code: "",
             beverage_name: ""
-        }, // Currently selected record
-        validated: {
+        },
+        validated: { // Store whether certain values are validated
             age: true,
             height: true,
             weight: true,
@@ -81,10 +81,10 @@ let vm = new Vue({
             changeBeverage: true,
             newSubjectCode: true
         },
-        fileMenuHeight: "135px",
-        searchText: "",
-        sortCycle: 0,
-        areYouSureCallback: null,
+        fileMenuHeight: "135px", // Default height for file menu (changes if user not Admin because 'Experimenter' option not displayed)
+        searchText: "", // Current text in search menu
+        sortCycle: 0, // Current sort cycle
+        areYouSureCallback: null, // Callback for are you sure menu
         isExperimentLoaded: false, // Is an experiment loaded
         isCalculateClicked: false, // Is the calculate button clicked
         isNewStart: true, // Program just started
@@ -98,7 +98,7 @@ let vm = new Vue({
         isLoadExperimentOpen: false, // Menu for loading experiment is open
         isAreYouSureOpen: false // Is the are you sure window open        
     },
-    components: {
+    components: { // Register the components
         'record': ComponentRecord,
         'dropdown': ComponentDropdown
     },
@@ -129,8 +129,8 @@ let vm = new Vue({
                     for (i = 0; i < records.length; i++) {
                         this.searchRecords.push(records[i]);
                     }
-                    for (i = 0; i < recordsDates.length; i++) {
-                        // Make sure no double ups occur
+                    for (i = 0; i < recordsDates.length; i++) { // Loop through dates
+                        // Make sure no double ups occur and add
                         let index = records.map((r) => r.id).indexOf(recordsDates[i].id);
                         if (index != -1) {
                             this.searchRecords.push(recordsDates[i]);
@@ -164,9 +164,9 @@ let vm = new Vue({
         }
     },
     methods: {
-        /// Data events
+        // On initial load
         initialLoad: function () {
-            // Get user
+            // Get user (from database using C++ interface)
             let user = window.OnGetUser();
             this.user = {
                 id: parseInt(user[0]),
@@ -175,14 +175,14 @@ let vm = new Vue({
                 accessLevel: parseInt(user[3])
             };
 
-            // Get experiments
+            // Get experiments (from database using C++ interface)
             let exps = window.OnLoadExperiments();
             for (i = 0; i < exps.length; i++) {
                 this.experiments.push({id: exps[i][0], 
                     name: exps[i][1]});
             }
 
-            // Get beverages
+            // Get beverages (from database using C++ interface)
             this.loadBeverages();
 
             // Set file menu height to fit menu item if adminstrator access
@@ -190,18 +190,24 @@ let vm = new Vue({
                 this.fileMenuHeight = "158px";
             }
         },
+        // On load beverages
         loadBeverages: function () {
-            // Get beverages
+            // Get beverages from DB
             let bevs = window.OnLoadBeverages();
+
+            // Assign beverages
             for (i = 0; i < bevs.length; i++) {
                 this.beverages.push({id: bevs[i][0],
                 name: bevs[i][1],
                 concentration: bevs[i][2]});
             }
         },
+        // On load subjects
         loadSubjects: function () {
             // Reset records
             this.records = [];
+
+            // Load subjects from DB
             let subjects = window.OnLoadSubjects(this.experiment.id);
                 
             // Assign subjects
@@ -212,8 +218,9 @@ let vm = new Vue({
                     display_date: subjects[i][2].split(" ")[0].split('-').reverse().join('/')});
             }
         },
+        // On load experiment
         loadExp: function () {
-            // Display subjects if experiment has been chosen
+            // Load subjects if experiment has been chosen
             if (this.experiment.id != null) {
                 this.isExperimentLoaded = true;
                 this.loadSubjects();
@@ -228,6 +235,7 @@ let vm = new Vue({
             this.isBacMode = false;
             this.isCalculateClicked = false;
         },
+        // On click sidebar record
         recordClick: function (event, record) {
             // Reset selected
             this.resetSelected();
@@ -243,14 +251,14 @@ let vm = new Vue({
                     this.isBacMode = true;
                 }
             } else {
-                // Get the subject
+                // Get the subject from DB
                 let subject = window.OnClickRecord(record.id);
                 
-                // Cut off seconds
+                // Cut off seconds from time (no need to be so precise)
                 let splitTime = subject[12].split(" ")[1].split(":");
                 splitTime = splitTime[0] + ":" + splitTime[1];
 
-                // Set selected
+                // Set selected object
                 this.selected = {id: subject[0], 
                     subject_code: subject[1], 
                     age: subject[2],
@@ -267,12 +275,13 @@ let vm = new Vue({
                     beverage_name: subject[13],
                     beverage_concentration: parseFloat(subject[14]).toFixed(3)};
                 
-                // Set the viewing modes
+                // Set screens
                 this.isNewStart = false;
                 this.isBacMode = false;
                 this.isViewingSubject = true;
             }
         },
+        // On save subject
         saveSubject: function () {
             // Define return array
             let returnArray = [];
@@ -299,17 +308,19 @@ let vm = new Vue({
             returnArray.push(this.draft.actual_bac);
             returnArray.push(this.draft.actual_bac_time);
 
-            // Send to database
+            // Send to database through C++ interface
             window.OnAddNewSubject(returnArray);
         },
+        // On reset selected object
         resetSelected: function () {
             // Reset selected
             this.selected = {
                 subject_code: ""
             };
         },
+        // On cancel subject creation
         cancelSubject: function () {
-            // Reset draft
+            // Annul draft values
             this.draft = {
                 subject_code: "",
                 age: "",
@@ -337,16 +348,17 @@ let vm = new Vue({
             this.validated.target_bac = true;
             this.validated.target_bac_time = true;
 
-            // Remove the draft sidebar record
+            // Remove the draft sidebar record from the front of the array
             this.records.shift();
 
             // Reset screen
             this.isNewStart = true;
             this.isCalculateClicked = false;
-            
         },
+        // On click calculate
         calculateClick: function () {
-            let invalid = false; // Hold whether anything is invalid
+            // Store whether validation fails
+            let invalid = false; 
             // Age
             if (this.isNotNumberOrIsDecimal(this.draft.age)) {
                 // If NaN or decimal
@@ -420,7 +432,7 @@ let vm = new Vue({
             // Don't send values for calculation if anything invalid
             if (invalid) return;
 
-            // Create array
+            // Create return array
             let sendValues = [];
 
             // Push all values for calculation
@@ -446,6 +458,7 @@ let vm = new Vue({
             // Show administer button
             this.isCalculateClicked = true;
         },
+        // Show s at end of 'hour' if more than 1 hour
         checkPlural: function (i) {
             // Return 'hours' if greater than 1
             if (i > 1) return "hours";
@@ -453,15 +466,18 @@ let vm = new Vue({
             // Otherwise return 'hour'
             return "hour";
         },
+        // On click administered
         administeredClick: function () {        
             // Set created on time
             this.draft.created_on = this.getDateNow();
 
             // Reset calculated check
             this.isCalculateClicked = false;
+
             // Change screen
             this.isBacMode = true;
         },
+        // On record BAC
         bacRecord: function () {
             // Catch invalid input for actual BAC
             if (isNaN(this.draft.actual_bac)) {
@@ -479,6 +495,7 @@ let vm = new Vue({
 
             // Get current date
             let date = this.getDateNow();
+
             // Set actual BAC datetime
             this.draft.actual_bac_time = date;
 
@@ -491,11 +508,11 @@ let vm = new Vue({
             // Set selected to the draft
             this.selected = Object.assign({}, this.draft);
 
-            // Cut off seconds
+            // Cut off seconds (no need to be that precise)
             let splitTime = date.split(" ")[1].split(":");
             this.selected.actual_bac_time = splitTime[0] + ":" + splitTime[1];
 
-            // Reset draft
+            // Annul draft values
             this.draft = {
                 subject_code: "",
                 age: "",
@@ -520,12 +537,20 @@ let vm = new Vue({
             // Reload experiment
             this.loadSubjects();
         },
+        // On click download report
         reportDownload: function () {
+            // TODO: Generate string and send to C++
+            let pdf = new jsPDF();
+            pdf.text('Test Document', 10, 10);
+
+            pdf.save("test.pdf");
             window.OnClickDownloadReport();
         },
+        // Set the gender for the draft
         setGender: function (event, gender) {
             this.draft.gender = gender;
         },
+        // Get current date in database ISO format
         getDateNow: function () {
             // Get date
             let date = new Date(Date.now());
@@ -540,13 +565,7 @@ let vm = new Vue({
             // Connect them together again
             return localDate + " " + localTime;
         },
-        downloadPDF: function () {
-            let pdf = new jsPDF();
-            pdf.text('Test Document', 10, 10);
-
-            pdf.save("test.pdf");
-        },
-        /// File menu methods
+        // On click file menu
         fileMenu: function () {
             // If already open
             if (this.isFileMenuOpen === true) {
@@ -557,8 +576,9 @@ let vm = new Vue({
             // Open the file menu
             this.isFileMenuOpen = true;
         },
+        // On hide file menu
         fileMenuHide: function (event) {
-            // Get menu & target
+            // Get menu & target from DOM
             let element = this.$refs.menuFile;
             let target = event.target;
             // Check if the target is the file button
@@ -572,19 +592,23 @@ let vm = new Vue({
                 this.isFileMenuOpen = false;
             }
         },
+        // On click administration mode button
         fileClickAdmin: function () {
             // Change modes
             window.OnClickAdminMode();
         },
+        // On click new subject button
         fileNewSubject: function () {
             this.isEnterSubjectOpen = true;
         },
+        // On close new subject modal
         newSubjectClose: function () {
             this.isEnterSubjectOpen = false;
             this.isNewStart = true;
         },
+        // On create new subject entry
         newSubject: function () {
-            // Check if there is a number
+            // Check if there is a number with regex
             if (!/\d/.test(this.draft.subject_code)) {
                 // There is no number, validation failed
                 this.validated.newSubjectCode = false;
@@ -593,9 +617,11 @@ let vm = new Vue({
                 // All good
                 this.validated.newSubjectCode = true;
             }
+
             // Get current datetime and format
             let date = this.getDateNow().split(" ");
-            // Add new card
+
+            // Add new card to top of record sidebar
             this.records.unshift({
                 id: this.records.length + 1, 
                 subject_code: this.draft.subject_code,
@@ -603,34 +629,41 @@ let vm = new Vue({
                 display_date: date[0].split('-').reverse().join('/'),
                 draft: true
             });
-            // Add code to selected
+
+            // Add subject code to selected object
             this.selected.subject_code = this.draft.subject_code;
-            // Process window changes
+
+            // Set screens
             this.isEnterSubjectOpen = false;
             this.isNewStart = false;
             this.isViewingSubject = false;
         },
+        // On open load experiment modal
         fileLoadExp: function () {
             this.isLoadExperimentOpen = true;
         },
+        // On choose experiment
         chooseExperiment: function (event, experiment) {
             this.isExperimentLoaded = false; // Mark as not loaded
             this.experiment = {id: experiment.id, name: experiment.name}; // Add to active experiment            
         },
+        // On close load experiment modal
         loadExpClose: function () {
             this.isLoadExperimentOpen = false;
         },
+        // On log out
         fileLogOut: function () {
             // Log out
             window.OnLogOut();
         },
-        /// Settings methods
+        // On open settings modal
         settingsOpen: function () {
             // Open
             this.isSettingsMenuOpen = true;            
         },
+        // On close settings modal
         settingsClose: function () {
-            // Reset values
+            // Annul beverage values
             this.settingsBeverage = {
                 id: null,
                 newName: "",
@@ -638,15 +671,19 @@ let vm = new Vue({
                 name: "",
                 concentration: ""
             };
+
             // Reset validation
             this.validated.newBeverage = true;
             this.validated.changeBeverage = true;
-            // Close menu
+
+            // Close modal
             this.isSettingsMenuOpen = false; 
         },
+        // On save settings
         settingsSave: function () {
-            // Record whether validation fails
+            // Store whether validation fails
             let invalid = false;
+
             // Existing concentration
             if (this.settingsBeverage.concentration == "") {
                 // Continue if empty
@@ -683,14 +720,15 @@ let vm = new Vue({
             // Don't save if invalid
             if (invalid) return;
 
-            // Define return array and push values
+            // Define return array
             let returnArray = [];
-            // Return ID if edited and -1 if not
+
+            // Push values
             returnArray.push(this.settingsBeverage.id);
             returnArray.push(this.settingsBeverage.newName);
-            returnArray.push(parseInt(this.settingsBeverage.newConc) / 100);
+            returnArray.push(parseInt(this.settingsBeverage.newConc) / 100); // Store as decimal not int
             returnArray.push(this.settingsBeverage.name);
-            returnArray.push(parseInt(this.settingsBeverage.concentration) / 100);
+            returnArray.push(parseInt(this.settingsBeverage.concentration) / 100); // Store as decimal not int
             if (this.settingsBeverage.id != null || this.settingsBeverage.concentration != "") {
                 returnArray.push(true); // Send true if edited
             } else {
@@ -705,7 +743,7 @@ let vm = new Vue({
             // Push to database
             window.OnAddNewBeverage(returnArray);
 
-            // Reset values
+            // Annul settings values
             this.settingsBeverage = {
                 id: null,
                 newName: "",
@@ -718,38 +756,45 @@ let vm = new Vue({
             this.beverages = [];
             this.loadBeverages();
         },
+        // On choose beverage
         chooseBeverage: function (event, beverage) {
-            // Add to values
+            // Add to settings object
             this.settingsBeverage.id = beverage.id;
             this.settingsBeverage.name = beverage.name;
             this.settingsBeverage.concentration = parseFloat(beverage.concentration) * 100;
         },
+        // On choose beverage in subject window
         chooseBeverageSubject: function (event, beverage) {
-            // Add to values
+            // Add to draft values
             this.draft.beverage_name = beverage.name;
             this.draft.beverage_concentration = beverage.concentration;
         },
+        // On delete beverage
         deleteBeverage: function () {
             // Delete
             window.OnDeleteBeverage(this.settingsBeverage.id);
 
-            // Reset values
+            // Annul settings values
             this.settingsBeverage.id = null;
             this.settingsBeverage.name = "";
             this.settingsBeverage.concentration = "";
             
-            // Reset array and reload
+            // Reset array and reload beverages
             this.beverages = [];
             this.loadBeverages();
         },
+        // Check whether not a number or a decimal
         isNotNumberOrIsDecimal: function (data) {
             // If not number
             if (isNaN(data)) return true;
-    
+            
+            // If not decimal
+            if (data.indexOf('.') != -1) return true;
+
             // Otherwise
             return false;
         },
-        /// Sorting methods
+        // On click sort button
         sortClick: function() {
             // Increment sort counter
             if (this.sortCycle == 0 || this.sortCycle != 4) { // Increment counter if start or not end of toggle
@@ -758,7 +803,7 @@ let vm = new Vue({
                 this.sortCycle = 1;
             }
 
-            // Sort elements
+            // Sort elements depending on cycle
             if (this.sortCycle == 1) {
                 // Sort by code descending (numbers)
                 this.records.sort((a, b) => parseInt(b.subject_code.replace(/\D/g, '')) - parseInt(a.subject_code.replace(/\D/g, '')));
@@ -795,6 +840,7 @@ let vm = new Vue({
                 });
             }
         },
+        // On click search button
         searchClick: function () {
             // If already open
             if (this.isSearchOpen === true) {
@@ -805,18 +851,20 @@ let vm = new Vue({
                 return;
             }
             // Open the search box and focus
-            //this.$refs.searchBox.$el.focus();
             this.isSearchOpen = true;
         },
+        // On click outside search box
         searchHide: function (event) {
-            // Get menu & target
+            // Get menu & target element
             let element = this.$refs.searchBox;
             let target = event.target;
+            
             // Check if the target is the file button
             if (target.id === "searchBtn") {
                 // Skip next block
                 return;
             }
+
             // If click outside the menu
             if ((element !== target) && !element.contains(target)) {
                 // Close menu
@@ -826,6 +874,7 @@ let vm = new Vue({
                 this.isSearchActive = false;
             }
         },
+        // On open are you sure modal
         areYouSureOpen: function (callback) {
             // Set the callback
             this.areYouSureCallback = callback;
@@ -838,6 +887,7 @@ let vm = new Vue({
             // Open the window
             this.isAreYouSureOpen = true;
         },
+        // On click yes
         areYouSureYes: function () {
             // Run the callback
             this.areYouSureCallback();
@@ -845,6 +895,7 @@ let vm = new Vue({
             // Close window
             this.isAreYouSureOpen = false;
         },
+        // On click no
         areYouSureNo: function () {
             // Clear the callback
             this.areYouSureCallback = null;
@@ -857,13 +908,15 @@ let vm = new Vue({
             window.OnWindowClose();
         }
     },
+    // On instance created
     created () {
-        // Add the click listeners
+        // Add the click listeners for file menu and search menu hide
         document.addEventListener('click', this.fileMenuHide);
         document.addEventListener('click', this.searchHide);
     },
+    // On instance destroyed
     destroyed () {
-        // Remove the click listener
+        // Remove the click listeners for file menu and search menu hide
         document.removeEventListener('click', this.fileMenuHide);
         document.removeEventListener('click', this.searchHide);
     }

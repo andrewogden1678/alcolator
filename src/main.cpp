@@ -1,8 +1,13 @@
 #include "Alcolator.h"
 
+// Application starting point
 int main() {
-  Alcolator app;
-  app.Run();
 
+  // Create new app instance
+  Alcolator app;
+
+  // Run the app
+  app.Run();
+  
   return 0;
 }

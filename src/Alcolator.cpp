@@ -6,6 +6,7 @@
 #define WINDOW_WIDTH  900
 #define WINDOW_HEIGHT 600
 
+// App constructor
 Alcolator::Alcolator() {
 
   // Create app instance
@@ -28,6 +29,7 @@ Alcolator::Alcolator() {
   window_->set_listener(nextView_.get());
 }
 
+// App destructor
 Alcolator::~Alcolator() {
   // Annul window listener
   window_->set_listener(nullptr);
