@@ -6,6 +6,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Vue.JS -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- JSPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
   </head>
   <body>
     <div id="vm">
@@ -27,7 +29,7 @@
           </template>
           <h2 class="yellow--text nav-item--push cursor-default"><strong>Alcolator</strong></h2>
           <img src="img/nav_separator.svg" class="nav-item cursor-default" style="opacity: 0.2">
-          <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;">minimize</i> <!-- TODO: Minimise -->
+          <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;" @click="downloadPDF">minimize</i> <!-- TODO: Minimise -->
           <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;" @click="areYouSureOpen(winClose)">close</i>
       </div>
       <div class="flexbox-row">
@@ -82,6 +84,9 @@
           </div>   
           <div class="vertical-scroll">
             <template v-if="isSearchActive">
+              <template v-if="searchRecords.length == 0">
+                <h6 style="text-align: center;">No records found.</h6>
+              </template>
               <record
               v-for="record in searchRecords"
               v-bind:key="record.id"
@@ -320,6 +325,9 @@
                 </template>
                 <template v-else-if="isBacMode">
                   <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
+                    <template v-if="draft.actual_bac == ''">
+                      <button class="normal red white--text disabled" style="margin-right: 25px;" id="recordBAC">Record Actual BAC</button>
+                    </template>
                     <button class="normal red white--text selectable" style="margin-right: 25px;" id="recordBAC" @click="bacRecord">Record Actual BAC</button>
                   </div>                
                 </template>
@@ -440,7 +448,6 @@
                       Select experiment
                   </button>                 
                 </template>
-                <!-- TODO: Have dropdown go away on click -->
               <div class="dropdown-content light-grey--notopaque" style="min-width: 94.25%;" id="dropContent">
                 <dropdown
                   v-for="experiment in experiments"

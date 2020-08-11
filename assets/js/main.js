@@ -540,6 +540,12 @@ let vm = new Vue({
             // Connect them together again
             return localDate + " " + localTime;
         },
+        downloadPDF: function () {
+            let pdf = new jsPDF();
+            pdf.text('Test Document', 10, 10);
+
+            pdf.save("test.pdf");
+        },
         /// File menu methods
         fileMenu: function () {
             // If already open
@@ -594,6 +600,7 @@ let vm = new Vue({
                 id: this.records.length + 1, 
                 subject_code: this.draft.subject_code,
                 created_on: date,
+                display_date: date[0].split('-').reverse().join('/'),
                 draft: true
             });
             // Add code to selected
@@ -644,7 +651,7 @@ let vm = new Vue({
             if (this.settingsBeverage.concentration == "") {
                 // Continue if empty
                 invalid = false;
-            } else if (isNan(this.settingsBeverage.concentration.toString())) {
+            } else if (isNaN(this.settingsBeverage.concentration.toString())) {
                 // If NaN or is decimal
                 this.validated.changeBeverage = false;
                 invalid = true;
@@ -660,7 +667,7 @@ let vm = new Vue({
             if (this.settingsBeverage.newConc == "") {
                 // Continue if empty
                 invalid = false;
-            } else if (isNan(this.settingsBeverage.newConc.toString())) {
+            } else if (isNaN(this.settingsBeverage.newConc.toString())) {
                 // If NaN or is decimal
                 this.validated.newBeverage = false;
                 invalid = true;
