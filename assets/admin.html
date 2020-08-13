@@ -80,30 +80,30 @@
                   <!-- First name -->
                   <h3 class="margin-input input-label semibold">First Name: </h3>
                   <template v-if="isNewUserOpen">
-                    <input class="light-grey border--black regular--dat" type="text" id="fname" v-model="draft.firstName">
+                    <input class="light-grey border--black regular--dat" maxlength="12" type="text" id="fname" v-model="draft.firstName">
                   </template>
                   <template v-else-if="isViewingUser">
-                    <input class="light-grey border--black regular--dat" type="text" id="fname" v-model="selected.firstName">
+                    <input class="light-grey border--black regular--dat" maxlength="12" type="text" id="fname" v-model="selected.firstName">
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--16px">
                   <!-- Last name -->
                   <h3 class="margin-input input-label semibold">Last Name: </h3>
                   <template v-if="isNewUserOpen">
-                    <input class="light-grey border--black regular--dat" type="text" id="lname" v-model="draft.lastName">
+                    <input class="light-grey border--black regular--dat" maxlength="12" type="text" id="lname" v-model="draft.lastName">
                   </template>
                   <template v-else-if="isViewingUser">
-                    <input class="light-grey border--black regular--dat" type="text" id="lname" v-model="selected.lastName">
+                    <input class="light-grey border--black regular--dat" maxlength="12" type="text" id="lname" v-model="selected.lastName">
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--16px">
                   <!-- Username -->
                   <h3 class="margin-input input-label semibold">Username: </h3>
                   <template v-if="isNewUserOpen">
-                    <input class="light-grey border--black regular--dat" style="display: inline-block;"type="text" id="username" v-model="draft.username">
+                    <input class="light-grey border--black regular--dat" maxlength="12" style="display: inline-block;"type="text" id="username" v-model="draft.username">
                   </template>
                   <template v-else-if="isViewingUser">
-                    <input class="light-grey border--black regular--dat" type="text" id="username" v-model="selected.username">
+                    <input class="light-grey border--black regular--dat" maxlength="12" type="text" id="username" v-model="selected.username">
                   </template>
                 </div>
                 <div class="flexbox-row--alignright margin-tb--16px">
@@ -257,7 +257,7 @@
         <div class="modal" v-bind:class="{show: isNewExperimentOpen === true}">
           <div class="modal--input white">
             <h1 style="font-size: 24px; margin: 0;">New Experiment</h1>
-            <input v-model="experimentCode" maxlength="12" class="light-grey border--black regular" type="text" id="expID" style="margin-top: 15px" placeholder=" Experiment code">
+            <input v-model="experimentCode" maxlength="12" class="light-grey border--black regular" maxlength="12" type="text" id="expID" style="margin-top: 15px" placeholder=" Experiment code">
             <div class="flexbox-row--align" style="margin-top: 15px; margin-left: 20px; width: 100%;">
               <template v-if="experimentCode != ''">
                 <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="newExperiment">Proceed</button>

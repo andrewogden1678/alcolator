@@ -6,6 +6,8 @@
 #include "../database/models/Result.h"
 #include <vector>
 #include <string>
+#include <iostream>
+#include <fstream>
 
 using namespace ultralight;
 using namespace std;
@@ -37,6 +39,7 @@ class MainView : public ViewController
         JSValue OnLoadBeverages(const JSObject& obj, const JSArgs& args);
         JSValue OnClickCalculate(const JSObject& obj, const JSArgs& args);
         JSValue OnGetUser(const JSObject& obj, const JSArgs& args);
+        JSValue OnClickDownloadReport(const JSObject& obj, const JSArgs& args);
         void OnAddNewBeverage(const JSObject& obj, const JSArgs& args);
         void OnAddNewSubject(const JSObject& obj, const JSArgs& args);
         void OnClickAdminMode(const JSObject& obj, const JSArgs& args);

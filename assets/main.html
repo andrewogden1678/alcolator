@@ -238,14 +238,14 @@
                   </template>
                   <template v-else>
                     <template v-if="validated.weight">
-                      <input class="light-grey border--black regular--dat" type="text" id="weight" v-model="draft.weight">
+                      <input class="light-grey border--black regular--dat" maxlength="5" type="text" id="weight" v-model="draft.weight">
                     </template>
                     <template v-else>
                       <!-- Validation -->
                       <div class="error-text flexbox-row white--text">
                         <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a whole or decimal number between 35 & 150.</h4>
                       </div>
-                      <input class="light-grey border--black error regular--dat" type="text" id="weight" v-model="draft.weight">
+                      <input class="light-grey border--black error regular--dat" maxlength="5" type="text" id="weight" v-model="draft.weight">
                     </template>
                   </template>
                 </div>
@@ -265,14 +265,14 @@
                   </template>
                   <template v-else>
                     <template v-if="validated.target_bac">
-                      <input class="light-grey border--black regular--dat" type="text" id="targetBAC" v-model="draft.target_bac">
+                      <input class="light-grey border--black regular--dat" maxlength="4" type="text" id="targetBAC" v-model="draft.target_bac">
                     </template>
                     <template v-else>
                       <!-- Validation -->
                       <div class="error-text flexbox-row white--text">
                         <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a decimal number between 0 & 0.15.</h4>
                       </div>
-                      <input class="light-grey border--black error regular--dat" type="text" id="targetBAC" v-model="draft.target_bac">
+                      <input class="light-grey border--black error regular--dat" maxlength="4" type="text" id="targetBAC" v-model="draft.target_bac">
                     </template>
                   </template>
                 </div>
@@ -289,14 +289,14 @@
                   </template>
                   <template v-else>
                     <template v-if="validated.target_bac_time">
-                      <input class="light-grey border--black regular--dat" type="text" id="bacReachTime" v-model="draft.target_bac_time">
+                      <input class="light-grey border--black regular--dat" maxlength="4" type="text" id="bacReachTime" v-model="draft.target_bac_time">
                     </template>
                     <template v-else>
                       <!-- Validation -->
                       <div class="error-text flexbox-row white--text">
                         <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a whole or decimal number between 0 & 8.</h4>
                       </div>
-                      <input class="light-grey border--black error regular--dat" type="text" id="bacReachTime" v-model="draft.target_bac_time">
+                      <input class="light-grey border--black error regular--dat" maxlength="4" type="text" id="bacReachTime" v-model="draft.target_bac_time">
                     </template>
                   </template>
                 </div>
@@ -311,14 +311,14 @@
                     <!-- Actual BAC recorded-->
                     <h3 class="margin-input input-label semibold">Actual BAC: </h3>
                     <template v-if="validated.actual_bac">
-                      <input class="light-grey border--black regular--dat" type="text" id="bacReachTime" v-model="draft.actual_bac">
+                      <input class="light-grey border--black regular--dat" maxlength="5" type="text" id="bacReachTime" v-model="draft.actual_bac">
                     </template>
                     <template v-else>
                       <!-- Validation -->
                       <div class="error-text flexbox-row white--text">
                         <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a decimal number between 0 & 0.15.</h4>
                       </div>
-                      <input class="light-grey border--black error regular--dat" type="text" id="bacReachTime" v-model="draft.actual_bac">
+                      <input class="light-grey border--black error regular--dat" maxlength="5" type="text" id="bacReachTime" v-model="draft.actual_bac">
                     </template>
                   </template>
                   <template v-else>
@@ -360,7 +360,7 @@
                       <button class="normal red white--text disabled" style="margin-right: 25px;" id="recordBAC">Record Actual BAC</button>
                     </template>
                     <template v-else>
-                      <button class="normal red white--text selectable" style="margin-right: 25px;" id="recordBAC" @click="bacRecord">Record Actual BAC</button>
+                      <button class="normal red white--text selectable" maxlength="4" style="margin-right: 25px;" id="recordBAC" @click="bacRecord">Record Actual BAC</button>
                     </template>
                   </div>                
                 </template>
@@ -382,6 +382,14 @@
           <div class="flexbox-column light-grey" style="height: 37%;">
             <!-- Results -->
             <strong><h2 style="margin: 5px;">Results</h2></strong> 
+            <template v-if="reportDownloadIsSuccessful != null">
+              <template v-if="reportDownloadIsSuccessful">
+                <h6 style="color: darkgreen; margin: 0; z-index: 10; position: absolute; margin-left: 114px; margin-top: 10px;">Report downloaded successfully into the program folder.</h6>
+              </template>
+              <template v-else>
+                <h6 style="color: darkred; margin: 0; z-index: 10; position: absolute; margin-left: 114px; margin-top: 10px;">Oops! There was a problem downloading the report.</h6>
+              </template>
+            </template>
             <div class="flexbox-row--alignleft" style="align-items: flex-end; margin-left: 10px; margin-top: 10%; width: 76%;">
               <!-- Results of calculation -->
               <template v-if="isCalculateClicked">
@@ -416,7 +424,7 @@
               </template>
               <!-- Button to download PDF report -->
               <template v-else-if="isViewingSubject">
-                <button class="dark-grey white--text selectable" style="align-self: flex-end; margin-bottom: 20px; margin-top: 0; margin-left: 20px;" id="pdfRep">Download PDF Report</button>
+                <button class="dark-grey white--text selectable" style="align-self: flex-end; margin-bottom: 20px; margin-top: 0; margin-left: 20px;" id="pdfRep" @click="reportDownload">Download PDF Report</button>
               </template>                    
               <img src="img/bottle.png" alt="beer bottle" class="nav-item--push" style="align-self: flex-end; margin-bottom: 0; margin-right: 20px;" width="209px" height="145px">
             </div>   
@@ -459,14 +467,14 @@
           <div class="modal--input white">
             <h1 style="font-size: 24px; margin: 0;">New Subject</h1>
             <template v-if="validated.newSubjectCode">
-              <input v-model="draft.subject_code" maxlength="12" class="light-grey border--black regular" type="text" id="subID" style="margin-top: 15px" placeholder=" Identification code">
+              <input v-model="draft.subject_code" maxlength="8" class="light-grey border--black regular" type="text" id="subID" style="margin-top: 15px" placeholder=" Identification code">
             </template>
             <template v-else>
               <!-- Validation -->
               <div class="error-text flexbox-row white--text" style="bottom: 106px; left: 17px; width: 229px;">
                 <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Must include at least one digit.</h4>
               </div>
-              <input v-model="draft.subject_code" maxlength="12" class="light-grey error regular" type="text" id="subID" style="margin-top: 15px" placeholder=" Identification code">
+              <input v-model="draft.subject_code" maxlength="8" class="light-grey error regular" type="text" id="subID" style="margin-top: 15px" placeholder=" Identification code">
             </template>
             <div class="flexbox-row--align" style="margin-top: 15px; margin-left: 20px; width: 100%;">
               <template v-if="draft.subject_code != ''">
@@ -485,9 +493,9 @@
             <h1 style="font-size: 24px; margin: 0;">Load Experiment</h1>
             <!-- Choose experiment from dropdown-->
             <div class="dropdown">
-                <template v-if="experiment.id != null">
+                <template v-if="experimentSelected.id != null">
                   <button class="dropdown-btn light-grey" style="margin-top: 15px; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
-                      {{experiment.name}}
+                      {{experimentSelected.name}}
                   </button>
                 </template>
                 <template v-else>
@@ -505,7 +513,7 @@
               </div>
             </div>	
             <div class="flexbox-row--align" style="margin-top: 15px; margin-left: 20px; width: 100%;">
-              <template v-if="experiment.id != null && experiment">
+              <template v-if="experimentSelected.id != null && experimentSelected">
                 <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="loadExp">Load</button>
               </template>
               <template v-else>
@@ -539,19 +547,19 @@
                 <h3 style="font-size: 18px; font-weight: bold; margin: 0;">Add New Beverage: </h3>
                 <div class="flexbox-row--alignleft margin-tb--10px">
                   <h3 class="margin-input input-label semibold">Name: </h3>
-                  <input class="light-grey border--black regular short" type="text" id="newBevName" v-model="settingsBeverage.newName">
+                  <input class="light-grey border--black regular short" maxlength="12" type="text" id="newBevName" v-model="settingsBeverage.newName">
                 </div>
                 <div class="flexbox-row--alignleft margin-tb--10px">
                   <h3 class="margin-input input-label semibold">Alc. %: </h3>
                   <template v-if="validated.newBeverage">
-                    <input class="light-grey border--black regular short" type="text" id="newBevConc" v-model="settingsBeverage.newConc">
+                    <input class="light-grey border--black regular short" maxlength="2" type="text" id="newBevConc" v-model="settingsBeverage.newConc">
                   </template>
                   <template v-else>
                     <!-- Validation -->
                     <div class="error-text flexbox-row white--text" style="left: 80px; width: 144px;">
-                      <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a number between 1 & 100.</h4>
+                      <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a number between 1 & 99.</h4>
                     </div>
-                    <input class="light-grey border--black error regular short" type="text" id="newBevConc" v-model="settingsBeverage.newConc">
+                    <input class="light-grey border--black error regular short" maxlength="2" type="text" id="newBevConc" v-model="settingsBeverage.newConc">
                   </template>
                 </div>
               </div>
@@ -590,9 +598,9 @@
                   <template v-else>
                     <!-- Validation -->
                     <div class="error-text flexbox-row white--text" style="left: 90px; width: 144px;">
-                      <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a number between 1 & 100.</h4>
+                      <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a number between 1 & 99.</h4>
                     </div>
-                    <input class="light-grey border--black error regular short" type="text" id="changeBevConc" v-model="settingsBeverage.concentration">
+                    <input class="light-grey border--black error regular short" maxlength="2" type="text" id="changeBevConc" v-model="settingsBeverage.concentration">
                   </template>
                 </div>
                 <div class="flexbox-row--align" style="margin-top: 20px; margin-left: 20px; width: 100%;">

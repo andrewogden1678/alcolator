@@ -184,6 +184,7 @@ let vm = new Vue({
             });
             // Set screens
             this.isNewStart = false;
+            this.isViewingUser = false;
             this.isNewUserOpen = true;
         },
         // Add new experiment (file menu modal)

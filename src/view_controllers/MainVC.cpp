@@ -33,7 +33,6 @@ void MainView::OnResize(uint32_t width, uint32_t height) {}
 
 // On DOM ready
 void MainView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, const String& url) {
-    double scale(App::instance()->main_monitor()->scale());
     // Lock and set the javascript context for all future calls
     Ref<JSContext> locked_context = GetView()->LockJSContext();
     SetJSContext(locked_context.get());
@@ -47,6 +46,7 @@ void MainView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, c
     global["OnClickRecord"] = BindJSCallbackWithRetval(&MainView::OnClickRecord);
     global["OnClickCalculate"] = BindJSCallbackWithRetval(&MainView::OnClickCalculate);
     global["OnGetUser"] = BindJSCallbackWithRetval(&MainView::OnGetUser);
+    global["OnClickDownloadReport"] = BindJSCallbackWithRetval(&MainView::OnClickDownloadReport);
 
     // Events with no return value
     global["OnWindowClose"] = BindJSCallback(&MainView::OnWindowClose);
@@ -385,4 +385,63 @@ void MainView::OnLogOut(const JSObject& obj, const JSArgs& args) {
     // Set login view and deallocate memory items
     NextView(new LoginView(window_.get()));
     ViewDealloc();
+}
+
+// On download report
+JSValue MainView::OnClickDownloadReport(const JSObject& obj, const JSArgs& args) {
+    // Acquire JS execution context
+    Ref<JSContext> context = GetView()->LockJSContext();
+
+    // Get the underlying context to use with JavaScriptCore
+    JSContextRef ctx = context.get();
+
+    // Script to execute
+    const char* script = "vm.getReportData()";
+
+    // Generate string ref to pass to API
+    JSStringRef str = JSStringCreateWithUTF8CString(script);
+
+    // Execute script and return the value ref, ignore other params for now
+    JSValueRef res = JSEvaluateScript(ctx, str, 0, 0, 0, 0);
+
+    // Safety check, ensure it is an object
+    if (JSValueIsObject(ctx, res)) {
+        // It is an object so cast it to an object ref
+        JSObjectRef resObj = JSValueToObject(ctx, res, 0);
+
+        // Get buffer size in bytes
+        size_t nBytes = JSObjectGetArrayBufferByteLength(ctx, resObj, 0);
+
+        // Get pointer to the raw bytes
+        void* buffer = JSObjectGetArrayBufferBytesPtr(ctx, resObj, 0);
+
+        // Cast to string
+        const char* temp = (const char*)buffer;
+        std::string castedStr(temp);
+
+        // Get document name
+        ultralight::String rawName(args[0].ToString());
+        std::string name(static_cast<std::string>(rawName.utf8().data()));
+
+        // Create a new file
+        ofstream pdf(name);
+
+        // Safety check
+        if (pdf.is_open()) {
+            // Write data
+            pdf << castedStr;
+
+            // Close file
+            pdf.close();
+        } else {
+            // Return an error code
+            return JSValue(1);
+        }
+    }
+
+    // Release the string we created from memory
+    JSStringRelease(str);
+
+    // Return success code
+    return JSValue(0);
 }

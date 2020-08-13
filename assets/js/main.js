@@ -42,6 +42,7 @@ let vm = new Vue({
             lastName: "",
             accessLevel: "",
         }, 
+        experimentSelected: {}, // Currently selected experiment in modal
         experiment: {}, // Currently loaded experiment
         settingsBeverage: { // Beverage settings selected in modal
             id: null,
@@ -81,6 +82,8 @@ let vm = new Vue({
             changeBeverage: true,
             newSubjectCode: true
         },
+        reportDownloadIsSuccessful: null,
+        temp: null,
         fileMenuHeight: "135px", // Default height for file menu (changes if user not Admin because 'Experimenter' option not displayed)
         searchText: "", // Current text in search menu
         sortCycle: 0, // Current sort cycle
@@ -123,7 +126,7 @@ let vm = new Vue({
                 if (!isNaN(this.searchText)) {
                     // Get corresponding subject IDs and dates
                     let records = this.records.filter(r => r.subject_code.includes(this.searchText.toLowerCase()));
-                    let recordsDates = this.records.filter(r => r.created_on.join(" ").includes(this.searchText));
+                    let recordsDates = this.records.filter(r => r.display_date.includes(this.searchText));
                     
                     // Loop through pulled records and add them to search records
                     for (i = 0; i < records.length; i++) {
@@ -132,7 +135,7 @@ let vm = new Vue({
                     for (i = 0; i < recordsDates.length; i++) { // Loop through dates
                         // Make sure no double ups occur and add
                         let index = records.map((r) => r.id).indexOf(recordsDates[i].id);
-                        if (index != -1) {
+                        if (index == -1) {
                             this.searchRecords.push(recordsDates[i]);
                         }
                     }
@@ -221,7 +224,9 @@ let vm = new Vue({
         // On load experiment
         loadExp: function () {
             // Load subjects if experiment has been chosen
-            if (this.experiment.id != null) {
+            if (this.experimentSelected.id != null) {
+                // Bind to actual experiment
+                this.experiment = Object.assign({}, this.experimentSelected);               
                 this.isExperimentLoaded = true;
                 this.loadSubjects();
                 // Hide experiment window
@@ -239,6 +244,8 @@ let vm = new Vue({
         recordClick: function (event, record) {
             // Reset selected
             this.resetSelected();
+            // Reset report download checker
+            this.reportDownloadIsSuccessful = null;
             // If it is the draft
             if (record.subject_code == this.draft.subject_code) {
                 // Set the subject code and beverage name
@@ -264,7 +271,7 @@ let vm = new Vue({
                     age: subject[2],
                     height: parseInt(subject[3]),
                     weight: parseFloat(subject[4]).toFixed(1),
-                    gender: Boolean(subject[5]) == true ? "Male" : "Female",
+                    gender: parseInt(subject[5]) == 1 ? "Male" : "Female",
                     created_on: subject[6].split(" ")[0],
                     target_bac: parseFloat(subject[7]).toFixed(3),
                     target_bac_time: subject[8],
@@ -291,7 +298,7 @@ let vm = new Vue({
             returnArray.push(this.user.id);
             returnArray.push(this.experiment.id);
             returnArray.push(this.draft.age);
-            returnArray.push(this.draft.gender);
+            returnArray.push(this.draft.gender == "Male" ? 1 : 0);
             returnArray.push(this.draft.height);
             returnArray.push(this.draft.weight);
             returnArray.push(this.draft.created_on);
@@ -539,12 +546,52 @@ let vm = new Vue({
         },
         // On click download report
         reportDownload: function () {
+            // Call the method and pass through document title
+            let res = window.OnClickDownloadReport("Report for " + this.experiment.name + "-" + this.selected.subject_code + ".pdf");
+            
+            this.temp = res;
+            // Set success/fail message
+            if (parseInt(res) === 0) {
+                this.reportDownloadIsSuccessful = true;
+            } else {
+                this.reportDownloadIsSuccessful = false;
+            }
+        },
+        // Get report data
+        getReportData: function () {
             // TODO: Generate string and send to C++
-            let pdf = new jsPDF();
-            pdf.text('Test Document', 10, 10);
+            let doc = new jsPDF();
+            doc.setFontSize(28);
+            doc.setFont("helvetica", "bold")
+            doc.text("Report for " + this.experiment.name + "-" + this.selected.subject_code, 104, 28, null, null, "center");
 
-            pdf.save("test.pdf");
-            window.OnClickDownloadReport();
+            doc.setFontSize(14);
+            doc.text("Subject Details", 30, 45);
+            doc.text("Analysis of Consumption", 100, 45);
+
+            doc.setFont("helvetica", "normal")
+            doc.text("Age:", 30, 60);
+            doc.text(this.selected.age, 65, 60);
+            doc.text("Gender:", 30, 75);
+            doc.text(this.selected.gender, 65, 75);
+            doc.text("Height:", 30, 90);
+            doc.text(this.selected.height + " cm", 65, 90);
+            doc.text("Weight:", 30, 105);
+            doc.text(this.selected.weight + " kg", 65, 105);
+
+            doc.text("Target BAC:", 100, 60);
+            doc.text(this.selected.target_bac + " %", 160, 60);
+            doc.text("Alcohol Consumption:", 100, 75);
+            doc.text(this.selected.amount_grams + " g", 160, 75);
+            doc.text("Measured as Whiskey:", 100, 90);
+            doc.text(this.selected.amount_beverage + " ml", 160, 90);
+            doc.text("Actual BAC:", 100, 105);
+            doc.text(this.selected.actual_bac + " %", 160, 105);
+            
+            doc.setFont("helvetica", "italic")
+            doc.text("This report generated by Alcolator: BAC Calculation in Laboratory Environments", 104, 130, null, null, "center");
+
+            return doc.output("arraybuffer");
         },
         // Set the gender for the draft
         setGender: function (event, gender) {
@@ -645,7 +692,7 @@ let vm = new Vue({
         // On choose experiment
         chooseExperiment: function (event, experiment) {
             this.isExperimentLoaded = false; // Mark as not loaded
-            this.experiment = {id: experiment.id, name: experiment.name}; // Add to active experiment            
+            this.experimentSelected = {id: experiment.id, name: experiment.name}; // Add to active selection            
         },
         // On close load experiment modal
         loadExpClose: function () {
