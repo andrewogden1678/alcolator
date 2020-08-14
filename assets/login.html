@@ -13,8 +13,8 @@
     <!-- Main panel -->
     <div class="flexbox-column--align" style="min-height: 95vh;" id="vm">
       <!-- Title & login labels -->
-      <h1 class="h-centred" style="margin: 0%; margin-left: 4.5%;">Alcolator</h1>
-      <h3 class="h-centred" style="margin-top: 0%; margin-left: 4.5%; margin-top: 0.5%;"><strong>Login</strong></h3>
+      <img src="img/logo-medium.png" class="h-centred" style="margin: 0%; margin-left: 4.5%; margin-bottom: 10px;">
+      <h3 class="h-centred orange--text" style="margin-top: 0%; margin-left: 4.5%; margin-top: 0.5%;"><strong>Login</strong></h3>
       <!-- Username input -->
       <div class="flexbox-row--align margin-b--10px">
         <i class="material-icons margin-lr--10px default">account_circle</i>
@@ -32,10 +32,10 @@
       <!-- Login button, don't register click if not all values are inputted -->
       <div class="flexbox-row margin-tb--10px" style="width: 37.5%; justify-content: flex-end;">
         <template v-if="username == '' || password == ''">
-          <button class="normal red white--text disabled">Login</button>
+          <button class="normal orange white--text disabled">Login</button>
         </template>
         <template v-else>
-          <button class="normal red white--text selectable" @click="login">Login</button>
+          <button class="normal orange white--text selectable" @click="login">Login</button>
         </template>
       </div>
     </div>

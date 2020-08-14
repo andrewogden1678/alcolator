@@ -29,9 +29,8 @@
           <template v-else>
             <a class="nav-item"><i>Experiment:</i> None Loaded</a>
           </template>
-          <h2 class="yellow--text nav-item--push cursor-default"><strong>Alcolator</strong></h2>
+          <img src="img/logo-small.png" class="nav-item--push cursor-default">
           <img src="img/nav_separator.svg" class="nav-item cursor-default" style="opacity: 0.2">
-          <i class="material-icons nav-icon nav-item selectable--text" style="margin-bottom: 6px;">minimize</i> <!-- TODO: Minimise -->
           <i class="material-icons nav-icon nav-item selectable--text" style="margin-right: 9px;" @click="areYouSureOpen(winClose)">close</i>
       </div>
       <div class="flexbox-row">
@@ -89,7 +88,7 @@
               <i id="searchBtn" class="material-icons disabled--text" style="margin-right: 9px; margin-left: 85px; position: absolute; font-size: 30px;">search</i>
             </template>
           </div>   
-          <div class="vertical-scroll">
+          <div v-bind:class="{'vertical-scroll': isSettingsMenuOpen === false}">
             <!-- Search if search box is active -->
             <template v-if="isSearchActive">
               <!-- Display message if no records found -->
@@ -357,10 +356,10 @@
                   <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
                     <!-- Record actual BAC button-->
                     <template v-if="draft.actual_bac == ''">
-                      <button class="normal red white--text disabled" style="margin-right: 25px;" id="recordBAC">Record Actual BAC</button>
+                      <button class="normal orange white--text disabled" style="margin-right: 25px;" id="recordBAC">Record Actual BAC</button>
                     </template>
                     <template v-else>
-                      <button class="normal red white--text selectable" maxlength="4" style="margin-right: 25px;" id="recordBAC" @click="bacRecord">Record Actual BAC</button>
+                      <button class="normal orange white--text selectable" maxlength="4" style="margin-right: 25px;" id="recordBAC" @click="bacRecord">Record Actual BAC</button>
                     </template>
                   </div>                
                 </template>
@@ -369,10 +368,10 @@
                   <div class="flexbox-row--alignright margin-tb--13px" style="justify-content: flex-end;">
                     <button class="normal dark-grey white--text selectable" style="margin-right: 25px; width: 172px;" id="cancel" @click="areYouSureOpen(cancelSubject)">Cancel</button>
                     <template v-if="draft.age == '' || draft.gender == '' || draft.height == '' || draft.weight == '' || draft.target_bac == '' || draft.target_bac_time == '' || draft.beverage_name == ''">
-                      <button class="normal red white--text disabled" style="margin-right: 25px;" id="calculate">Calculate</button>
+                      <button class="normal orange white--text disabled" style="margin-right: 25px;" id="calculate">Calculate</button>
                     </template>
                     <template v-else>
-                      <button class="normal red white--text selectable" style="margin-right: 25px;" id="calculate" @click="calculateClick">Calculate</button>
+                      <button class="normal orange white--text selectable" style="margin-right: 25px;" id="calculate" @click="calculateClick">Calculate</button>
                     </template>           
                   </div>
                 </template>
@@ -384,10 +383,10 @@
             <strong><h2 style="margin: 5px;">Results</h2></strong> 
             <template v-if="reportDownloadIsSuccessful != null">
               <template v-if="reportDownloadIsSuccessful">
-                <h6 style="color: darkgreen; margin: 0; z-index: 10; position: absolute; margin-left: 114px; margin-top: 10px;">Report downloaded successfully into the program folder.</h6>
+                <h6 style="color: darkgreen; margin: 0; z-index: 5; position: absolute; margin-left: 120px; margin-top: 10px;">Report downloaded successfully into the program folder.</h6>
               </template>
               <template v-else>
-                <h6 style="color: darkred; margin: 0; z-index: 10; position: absolute; margin-left: 114px; margin-top: 10px;">Oops! There was a problem downloading the report.</h6>
+                <h6 style="color: darkred; margin: 0; z-index: 5; position: absolute; margin-left: 120px; margin-top: 10px;">{{temp}}</h6>
               </template>
             </template>
             <div class="flexbox-row--alignleft" style="align-items: flex-end; margin-left: 10px; margin-top: 10%; width: 76%;">
@@ -483,7 +482,7 @@
               <template v-else>
                 <button class="dark-grey white--text disabled" style="margin-right: 5px;">Proceed</button>
               </template>
-              <button class="red white--text selectable" style="margin-left: 5px; margin-right: 50px;" @click="newSubjectClose">Cancel</button>
+              <button class="orange white--text selectable" style="margin-left: 5px; margin-right: 50px;" @click="newSubjectClose">Cancel</button>
             </div>
           </div>
         </div>
@@ -519,7 +518,7 @@
               <template v-else>
                 <button class="dark-grey white--text disabled" style="margin-right: 5px;">Load</button>
               </template>
-              <button class="red white--text selectable" style="margin-left: 5px; margin-right: 50px;" @click="loadExpClose">Cancel</button>
+              <button class="orange white--text selectable" style="margin-left: 5px; margin-right: 50px;" @click="loadExpClose">Cancel</button>
             </div>
           </div>
         </div>
@@ -530,7 +529,7 @@
             <h6 style="margin-top: 22px; margin-bottom: 27px; padding: 0;">You might lose some changes.</h6>
             <div class="flexbox-row--align" style="margin-top: 15px; margin-left: 20px; width: 100%;">
               <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="areYouSureYes">Proceed</button>
-              <button class="red white--text selectable" style="margin-left: 5px; margin-right: 50px;" @click="areYouSureNo">Cancel</button>
+              <button class="orange white--text selectable" style="margin-left: 5px; margin-right: 50px;" @click="areYouSureNo">Cancel</button>
             </div>
           </div>
         </div>
@@ -605,7 +604,7 @@
                 </div>
                 <div class="flexbox-row--align" style="margin-top: 20px; margin-left: 20px; width: 100%;">
                   <template v-if="settingsBeverage.id != null">
-                    <button class="red white--text selectable" style="margin-left: 5px; position: absolute; width: 200px; right: 315px; margin-bottom: 8px;" @click="deleteBeverage">Delete Selected</button>
+                    <button class="orange white--text selectable" style="margin-left: 5px; position: absolute; width: 200px; right: 315px; margin-bottom: 8px;" @click="deleteBeverage">Delete Selected</button>
                   </template>
                   <template v-if="settingsBeverage.id != null || settingsBeverage.newName != '' || settingsBeverage.newConc != '' || settingsBeverage.concentration != ''">
                     <button class="dark-grey white--text selectable" style="margin-right: 5px;" @click="settingsSave">Save</button>
@@ -613,7 +612,7 @@
                   <template v-else>
                     <button class="dark-grey white--text disabled" style="margin-right: 5px;">Save</button>
                   </template>
-                  <button class="red white--text selectable" style="margin-left: 5px;" @click="settingsClose">Close</button>
+                  <button class="orange white--text selectable" style="margin-left: 5px;" @click="settingsClose">Close</button>
                 </div>
               </div>
             </div>

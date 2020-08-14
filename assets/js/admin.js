@@ -404,6 +404,10 @@ let vm = new Vue({
 
             // Open the window
             this.isAreYouSureOpen = true;
+
+            // Close popups
+            this.isNewExperimentOpen = false
+            this.isFileMenuOpen = false;
         },
         // On click yes
         areYouSureYes: function () {
