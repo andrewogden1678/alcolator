@@ -56,12 +56,10 @@ void LoginView::OnDOMReady(View* caller, uint64_t frame_id, bool is_main_frame, 
 ///
 // On authentication
 bool LoginView::OnLogin(const JSObject& obj, const JSArgs& args) {
-    // Extract username
+    // Extract username and parse to sql string format
     ultralight::String rawUsername(args[0].ToString());
-    std::string username;
-    username += "\"";
-    username += static_cast<std::string>(rawUsername.utf8().data());
-    username += "\"";
+    std::string temp = static_cast<std::string>(rawUsername.utf8().data());
+    std::string username = Database::FormatStringSQL(&temp);
     // Extract password
     ultralight::String rawPassword(args[1].ToString());
     std::string password(static_cast<std::string>(rawPassword.utf8().data()));

@@ -386,7 +386,7 @@
                 <h6 style="color: darkgreen; margin: 0; z-index: 5; position: absolute; margin-left: 120px; margin-top: 10px;">Report downloaded successfully into the program folder.</h6>
               </template>
               <template v-else>
-                <h6 style="color: darkred; margin: 0; z-index: 5; position: absolute; margin-left: 120px; margin-top: 10px;">{{temp}}</h6>
+                <h6 style="color: darkred; margin: 0; z-index: 5; position: absolute; margin-left: 120px; margin-top: 10px;">Oops! There was a problem downloading the report.</h6>
               </template>
             </template>
             <div class="flexbox-row--alignleft" style="align-items: flex-end; margin-left: 10px; margin-top: 10%; width: 76%;">
@@ -492,16 +492,16 @@
             <h1 style="font-size: 24px; margin: 0;">Load Experiment</h1>
             <!-- Choose experiment from dropdown-->
             <div class="dropdown">
-                <template v-if="experimentSelected.id != null">
-                  <button class="dropdown-btn light-grey" style="margin-top: 15px; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
-                      {{experimentSelected.name}}
-                  </button>
-                </template>
-                <template v-else>
-                  <button class="dropdown-btn light-grey" style="margin-top: 15px; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
-                      Select experiment
-                  </button>                 
-                </template>
+              <template v-if="experimentSelected.id != null">
+                <button class="dropdown-btn light-grey" style="margin-top: 15px; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                    {{experimentSelected.name}}
+                </button>
+              </template>
+              <template v-else>
+                <button class="dropdown-btn light-grey" style="margin-top: 15px; padding-top: 0; padding-bottom: 0; padding-left: 8px; padding-right: 0; border-radius: 0px; text-align: left; font-size: 12pt;">
+                    Select experiment
+                </button>                 
+              </template>
               <div class="dropdown-content light-grey--notopaque" style="min-width: 94.25%;" id="dropContent">
                 <dropdown
                   v-for="experiment in experiments"
@@ -551,14 +551,14 @@
                 <div class="flexbox-row--alignleft margin-tb--10px">
                   <h3 class="margin-input input-label semibold">Alc. %: </h3>
                   <template v-if="validated.newBeverage">
-                    <input class="light-grey border--black regular short" maxlength="2" type="text" id="newBevConc" v-model="settingsBeverage.newConc">
+                    <input class="light-grey border--black regular short" maxlength="4" type="text" id="newBevConc" v-model="settingsBeverage.newConc">
                   </template>
                   <template v-else>
                     <!-- Validation -->
                     <div class="error-text flexbox-row white--text" style="left: 80px; width: 144px;">
                       <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a number between 1 & 99.</h4>
                     </div>
-                    <input class="light-grey border--black error regular short" maxlength="2" type="text" id="newBevConc" v-model="settingsBeverage.newConc">
+                    <input class="light-grey border--black error regular short" maxlength="4" type="text" id="newBevConc" v-model="settingsBeverage.newConc">
                   </template>
                 </div>
               </div>
@@ -592,14 +592,14 @@
                 <div class="flexbox-row--alignleft margin-tb--10px">
                   <h3 class="margin-input input-label semibold">Alc. %: </h3>
                   <template v-if="validated.changeBeverage">
-                    <input class="light-grey border--black regular short" type="text" id="changeBevConc" v-model="settingsBeverage.concentration">
+                    <input class="light-grey border--black regular short" maxlength="4" type="text" id="changeBevConc" v-model="settingsBeverage.concentration">
                   </template>
                   <template v-else>
                     <!-- Validation -->
                     <div class="error-text flexbox-row white--text" style="left: 90px; width: 144px;">
                       <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a number between 1 & 99.</h4>
                     </div>
-                    <input class="light-grey border--black error regular short" maxlength="2" type="text" id="changeBevConc" v-model="settingsBeverage.concentration">
+                    <input class="light-grey border--black error regular short" maxlength="4" type="text" id="changeBevConc" v-model="settingsBeverage.concentration">
                   </template>
                 </div>
                 <div class="flexbox-row--align" style="margin-top: 20px; margin-left: 20px; width: 100%;">

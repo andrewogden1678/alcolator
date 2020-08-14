@@ -140,11 +140,14 @@ void MainView::OnAddNewSubject(const JSObject& obj, const JSArgs& args) {
     // Amount (beverage)
     ultralight::String rawAmountBeverage(jArray[12].ToString());
     double amountBeverage(atof(rawAmountBeverage.utf8().data()));
+    // Alcohol volume
+    ultralight::String rawAlcvol(jArray[13].ToString());
+    double alcvol(atof(rawAlcvol.utf8().data()));
     // Actual BAC
-    ultralight::String rawActualBAC(jArray[13].ToString());
+    ultralight::String rawActualBAC(jArray[14].ToString());
     double actualBAC(atof(rawActualBAC.utf8().data()));
     // Actual BAC recorded time
-    ultralight::String rawActualBACTime(jArray[14].ToString());
+    ultralight::String rawActualBACTime(jArray[15].ToString());
     std::string actualBACTime(static_cast<std::string>(rawActualBACTime.utf8().data()));
 
     // Create and insert subject
@@ -152,14 +155,11 @@ void MainView::OnAddNewSubject(const JSObject& obj, const JSArgs& args) {
     Database::Instance()->Insert<Subject>(&subject);
 
     // Get ID for subject just inserted
-    std::string condition;
-    condition += "\"";
-    condition += createdOn;
-    condition += "\"";
+    std::string condition = Database::FormatStringSQL(&createdOn);
     int subID(Database::Instance()->Select<Subject>("created_on", "IS", condition).at(0).GetPK());
     
     // Create and insert result
-    Result result(-1, subID, beverage, targetBAC, targetBACTime, amountGrams, amountBeverage, actualBAC, actualBACTime);
+    Result result(-1, subID, beverage, targetBAC, targetBACTime, amountGrams, amountBeverage, alcvol, actualBAC, actualBACTime);
     Database::Instance()->Insert<Result>(&result);
 }
 
@@ -333,10 +333,11 @@ JSValue MainView::OnClickRecord(const JSObject& obj, const JSArgs& args) {
         // [8] Target BAC time
         // [9] Amount (grams)
         // [10] Amount (beverage)
-        // [11] Actual BAC
-        // [12] Actual BAC time
-        // [13] Beverage name
-        // [14] Beverage concentration
+        // [11] Alcohol volume
+        // [12] Actual BAC
+        // [13] Actual BAC time
+        // [14] Beverage name
+        // [15] Beverage concentration
         jArray.push(JSValue(JSString(std::to_string(res.subject_.GetPK()).c_str())));
         jArray.push(JSValue(JSString(res.subject_.subject_code_.c_str())));
         jArray.push(JSValue(JSString(std::to_string(res.subject_.age_).c_str())));
@@ -348,6 +349,7 @@ JSValue MainView::OnClickRecord(const JSObject& obj, const JSArgs& args) {
         jArray.push(JSValue(JSString(std::to_string(res.target_bac_time_).c_str())));
         jArray.push(JSValue(JSString(std::to_string(res.amount_grams_).c_str())));
         jArray.push(JSValue(JSString(std::to_string(res.amount_beverage_).c_str())));
+        jArray.push(JSValue(JSString(std::to_string(res.alcvol_).c_str())));
         jArray.push(JSValue(JSString(std::to_string(res.actual_bac_).c_str())));
         jArray.push(JSValue(JSString(res.actual_bac_time_.c_str())));
         jArray.push(JSValue(JSString(res.beverage_.name_.c_str())));
@@ -442,6 +444,12 @@ JSValue MainView::OnClickDownloadReport(const JSObject& obj, const JSArgs& args)
     // Release the string we created from memory
     JSStringRelease(str);
 
-    // Return success code
-    return JSValue(0);
+    // Check if null
+    if (JSValueIsNull(ctx, res)) {
+        // Return fail code
+        return JSValue(1);
+    } else {
+        // Return success code
+        return JSValue(0);
+    }  
 }

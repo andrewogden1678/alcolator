@@ -62,6 +62,7 @@ let vm = new Vue({
             target_bac_time: "",
             amount_grams: "",
             amount_beverage: "",
+            alcvol: "",
             actual_bac: "",
             actual_bac_time: "",
             beverage_name: "",
@@ -83,7 +84,8 @@ let vm = new Vue({
             newSubjectCode: true
         },
         reportDownloadIsSuccessful: null,
-        temp: null,
+        // Yeah it's a B64 string, the framework doesn't yet support conversion inside the JS :)
+        reportB64: "iVBORw0KGgoAAAANSUhEUgAAAWUAAAA3CAYAAADUtFvzAAAWnklEQVR4nO1dD4wc1X3+fu/tv7uz9/5QQ/nv2i1VpVaY4gRKVWwSW00bIgzUTtQ01G1aQEUVpnvUbpM6NvSPg3zB9A/ITiWMWrUKbmQDoUL1FRtQEqJgYUetqoRiDLgFYuzzLee7vd1571Vv5u15fN7bebM7ezPrzieN7vZud+a3s2++/c33vt/vIUWKFClSJAcUFIlSKv24UqToIMQfD/0tSflpQI0DkJDiJ9yfRMq9RhX0TwUCc6M4/7F0f879/+aPvb+c83xSUinGzGNNApQFY6cBTAJYqBj7Dn9k7IvpuGgMokBqnROZ+Q83RYoU54AwBKjF0NzHOFSWA1KCXD4+e4HXE6S5HrtsqulT51rkviDc65XhZqnjIC8WvT8CFOMgpS6HU/P+QPRG+iF2Bikpp0gRMxTL3A0lXyEhH4cUAr2Dn1PEXlfVyiJFUMQoo4lQCSkAUsRJX7ekhHL0y73HRJDSUUopYsx9PoQUaub/+vnSafh6ogwYCEI6StQk9RUnRKYgeWVsgZLIEOcTAAlUJl4gqKsA+oZi2XvTcdMZpKScIkX80KT3BBjPQIq/psnyCAoLv6AYf5mU9FRGzacuGDCjKKpzfsCoEpiRHBv9v8FjTeBSavYHBi7Vx1gmpqs3gvguBiEhZJFqlW+SqF0FnvlHAF/w7SRFxGDpCU2RIjH4GzB+H2TtKkyePkhS3Kb0JZpfAGT7vBh1shwlNIG7CTiDyuWheHYl//CdbxdOv/MEePYSgHqpNvUqieoq8Mw3UkLuPFJSTpEiMXDJ7nGw7B8QJFFlYh9J8RnieVBhwNvyfR6Ruhl0O+SoQNxTLeBMawkFpOStmffeOIDaZK9cOLSe15xxVj3zPZLOzyGT/RcQfS4dK51HSsopUiQPTyiW2aD5kk1PPAtR+5Q7KaeJs6cf6B0CMgUv6BlZIwSUZ9Qgxl0C0JN4gFqTGf/wOZIORHHRvXCcp1ilfIAp8fNg/J8BrE3HyfwgJeUUKZKJx8Az9+mMmE7/z7OoVW7WEoObIbOMK2dQz6DJnKXZ5sqctceN4BnspKchGzesdP8uf41PjO3VfxeDl6+Riu1k1clDgPy44plnAXx+7n2niBopKadIkVw8jmz+QQgny8aOH4BTXQ2W9QhY68A8D+QHgJ5BL3Om8zNnz1anL3N+/pskLV7QXbwy9a8QOkO++HcV2DOZykffgRS/6GnIdFubOkmKkEhJOUWKRENtR7bwAKTD2Ph7e+FM/7JLzBpKmMw5CxT6gcIgkO31uSqYkSbY+bSq60KEcy+mPnpKZ9Gyf9HtSson2ZmT34Ws/RJ45jkAv5WOjflHSsopUiQeagdyhQchnT46+fZL5Ex/wpUw6nClC505Z0E9Q660oTyDc+M3RlwT8oM0cfIJOFNQg5d9Br0X7eOTp19ltakbwTPfBNEaAC0I1inaRUrKKVJ0B7YjVxiGcDjG3t0HUV0BNkuSqGvLPDu34uAWlVTvY5PlRyBqUMVFn1Q9A9+i0++/jFrlBpXJPwOidW6Zd4pYkJJyihTdAG+ibQS5QomEs5CNv/fvcGo3gzeo/9J6c70+2i259jZSpoQa6hoFUZMDl/6CGrjiRTp1/FWaPPUrKpt/HkS/kRJyvEhJOUWKboFHzF9DtvAnkILT2PEX4Ezf7EkZvio+nUHrTU/6aVnDnfxzfc03kRB5le37klz4k5dhwSX/wU69e4AmT92gcr37QOxWQKWSRcwILLNup9tRimCIUnEJgOsBLPFtfhwCMKZ/8pHy6HydUlEqDpq49Fb/3Y+jvk3HdjT9uFtDbdOikK9T25AtCKpNPUKn3n1eDl35CWRy39dyhC6XRq4PTP9+5oQnZbiNhmgbObWNVKtsVYXiFjV4xQT/4I3vYfLUx5HvHQXos2FNFs24QZSKywAsBrCswb91t7nDeuMj5dOtnrf5QBxdMjvOuKJU1KbzpwOetomPlL8a4TH3A1jV5CmjfKS8OqrjhYUh4ruNIX82CQdBE/MevfGR8ljEcQ364ppNwkE4auLaFQVBJ/0z9KPdMa5JmUQNM30uTLfOc0hvRo7w/QlsM9Umt4LnqnLoilXg2VdQqwG5AmjqNHDmQ4Dn+iCcTaw69WXFc+NqwdCnZN9F32fj//siTZy8Gbm+Z8HYnUpKp95c7jwoX48M5fXXkJk8sttOzDxTlIoDANYDWAngthCn720A+/TGR8oHQ7xuTohSUe9nRZu70XEdM78fNL8fZNvHjwW8zkU7yex8yBd3WzxnoyGECxqiVLxelIr64n1Tv+cWCBmGqHbqfYhSMZLzpr8kRKmo93kKwLYWCBnmvWw0ce0XpWIzQr3QMP9j3OVJ9RCyPX8KMZ2jU8efgVP9GLhv8o9cGWMJTZ35srbNyaHLV8iFi15l4++N0kcf3oxc7yiIfRaqdclClIqLRam429zNPRqSkDWuBnA/gAOiVDwmSsX1rcYSMa42xK63rwB4EsBbcrj/sBzu72iMHSVlTUIB2U4dgxdyGae+GEWpqMnutQjf56Ah0DdNptZqbBvNl4QNsdhCf+aamJ++0L9s4xzj5CWwf6WyvZvJmR5kp959GcK5yfUnZ3ugMgUoSf8lrvnYXeKyn/1p8NwRV0OeOLkS+b4XQPzTUKrSyrFZbXpAlIo7NFEB+O2I3pImwicNOa+MaJ9R41odoxzuPyaH+9d04gCdzpTDXOgbOxhHbDAX7WsdfH/6Yn/aZLrWMNnxa4bYO4W15kvjQs6aYx7jbu30w8j1/hmkU6Cx489BVG9AJgtyKlqPcFSh+A+KZd5kJ999kc6MrVS53hcU8TWArLZ4yGVGE74/8rfj4WqTOe/o0P6jgI5xrxzu3y2H+wei3HHHSNmnm9piSTsZXxJhCHl/izJFWNxtdNhA+L4oWpEpwmLQZM1RZuKJQFLGOLk6L/25yvVsptr0EDt1fJSc6vVaIFbZPOiDt/vZh8e+TdUztyDX8xI4u4OUnG7pYErpW/fXDSl1GveLUvGw0auTCn2XcDBKYu5kptzK4LtgLlwfIc/n7fuqoIw5prg0dl6AxJygMa7beeJhVeh7GM70Ajp5/CWS8nlNnuzMqa/T5OmbZL73W+B8FaSaaukQUq432up8QssFBxNOzDrG3VHtrCOkbHTEVm7VVhnS6GqY998K8WlnhZ6h3+TbRs0kig3083YFfC5PxxBXHTsvhM8XHRvjs2bslW9r9Ngj4pnVRryMGZtVJvMYRLUPCr/Onek7qVJeC557H8CdEMKpOyga/my0uYdQK2Mg5DquNQ6NJOO2qCYAO7Uc1No2MjGdSdwTcTzzjTDEd9QQ3lwWN9dGZXTZjU0mlfRrV/OR8qEmx9oZQkqxjWut+cxsdWOtfy+P2s4XAyIb46S9xWBQM5ysvMfn+IaZZbM2rVnQf7qVfjy7BUo9C54ZAWiSpCQYw91ZqPqrmmGgBVI8YrLHc/zIPv/yGrP1W+5vhdaY+Uh5Q8g45sItTf43YPzVi0PGuCOKjLlTpNwsgxgz21zkoLXRr3ZrMYK5RbclKGt/tikcGTXkPJtcAwnZkKft7XaYuFzPtInL5suobp3bZBlLUhHdGJ/xJ9dBs37O/nszuD7nIc/TrH6gICvk9WHuAagHQCta8u4QxKTJeMNcnmM+Uj5siHqfkSQ2GMuZDbTGHImf2WIf7peQLh4xGfAOi3PQr5/Lto+3RcyRyxfm4m+Wje1pdott0M0Tfja3tPqCXd5KwYwh5+Wm0g/m59KADBmWLot241rqi6sZNppJsq5E1GNcuVkxRbbpEL0dqwGSIudJHiZJDo8wxSCP8ZHyMlvS1NkzHylvAXCdKdawwZYW3kNbMCSrz8O4xX7atsl1QlMOmsjYZQZtM3RlMYnJkm3IJkhmaApz67/anMfVQVJADHHZ3OV0swUy4WOcvAoSp8ZQrTKz/lO2xTtjWxJ8oFVpwWTPyyyJeUUcHma2ffywyeqDELZ45vxjtR2tDxZGel0aW++T0CyT6NZiEpuZ9U3tEF8dmgD5SHmdpTZrcy4ji8tyTmBtl37xRj7GKeJtBowp8IxJnt3sOWz3t2WW5crP8JFyW55ioznrLNMmG41KVw4FkzEHxieH+xe3dZyI4w4ipT1z/N4IXZVJ+RoLNcPRKHt8hIgrSOOONC4jZQTdvl+oX7wtjHEV9ebJF5msVLm89Cb/3FLqWsj3auMmGLd8XiBMxmxD7rfFaJE7bPGcZJCyhZFeZ3YzF6q5cJvd5nZbMYnN5N68ErJBXHHZ7LOr7HFdN8a120I69eSZN16orylsZIIdEXd622GZLcdVhh1J06RmiDJTDhpcjS7SoGyqm4oNbAgmKHPqBGKJy9y+B8kh3eZZ7sgYj3KSz9MqzmrKND3NTIe5TEhNecD4g4MQaSm0IXgb90JcpNyoFWmkiISULY30jS78XQEFCN1UTBI0kXYoJm9unHEF9X/uGlLu5BhnstaZ88C4Aud1U7KYcWXYwYZ8jnSoH7JNNtpxcmzjuG2dk6gy5SAj/Z5GvmNDBkFZWrdky0EXVtuTaC0izrgCXRhd9KXb0TEeZa7sGZ8JyGSEyuWF6YNcC7kQqo0u2qlbeZv9tqXbtgI53L/SpueHcWq0jKhIuZUMoo7A27su8bQGOQniKoaJMy6bfXeLA6OjY5yksyQ6Dwa8iUMpGUnhXeMUWlO2Ib2OrBpimX3PR0OkGZiGQzZSzZF2j9U2KVsY6Y+aqq+GMDasoGztgu21nCL5mK8xHpUHA7qhMnw+Za+LXKs+5bhgW0zScRiL20FLjb3tMusoMmUbI30Qgp7z/2JlkhSJxbyMcSZrEY1x00VI+5T15iGsphw35jUTng3do0OUimt0v2TTyN+GkBF77wtLD2zggNU2IrMyx1yDsu5ptRn8cWEs4FY8Lgkmzrhs9p3oxkTzPcYJqs0xXteUjU+ZMUHVaS1lOCBKV6o2EKViJ1ZE3cq2j7ct6bSbKQfpbLtCzOwHZhKW+4kLSbV/xRlXIClHUUXYYczzGG9fvJjRlaUkEl5nOLhdiUJpyrE5IEwnuSC81Iljt4EjUdkDW86UfSsfN8OgWQPOBoHdxbS210y7ixlBk1p60dTBGGxxccYVlGEmmpDjGOMkxVrJsm2McQJBnu19ocDBXF4OqynbZHyd8grb7Lcjk4wtQhe7rIkiS0ab8oWNVS1Mu0jbYyaVlG0IJg4JJpa4LMvOk54ld/cYd/VkVW/LHLb3xWFDNs3aVfZr3ZWPlKNuQG9Ttt3xyjpLHDGEfCyqHbYjX8QhJyS5mCSoUAIxnbO44rLZZ7dLF52AW0zSvk/Z1/virE85bO8LG+KLtDmQ6QBnM6mWBFLeqrP6KAkZrZKyaQUZlxsikcUklmXFS0Lc6kYCE1cQMUcal2l4H/Q52RRVxIYuH+Nebqx07wvVTu8LmwxYt9KMcql9G132bdO8KE5cx7aPb4lKsvCj1Uw5zkm3JBeT2EgA26LI9rXeKUrFpy2tgjbkF1lcZmWUwJgSviRUrGNcF5MoRWi42fa+qNUYVSv13hdza8pzrc2nlFWrSm0Ds5ycawpRKurjzYsXOAJE0hmvEUKTssmC4ibFRBaTmA5hNlVs+9shQN/CrPo8vBa0rxjishkfcXTMs0JixjhnaLSRliPIVO+5OfF5FX31GhIFzPiU5fmL/BnHhl7Pj+l9c+93/2aXufabFadbJmZRKm4xy/UHYTwKlwMfKdNcW8D6fXXcb8quI0crmXISrGlJLiaxIZtBQ6ahz6UhjDd9k2hLLMnUZk28KONqhqSvwZiIMc6c6UHKMpyz5TiIFIgRSBM00zQsfZs7n0czvS/yM70vpDvZd3Z1at2wCCqTg8rm9SKrULk8VP7cLUQrzToxh5IydF9kve5eiHX6om4Veh7MclZbLZ66z5RfR4pQ7gtLI/26dm1r5gLf3+QpiS0mMUUCay37GG8z2mWzVaNdBKxmPWiIec7lnPRnIkrFPZZ3GWHiCrua9dGEZ8nJGuMqYIyTzpwN1yqTKCsaN0kx8zXDmAJQddeyZt5lTzoT9gjbe7E6v55CFXpOU2VK36rvtXhbmpj3ilJRe4h385HynDKDKBUXm0nC9WEWZTVr+nUc+jjmC6aZnNJvpJQoNfVwCymKUnFnwCSE7gGwtP2w3GO9adFvoOGxRKm4PwRJtIvVppm5//iDJmsMm82PmslCPwmuMtmnzb6armpt4nqthVvzduPyY7lNwUhcn2HSxrgq9Jx7LCJQrQZFhm+VcrNkveqyljVcTVnKjSSq26DkfYAaBfgPwfkx8MxPweVs9zkgnSnDk0JIOlBavqDGlECVqd2W8sJsaII+ZjYYD/LiFsqodba+0maCT5SKB4OWsTIyRdB+tBzzukVst7Pt4+dMitIc59EG1vKFpZE+ysw1KJtK7MokvgVEw05k1bPhbb5tVQjia/oZmbjWxRBXHfckuYIviWOcKlOWY9wl5CtIiq+7hEwMqlB8XxUGymB8AlIshhAH3XHZAmGoQs/6FjugrTBk/hWzrWixr8WG+XZcmOPZyBi7212Xz48wmrKNTSfKAbvHgjwS22vZkE8rxNwOtNTQdNHSmOKCIeQk9y5B945xne2q3yeneghO9fcg5bTifAOy+b3gufdVNnsHlPgBhLMCteq/QcoREA2EvFGGyXLbbk3ZAn6nmRTSSWjbm0VJd3+UjpAwpBxlD4BAWDYHT/TKJD4CnI9JLX3+19k80cS1fJ6KN+qSStIJGUkd41SZajzGXRcGboJ0Rqny0S4ocbEqLPgnxfk1qnfwMdSmFU2cgOq9aL/K9lyrCr0PKZ6p0lT5j6haOQTCF2dcHBbQ+rIh5qeiOgcB0JLFLXERsg/rLSY7V8jh/kgKaaxI2dJI34lCAJsLOdErk/gIsFOTW2Nm4slmWX9/XFobXW7pymgVekwsna25JxFdOMa1VPEo1SoHIJxPquKlr6jewZ+hykefl1de/466/DqQMw2qTkINXgVxzWpASC0f5NXAlX8Hnl2Cypm/h6g9B1I32koampiNlPGApSujVejsdJlxQsQKU7FnM8G4RQ73t+3Xts2UgzKIo5248Cybgyd+ZRKdEfGR8iZDzlGdpzFDqEvbcQLwkbL+slga8W35qMmO1yW8QMSPRI9xqkydHeOEO6lWO0TVygZIkZP5vmn0DL0Fx7kDUjxEEyf2sRP//Tyk2IFc4S/ZqXf2sJNHXyCn+ig51Y3IL6jIvsHj7q5q07dSdeq7UGprmIo/VejZYSbsos6adXP72/lIWU/qRVq+3A7Y9vEd8yVjBFriLI30nbw13WVRIbY2yTarOupyhm+p+qAVLRph1GRskVXEGc/wPaJU/KqvwU5YWeioiWtXwj3Ic6GbxvgfQtYuVoy7eRWrTuXx4x/e5ZqWsz1gJ37kuiuQ64PKFEAn3wJTDlRuwa/qYj/68Y9APOv6lF0Ioa11m5HJfC1M9mv8wutN4cd6s7XanP4ZY6OLurlRlFhjXCTNLHzXyuH+LZaZdUO07ttIEQl83dSW+DY/6la0Q/MpAxgnwvU+29tskj7q2w51KREnAs6XLrEPQ8sMjnMXVad/E0SnXYOxksytv2ZcejYM6TUkIuYJxm7hiDKPtR1OaC+dfr7XOU6pi1Qmexi53GYoVbUNJfMXH5z3N2MjW2l6LS82P2eT2BHTevOg6UZ3MMqCEBND06IOW1lEzfJuG5dFoNMiCbJLihQpUqRoFwD+DzA0dmOvgLheAAAAAElFTkSuQmCC",
         fileMenuHeight: "135px", // Default height for file menu (changes if user not Admin because 'Experimenter' option not displayed)
         searchText: "", // Current text in search menu
         sortCycle: 0, // Current sort cycle
@@ -99,7 +101,7 @@ let vm = new Vue({
         isSettingsMenuOpen: false, // Settings menu is open
         isEnterSubjectOpen: false, // Menu for entering subject code is open
         isLoadExperimentOpen: false, // Menu for loading experiment is open
-        isAreYouSureOpen: false // Is the are you sure window open        
+        isAreYouSureOpen: false // Is the are you sure window open   
     },
     components: { // Register the components
         'record': ComponentRecord,
@@ -262,7 +264,7 @@ let vm = new Vue({
                 let subject = window.OnClickRecord(record.id);
                 
                 // Cut off seconds from time (no need to be so precise)
-                let splitTime = subject[12].split(" ")[1].split(":");
+                let splitTime = subject[13].split(" ")[1].split(":");
                 splitTime = splitTime[0] + ":" + splitTime[1];
 
                 // Set selected object
@@ -277,10 +279,11 @@ let vm = new Vue({
                     target_bac_time: subject[8],
                     amount_grams: parseFloat(subject[9]).toFixed(1),
                     amount_beverage: parseFloat(subject[10]).toFixed(1),
-                    actual_bac: parseFloat(subject[11]).toFixed(3),
+                    alcvol: parseFloat(subject[11]).toFixed(1),
+                    actual_bac: parseFloat(subject[12]).toFixed(3),
                     actual_bac_time: splitTime,
-                    beverage_name: subject[13],
-                    beverage_concentration: parseFloat(subject[14]).toFixed(3)};
+                    beverage_name: subject[14],
+                    beverage_concentration: parseFloat(subject[15]).toFixed(3)};
                 
                 // Set screens
                 this.isNewStart = false;
@@ -312,6 +315,7 @@ let vm = new Vue({
             returnArray.push(this.draft.target_bac_time);
             returnArray.push(this.draft.amount_grams);
             returnArray.push(this.draft.amount_beverage);
+            returnArray.push(this.draft.alcvol)
             returnArray.push(this.draft.actual_bac);
             returnArray.push(this.draft.actual_bac_time);
 
@@ -339,6 +343,7 @@ let vm = new Vue({
                 target_bac_time: "",
                 amount_grams: "",
                 amount_beverage: "",
+                alcvol: "",
                 actual_bac: "",
                 actual_bac_time: "",
                 beverage_name: "",
@@ -506,6 +511,9 @@ let vm = new Vue({
             // Set actual BAC datetime
             this.draft.actual_bac_time = date;
 
+            // Set concentration
+            this.draft.alcvol = this.draft.beverage_concentration;
+
             // Save the subject
             this.saveSubject();
 
@@ -531,6 +539,7 @@ let vm = new Vue({
                 target_bac_time: "",
                 amount_grams: "",
                 amount_beverage: "",
+                alcvol: "",
                 actual_bac: "",
                 actual_bac_time: "",
                 beverage_name: "",
@@ -550,7 +559,7 @@ let vm = new Vue({
             let res = window.OnClickDownloadReport("Report for " + this.experiment.name + "-" + this.selected.subject_code + ".pdf");
             
             // Set success/fail message
-            if (parseInt(res) === 1) {
+            if (parseInt(res) === 0) {
                 this.reportDownloadIsSuccessful = true;
             } else {
                 this.reportDownloadIsSuccessful = false;
@@ -558,63 +567,76 @@ let vm = new Vue({
         },
         // Get report data
         getReportData: function () {
-            // TODO: Generate string and send to C++
+            // Create new document
             let doc = new jsPDF();
+
+            // Convert image
+            /*let binaryString = window.atob(this.reportB64);
+            let len = binaryString.length;
+            let bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            doc.internal.scaleFactor = 1.33;
+            doc.addImage(bytes, "PNG", 100, 15, 90, 13.87);*/
+            //doc.internal.scaleFactor = 1.0;
+
+            // Set header text
             doc.setFontSize(28);
             doc.setFont("helvetica", "bold");
-
-            // Get logo image
-            try {
-                let img = new Image();
-                img.setAttribute('crossOrigin', 'anonymous');
-                img.src = "img/logo-report.png";
-
-                let canvas = document.createElement('canvas');
-                let ctx = canvas.getContext('2d');
-
-                canvas.width = img.width;
-                canvas.height = img.height;
-
-                ctx.drawImage(img, 0, 0);
-
-                let b64 = canvas.toDataURL('image/png');
-                this.temp = b64;
-                doc.addImage(b64, 'png', 180, 20, 120, 18.31);
-            } catch (e) {
-                
-            }
-            
+            doc.setTextColor(253,115,14);
             doc.text("Report for " + this.experiment.name + "-" + this.selected.subject_code, 104, 40, null, null, "center");
 
+            // Set subheader text
+            doc.setTextColor(0,0,0);
             doc.setFontSize(18);
             doc.text("Subject Details", 20, 65);
-            doc.text("Analysis of Consumption", 20, 145);
+            doc.text("Analysis of Consumption", 20, 115);
+            
+            // Underline the subheaders
+            doc.setLineWidth(0.5);
+            let textWidth = doc.getTextWidth("Subject Details");
+            doc.line(20, 66, 20 + textWidth, 66);
+            textWidth = doc.getTextWidth("Analysis of Consumption");
+            doc.line(20, 116, 20 + textWidth, 116);
 
+            // Set labels for subject details
             doc.setFontSize(14);
             doc.text("Age:", 20, 80);
-            doc.text("Gender:", 20, 95);
-            doc.text("Height:", 20, 110);
-            doc.text("Weight:", 20, 125);
-            doc.text("Target BAC:", 20, 160);
-            doc.text("Alcohol Consumption:", 20, 175);
-            doc.text("Measured in " + this.selected.beverage_name + ":", 20, 190);
-            doc.text("Alcohol Concentration:" , 20, 205);
-            doc.text("Actual BAC:", 20, 220);
+            doc.text("Gender:", 20, 90);
+            doc.text("Height:", 110, 80);
+            doc.text("Weight:", 110, 90);
             
+            // Set values for subject details
             doc.setFont("helvetica", "normal")
-            doc.text(this.selected.age, 90, 80);
-            doc.text(this.selected.gender, 90, 95);
-            doc.text(this.selected.height + " cm", 90, 110);
-            doc.text(this.selected.weight + " kg", 90, 125);
-            doc.text(this.selected.target_bac + " %", 90, 160);
-            doc.text(this.selected.amount_grams + " g", 90, 175);
-            doc.text(this.selected.amount_beverage + " ml", 90, 190);
-            doc.text(this.selected.beverage_concentration * 100 + " %", 90, 205);
-            doc.text(this.selected.actual_bac + " %", 90, 220);
+            doc.text(this.selected.age, 45, 80);
+            doc.text(this.selected.gender, 45, 90);
+            doc.text(this.selected.height + " cm", 135, 80);
+            doc.text(this.selected.weight + " kg", 135, 90);
             
+            // Set labels for analysis
+            doc.setFont("helvetica", "bold");
+            doc.text("Target BAC:", 20, 130);
+            doc.text("Alcohol Consumption:", 20, 141);
+            doc.text("Measured in " + this.selected.beverage_name + ":", 20, 152);
+            doc.text("Alcohol Concentration:" , 20, 163);
+            doc.text("Actual BAC:", 20, 174);
+            
+            // Set values for analysis
+            doc.setFont("helvetica", "normal")
+            doc.text(this.selected.target_bac + "%", 85, 130);
+            doc.text(this.selected.amount_grams + " g", 85, 141);
+            doc.text(this.selected.amount_beverage + " ml", 85, 152);
+            doc.text((this.selected.alcvol * 100).toFixed(1) + "% vol/vol", 85, 163);
+            doc.text(this.selected.actual_bac + "%", 85, 174);
+            
+            // Set footer text and date
             doc.setFont("helvetica", "italic")
-            doc.text("This report generated by Alcolator: BAC Calculation in Laboratory Environments", 104, 280, null, null, "center");
-
+            doc.text("This report generated by Alcolator: BAC Calculation in Laboratory Environments", 104, 270, null, null, "center");
+            let date = this.getDateNow().split(" ")[0].split("-").reverse().join("/");
+            doc.text("on " + date + ".", 104, 280, null, null, "center");
+            
+            // Return the buffer
             return doc.output("arraybuffer");
         },
         // Set the gender for the draft
@@ -797,9 +819,9 @@ let vm = new Vue({
             // Push values
             returnArray.push(this.settingsBeverage.id);
             returnArray.push(this.settingsBeverage.newName);
-            returnArray.push(parseInt(this.settingsBeverage.newConc) / 100); // Store as decimal not int
+            returnArray.push(parseFloat(this.settingsBeverage.newConc).toFixed(1) / 100); // Store as decimal not int
             returnArray.push(this.settingsBeverage.name);
-            returnArray.push(parseInt(this.settingsBeverage.concentration) / 100); // Store as decimal not int
+            returnArray.push(parseFloat(this.settingsBeverage.concentration).toFixed(1) / 100); // Store as decimal not int
             if (this.settingsBeverage.id != null || this.settingsBeverage.concentration != "") {
                 returnArray.push(true); // Send true if edited
             } else {

@@ -41,6 +41,7 @@ create table results(id integer primary key,
                      target_bac_time int NOT NULL,
                      amount_grams decimal NOT NULL,
                      amount_beverage DECIMAL NOT NULL,
+                     alcvol DECIMAL NOT NULL,
                      actual_bac DECIMAL,
                      actual_bac_time Datetime,
                      FOREIGN key (subject_id) 

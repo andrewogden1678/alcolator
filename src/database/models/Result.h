@@ -12,7 +12,7 @@ class Result : public Model {
         // Main object constructor
         Result(int pk, int subject_id, int beverage_id,
                     double target_bac, int target_bac_time, double amount_grams, 
-                    double amount_beverage, double actual_bac, std::string actual_bac_time);
+                    double amount_beverage, double alcvol, double actual_bac, std::string actual_bac_time);
 
         // SQL Callback constructor
         Result(char** fields);
@@ -29,7 +29,7 @@ class Result : public Model {
         }
 
         // Column list
-        static std::array<std::string, 8> columns_;
+        static std::array<std::string, 9> columns_;
 
         /// DB Members
         // Foreign key to a Subject (One<->One)
@@ -44,6 +44,8 @@ class Result : public Model {
         double amount_grams_;
         // Amount of alcohol (beverage unit)
         double amount_beverage_;
+        // Alcohol volume
+        double alcvol_;
         // Actual recorded BAC
         double actual_bac_;
         // Time BAC was recorded
