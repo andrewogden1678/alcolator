@@ -37,56 +37,56 @@
         <!-- Record sidebar -->
         <div class="flexbox-column--list light-grey">
           <!-- Search box -->
-          <input v-model="searchText" class="white border--black regular" ref="searchBox" v-bind:class="{show: isSearchOpen}" style="padding-left: 38px; position: absolute; left: 185px; top: 38px; display: none;" id="search">
+          <input v-model="searchText" class="white border--black regular" ref="searchBox" v-bind:class="{show: isSearchOpen}" style="padding-left: 38px; position: absolute; left: 185px; top: 45px; display: none;" id="search">
           <!-- Sort buttons, toggleable -->
           <template v-if="isExperimentLoaded">
             <template v-if="sortCycle == 1">
               <div class="selectable--text" @click="sortClick">
-                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 5px">Code</h6>
-                <i class="material-icons" style="margin-left: 40px; top: 42px; position: absolute; font-size: 30px;">keyboard_arrow_down</i>
+                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 19px; left: 5px">Code</h6>
+                <i class="material-icons" style="margin-left: 38px; top: 49px; position: absolute; font-size: 30px;">keyboard_arrow_down</i>
               </div>
             </template>
             <template v-else-if="sortCycle == 2">
               <div class="selectable--text" @click="sortClick">
-                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 5px">Code</h6>
-                <i class="material-icons" style="margin-left: 40px; top: 42px; position: absolute; font-size: 30px;">keyboard_arrow_up</i>
+                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 19px; left: 5px">Code</h6>
+                <i class="material-icons" style="margin-left: 38px; top: 49px; position: absolute; font-size: 30px;">keyboard_arrow_up</i>
               </div>
             </template>
             <template v-else-if="sortCycle == 3">
               <div class="selectable--text" @click="sortClick">
-                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 6px">Date</h6>
-                <i class="material-icons" style="margin-left: 40px; top: 42px; position: absolute; font-size: 30px;">keyboard_arrow_down</i>
+                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 19px; left: 6px">Date</h6>
+                <i class="material-icons" style="margin-left: 38px; top: 49px; position: absolute; font-size: 30px;">keyboard_arrow_down</i>
               </div>
             </template>
             <template v-else-if="sortCycle == 4">
               <div class="selectable--text" @click="sortClick">
-                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 6px">Date</h6>
-                <i class="material-icons" style="margin-left: 40px; top: 42px; position: absolute; font-size: 30px;">keyboard_arrow_up</i>
+                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 19px; left: 6px">Date</h6>
+                <i class="material-icons" style="margin-left: 38px; top: 49px; position: absolute; font-size: 30px;">keyboard_arrow_up</i>
               </div>
             </template>
             <template v-else-if="sortCycle == 0">
               <div class="selectable--text" @click="sortClick">
-                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 5px">Sort</h6>
-                <i class="material-icons" style="margin-left: 34px; top: 42px; position: absolute; font-size: 30px;">import_export</i>
+                <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 19px; left: 5px">Sort</h6>
+                <i class="material-icons" style="margin-left: 34px; top: 49px; position: absolute; font-size: 30px;">import_export</i>
               </div>
             </template>
           </template>
           <template v-else>
             <!-- If no experiment loaded, don't allow click -->
             <div class="disabled--text">
-              <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 12px; left: 5px">Sort</h6>
-              <i class="material-icons" style="margin-left: 34px; top: 42px; position: absolute; font-size: 30px;">import_export</i>
+              <h6 style="position: absolute; font-weight: bold; font-size: 11pt; top: 19px; left: 5px">Sort</h6>
+              <i class="material-icons" style="margin-left: 34px; top: 49px; position: absolute; font-size: 30px;">import_export</i>
             </div>
+          </template>
+          <!-- Allow search if experiment is loaded -->
+          <template v-if="isExperimentLoaded">
+            <i @click="searchClick" id="searchBtn" class="material-icons selectable--text" style="top: 50px; margin-right: 9px; left: 190px; position: absolute; font-size: 30px;">search</i>
+          </template>
+          <template v-else>
+            <i id="searchBtn" class="material-icons disabled--text" style="top: 50px; margin-right: 9px; left: 190px; position: absolute; font-size: 30px;">search</i>
           </template>
           <div class="flexbox-row--align">
             <strong><h2 style="margin: 10px;">Records</h2></strong>
-            <!-- Allow search if experiment is loaded -->
-            <template v-if="isExperimentLoaded">
-              <i @click="searchClick" id="searchBtn" class="material-icons selectable--text" style="margin-right: 9px; margin-left: 85px; position: absolute; font-size: 30px;">search</i>
-            </template>
-            <template v-else>
-              <i id="searchBtn" class="material-icons disabled--text" style="margin-right: 9px; margin-left: 85px; position: absolute; font-size: 30px;">search</i>
-            </template>
           </div>   
           <div v-bind:class="{'vertical-scroll': isSettingsMenuOpen === false}">
             <!-- Search if search box is active -->
@@ -264,14 +264,14 @@
                   </template>
                   <template v-else>
                     <template v-if="validated.target_bac">
-                      <input class="light-grey border--black regular--dat" maxlength="4" type="text" id="targetBAC" v-model="draft.target_bac">
+                      <input class="light-grey border--black regular--dat" maxlength="4" type="text" id="targetBAC" v-model="draft.target_bac" placeholder="Eg. 0.08">
                     </template>
                     <template v-else>
                       <!-- Validation -->
                       <div class="error-text flexbox-row white--text">
                         <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a decimal number between 0 & 0.15.</h4>
                       </div>
-                      <input class="light-grey border--black error regular--dat" maxlength="4" type="text" id="targetBAC" v-model="draft.target_bac">
+                      <input class="light-grey border--black error regular--dat" maxlength="4" type="text" id="targetBAC" v-model="draft.target_bac" placeholder="eg. 0.08">
                     </template>
                   </template>
                 </div>
@@ -288,14 +288,14 @@
                   </template>
                   <template v-else>
                     <template v-if="validated.target_bac_time">
-                      <input class="light-grey border--black regular--dat" maxlength="4" type="text" id="bacReachTime" v-model="draft.target_bac_time">
+                      <input class="light-grey border--black regular--dat" maxlength="4" type="text" id="bacReachTime" v-model="draft.target_bac_time" placeholder="Hours (eg. 1.5)">
                     </template>
                     <template v-else>
                       <!-- Validation -->
                       <div class="error-text flexbox-row white--text">
                         <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Enter a whole or decimal number between 0 & 8.</h4>
                       </div>
-                      <input class="light-grey border--black error regular--dat" maxlength="4" type="text" id="bacReachTime" v-model="draft.target_bac_time">
+                      <input class="light-grey border--black error regular--dat" maxlength="4" type="text" id="bacReachTime" v-model="draft.target_bac_time" placeholder="Number of hours (eg. 1.5)">
                     </template>
                   </template>
                 </div>
@@ -402,14 +402,14 @@
               <!-- Results of alcohol administration -->
               <template v-else-if="isBacMode">
                 <p>
-                <strong>SUBJECT {{draft.subject_code}}</strong> administered {{draft.amount_grams}} grams of alcohol targeting
+                <strong>SUBJECT {{draft.subject_code}}</strong> administered {{draft.amount_beverage}} mls of {{selected.beverage_name.toLowerCase()}} targeting
                   a blood alcohol concentration of {{draft.target_bac}}% in {{draft.target_bac_time}} hours.
                 </p>
               </template>
               <!-- Final results with actual BAC -->
               <template v-else-if="isViewingSubject">
                 <p>
-                  <strong>SUBJECT {{selected.subject_code}}</strong> administered {{selected.amount_grams}} grams of alcohol targeting
+                  <strong>SUBJECT {{selected.subject_code}}</strong> administered {{selected.amount_beverage}} mls of {{selected.beverage_name.toLowerCase()}} targeting
                   a blood alcohol concentration of {{selected.target_bac}}% in {{selected.target_bac_time}} {{checkPlural(selected.target_bac_time)}}.
                   <br><br>
                   Actual BAC recorded was {{selected.actual_bac}}% read at {{selected.actual_bac_time}}.
@@ -471,7 +471,7 @@
             <template v-else>
               <!-- Validation -->
               <div class="error-text flexbox-row white--text" style="bottom: 106px; left: 17px; width: 229px;">
-                <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Must include at least one digit.</h4>
+                <h4 style="margin-left: 4px; font-weight: 500; font-size: 12;">Must be unique and include at least one digit.</h4>
               </div>
               <input v-model="draft.subject_code" maxlength="8" class="light-grey error regular" type="text" id="subID" style="margin-top: 15px" placeholder=" Identification code">
             </template>
